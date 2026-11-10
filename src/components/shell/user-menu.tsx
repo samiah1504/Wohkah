@@ -1,0 +1,72 @@
+"use client";
+
+import Link from "next/link";
+import { LogOutIcon, UserIcon, LayoutGridIcon } from "lucide-react";
+import { Avatar } from "@/components/ui/display";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/overlays";
+import { signOut } from "@/modules/identity/server/actions";
+
+export function UserMenu({
+  name,
+  email,
+  align = "end",
+  tone = "light",
+}: {
+  name: string;
+  email: string;
+  align?: "start" | "end";
+  tone?: "light" | "dark";
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={
+          tone === "dark"
+            ? "flex w-full items-center gap-3 rounded-lg p-2 text-left text-sidebar-foreground outline-none hover:bg-sidebar-active focus-visible:ring-2 focus-visible:ring-ring"
+            : "flex items-center gap-2 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        }
+        aria-label="Account menu"
+      >
+        <Avatar name={name || email} className="size-8" />
+        {tone === "dark" ? (
+          <span className="min-w-0">
+            <span className="block truncate text-sm font-semibold">{name || "Your account"}</span>
+            <span className="block truncate text-xs text-sidebar-muted">{email}</span>
+          </span>
+        ) : null}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align={align} className="w-60">
+        <DropdownMenuLabel>
+          <span className="block truncate text-foreground">{name || "Your account"}</span>
+          <span className="block truncate font-normal">{email}</span>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/account">
+            <UserIcon /> Account and security
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/workspaces?all=1">
+            <LayoutGridIcon /> All workspaces
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <form action={signOut}>
+          <DropdownMenuItem asChild>
+            <button type="submit" className="w-full">
+              <LogOutIcon /> Sign out
+            </button>
+          </DropdownMenuItem>
+        </form>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}

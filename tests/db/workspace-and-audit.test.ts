@@ -277,3 +277,27 @@ describe("platform admins", () => {
     );
   });
 });
+
+describe("member directory", () => {
+  it("shows emails to members.view holders only, within their own company", async () => {
+    const owner = await createUser();
+    const company = await createCompany(owner.id);
+    const employee = await addMember(company, owner.id);
+    const outsider = await createUser();
+    await createCompany(outsider.id);
+
+    const rows = await asUser({ userId: owner.id }, async (db) =>
+      (await db.query("select * from public.workspace_member_directory($1)", [company.id])).rows,
+    );
+    expect(rows.map((r) => r.email).sort()).toEqual([owner.email, employee.email].sort());
+
+    for (const user of [employee, outsider]) {
+      await expectDbError(
+        asUser({ userId: user.id }, (db) =>
+          db.query("select * from public.workspace_member_directory($1)", [company.id]),
+        ),
+        /permission to view members/,
+      );
+    }
+  });
+});

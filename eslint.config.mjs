@@ -11,8 +11,13 @@ const ADMIN_CLIENT_ALLOWED = [
   "src/lib/supabase/admin.ts",
   "src/lib/rate-limit/**",
   "src/lib/audit/**",
-  "src/modules/identity/server/**",
 ];
+
+const ADMIN_IMPORT = {
+  group: ["@/lib/supabase/admin", "**/supabase/admin"],
+  message:
+    "The service-role client bypasses RLS. Only allow-listed modules may import it (see eslint.config.mjs and SECURITY.md).",
+};
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -27,23 +32,30 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    // Guard rails: the admin client and module internals.
+    // Guard rail: the service-role client bypasses RLS.
     files: ["src/**/*.{ts,tsx}"],
+    ignores: [...ADMIN_CLIENT_ALLOWED, "src/modules/**"],
+    rules: {
+      "no-restricted-imports": ["error", { patterns: [ADMIN_IMPORT] }],
+    },
+  },
+  {
+    // Inside a module: same-module files use relative imports; other modules
+    // are reached only through their public entry point (@/modules/<name>).
+    // Route files in src/app are the composition layer and may import module
+    // actions, queries and components directly.
+    files: ["src/modules/**/*.{ts,tsx}"],
     ignores: ADMIN_CLIENT_ALLOWED,
     rules: {
       "no-restricted-imports": [
         "error",
         {
           patterns: [
+            ADMIN_IMPORT,
             {
-              group: ["@/lib/supabase/admin", "**/supabase/admin"],
+              group: ["@/modules/*/*", "@/modules/*/*/**"],
               message:
-                "The service-role client bypasses RLS. Only allow-listed modules may import it (see eslint.config.mjs and SECURITY.md).",
-            },
-            {
-              group: ["@/modules/*/server/*", "@/modules/*/components/*"],
-              message:
-                "Import another module through its public entry point (@/modules/<name>) or from within the same module only.",
+                "Import another module through its public entry point (@/modules/<name>), or use a relative import within the same module.",
             },
           ],
         },

@@ -14,7 +14,8 @@
     "test:db": "vitest run --project db",
     "test:e2e": "playwright test",
     "db:local:reset": "bash scripts/db-local-reset.sh",
-    "check": "pnpm typecheck && pnpm lint && pnpm test"
+    "check": "pnpm typecheck && pnpm lint && pnpm test",
+    "db:types": "supabase gen types typescript --remote=\"${DATABASE_URL:-postgresql://root@localhost/wohkah_test?host=/var/run/postgresql}\" --schema public > src/lib/supabase/database.types.ts && prettier --write src/lib/supabase/database.types.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
@@ -44,6 +45,7 @@
     "pg": "8.23.1",
     "prettier": "3.9.10",
     "prettier-plugin-tailwindcss": "0.8.1",
+    "supabase": "3.1.0",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
     "vitest": "5.1.0"
