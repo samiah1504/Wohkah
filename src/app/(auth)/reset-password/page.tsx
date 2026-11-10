@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton } from "@/components/ui/display";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Skeleton,
+} from "@/components/ui/display";
 import { ResetPasswordForm } from "@/modules/identity/components/auth-forms";
 import { requireUser } from "@/lib/auth/session";
 

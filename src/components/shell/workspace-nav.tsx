@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CheckIcon, ChevronsUpDownIcon, HomeIcon, PlusIcon, SettingsIcon, ShieldIcon, UserIcon, UsersIcon } from "lucide-react";
+import {
+  CheckIcon,
+  ChevronsUpDownIcon,
+  HomeIcon,
+  PlusIcon,
+  SettingsIcon,
+  ShieldIcon,
+  UserIcon,
+  UsersIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -64,9 +73,12 @@ export function BottomNav({ items }: { items: NavItem[] }) {
   return (
     <nav
       aria-label="Workspace"
-      className="fixed inset-x-0 bottom-0 z-40 border-t bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className="bg-surface fixed inset-x-0 bottom-0 z-40 border-t pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
-      <ul className="mx-auto grid max-w-md" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}>
+      <ul
+        className="mx-auto grid max-w-md"
+        style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
+      >
         {items.map((item) => {
           const Icon = ICONS[item.key];
           const active = isActive(pathname, item);
@@ -104,14 +116,16 @@ export function WorkspaceSwitcher({
     <DropdownMenu>
       <DropdownMenuTrigger
         className={cn(
-          "flex w-full min-w-0 items-center gap-2 rounded-lg px-2 py-2 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          tone === "dark" ? "text-white hover:bg-sidebar-active" : "text-walnut hover:bg-subtle",
+          "focus-visible:ring-ring flex w-full min-w-0 items-center gap-2 rounded-lg px-2 py-2 text-left outline-none focus-visible:ring-2",
+          tone === "dark" ? "hover:bg-sidebar-active text-white" : "text-walnut hover:bg-subtle",
         )}
       >
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-primary font-heading text-sm font-extrabold text-walnut">
+        <span className="bg-primary font-heading text-walnut flex size-8 shrink-0 items-center justify-center rounded-md text-sm font-extrabold">
           {current.name.slice(0, 1).toUpperCase()}
         </span>
-        <span className="min-w-0 flex-1 truncate font-heading text-sm font-bold">{current.name}</span>
+        <span className="font-heading min-w-0 flex-1 truncate text-sm font-bold">
+          {current.name}
+        </span>
         <ChevronsUpDownIcon className="size-4 shrink-0 opacity-70" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64">
@@ -121,7 +135,7 @@ export function WorkspaceSwitcher({
             <Link href={`/w/${w.slug}`}>
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium">{w.name}</span>
-                <span className="block truncate text-xs text-muted-foreground">
+                <span className="text-muted-foreground block truncate text-xs">
                   {w.roleNames.join(", ")}
                 </span>
               </span>

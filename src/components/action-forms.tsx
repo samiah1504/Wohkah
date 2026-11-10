@@ -142,7 +142,7 @@ export function ActionButton({
       {Object.entries(hidden).map(([name, value]) => (
         <input key={name} type="hidden" name={name} value={value} />
       ))}
-      {confirm ? <span className="text-xs text-muted-foreground">{confirm}</span> : null}
+      {confirm ? <span className="text-muted-foreground text-xs">{confirm}</span> : null}
       <Button
         type="submit"
         variant={confirm ? "destructive" : variant}

@@ -7,8 +7,8 @@ export default function WorkspaceNotFound() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4 text-center">
       <Logo />
-      <h1 className="font-heading text-2xl font-extrabold text-walnut">Workspace not found</h1>
-      <p className="max-w-md text-sm text-muted-foreground">
+      <h1 className="font-heading text-walnut text-2xl font-extrabold">Workspace not found</h1>
+      <p className="text-muted-foreground max-w-md text-sm">
         This workspace doesn&apos;t exist, or you don&apos;t have access to it. If you were invited,
         open the invitation link from your email.
       </p>

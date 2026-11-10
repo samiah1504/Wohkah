@@ -12,11 +12,18 @@ export function todayIn(timeZone: string, now: Date = new Date()): string {
   }).format(now);
 }
 
-export function formatDate(isoDate: string, opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" }) {
+export function formatDate(
+  isoDate: string,
+  opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" },
+) {
   // Plain dates (YYYY-MM-DD) are calendar dates: format them in UTC to avoid shifting.
   return new Date(`${isoDate}T00:00:00Z`).toLocaleDateString("en-GB", { ...opts, timeZone: "UTC" });
 }
 
 export function formatDateTime(iso: string, timeZone: string) {
-  return new Date(iso).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short", timeZone });
+  return new Date(iso).toLocaleString("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone,
+  });
 }

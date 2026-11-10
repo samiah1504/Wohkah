@@ -120,15 +120,19 @@ describe("1. Company A cannot read Company B records", () => {
   });
 
   it("does not show Company B in the companies table", async () => {
-    const rows = await asUser({ userId: ownerA.id }, async (db) =>
-      (await db.query("select id from public.companies where id = $1", [companyB.id])).rows,
+    const rows = await asUser(
+      { userId: ownerA.id },
+      async (db) =>
+        (await db.query("select id from public.companies where id = $1", [companyB.id])).rows,
     );
     expect(rows).toEqual([]);
   });
 
   it("returns no workspace context for Company B's slug", async () => {
-    const ctx = await asUser({ userId: ownerA.id }, async (db) =>
-      (await db.query("select public.workspace_context($1) as c", [companyB.slug])).rows[0]!.c,
+    const ctx = await asUser(
+      { userId: ownerA.id },
+      async (db) =>
+        (await db.query("select public.workspace_context($1) as c", [companyB.slug])).rows[0]!.c,
     );
     expect(ctx).toBeNull();
   });
@@ -195,13 +199,15 @@ describe("2 & 6. Company A cannot modify Company B records, even with B's ids", 
   });
 
   it("cannot move its own row into Company B", async () => {
-    const deptA = await asUser({ userId: ownerA.id }, async (db) =>
-      (
-        await db.query<{ id: string }>(
-          "insert into public.departments (company_id, name) values ($1, 'Ops') returning id",
-          [companyA.id],
-        )
-      ).rows[0]!.id,
+    const deptA = await asUser(
+      { userId: ownerA.id },
+      async (db) =>
+        (
+          await db.query<{ id: string }>(
+            "insert into public.departments (company_id, name) values ($1, 'Ops') returning id",
+            [companyA.id],
+          )
+        ).rows[0]!.id,
     );
     // company_id is not even an updatable column for clients.
     await expectDbError(
@@ -216,21 +222,23 @@ describe("2 & 6. Company A cannot modify Company B records, even with B's ids", 
   });
 
   it("cannot assign itself a role in Company B", async () => {
-    const roleB = await asAdmin(async (db) =>
-      (
-        await db.query<{ id: string }>(
-          "select id from public.roles where company_id = $1 and system_key = 'owner'",
-          [companyB.id],
-        )
-      ).rows[0]!.id,
+    const roleB = await asAdmin(
+      async (db) =>
+        (
+          await db.query<{ id: string }>(
+            "select id from public.roles where company_id = $1 and system_key = 'owner'",
+            [companyB.id],
+          )
+        ).rows[0]!.id,
     );
-    const memberA = await asAdmin(async (db) =>
-      (
-        await db.query<{ id: string }>(
-          "select id from public.company_members where company_id = $1 and user_id = $2",
-          [companyA.id, ownerA.id],
-        )
-      ).rows[0]!.id,
+    const memberA = await asAdmin(
+      async (db) =>
+        (
+          await db.query<{ id: string }>(
+            "select id from public.company_members where company_id = $1 and user_id = $2",
+            [companyA.id, ownerA.id],
+          )
+        ).rows[0]!.id,
     );
     await expectDbError(
       asUser({ userId: ownerA.id }, (db) =>
@@ -265,11 +273,15 @@ describe("5. A user in two companies only acts within the selected workspace", (
     const both = await addMember(companyA, ownerA.id, ["employee"]);
     const company2 = await createCompany(both.id, "Both Co");
 
-    const ctxA = await asUser({ userId: both.id }, async (db) =>
-      (await db.query("select public.workspace_context($1) as c", [companyA.slug])).rows[0]!.c,
+    const ctxA = await asUser(
+      { userId: both.id },
+      async (db) =>
+        (await db.query("select public.workspace_context($1) as c", [companyA.slug])).rows[0]!.c,
     );
-    const ctx2 = await asUser({ userId: both.id }, async (db) =>
-      (await db.query("select public.workspace_context($1) as c", [company2.slug])).rows[0]!.c,
+    const ctx2 = await asUser(
+      { userId: both.id },
+      async (db) =>
+        (await db.query("select public.workspace_context($1) as c", [company2.slug])).rows[0]!.c,
     );
     expect(ctxA.company.id).toBe(companyA.id);
     expect(ctxA.permissions).toEqual([]);
@@ -294,8 +306,10 @@ describe("5. A user in two companies only acts within the selected workspace", (
         member.memberId,
       ]),
     );
-    const rows = await asUser({ userId: member.id }, async (db) =>
-      (await db.query("select id from public.companies where id = $1", [companyA.id])).rows,
+    const rows = await asUser(
+      { userId: member.id },
+      async (db) =>
+        (await db.query("select id from public.companies where id = $1", [companyA.id])).rows,
     );
     expect(rows).toEqual([]);
   });

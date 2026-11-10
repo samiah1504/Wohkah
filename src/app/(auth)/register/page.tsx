@@ -2,7 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton } from "@/components/ui/display";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Skeleton,
+} from "@/components/ui/display";
 import { RegisterForm } from "@/modules/identity/components/auth-forms";
 import { getSessionUser, safeNextPath } from "@/lib/auth/session";
 
@@ -21,9 +28,9 @@ export default function RegisterPage(props: PageProps<"/register">) {
         <Suspense fallback={<Skeleton className="h-80" />}>
           <RegisterContent searchParams={props.searchParams} />
         </Suspense>
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-center text-sm">
           Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-walnut hover:underline">
+          <Link href="/login" className="text-walnut font-semibold hover:underline">
             Sign in
           </Link>
         </p>

@@ -51,19 +51,31 @@ export async function listRoles(ctx: TenantContext) {
       .eq("company_id", ctx.company.id)
       .order("system_key", { ascending: true, nullsFirst: false })
       .order("name"),
-    supabase.from("role_permissions").select("role_id, permission_key").eq("company_id", ctx.company.id),
+    supabase
+      .from("role_permissions")
+      .select("role_id, permission_key")
+      .eq("company_id", ctx.company.id),
     supabase.from("member_roles").select("role_id, member_id").eq("company_id", ctx.company.id),
   ]);
   if (roles.error) fail("roles", roles.error);
   if (perms.error) fail("role permissions", perms.error);
   if (assignments.error) fail("role assignments", assignments.error);
 
-  const SYSTEM_ORDER = ["owner", "hr_admin", "ops_manager", "dept_manager", "accountant", "employee"];
+  const SYSTEM_ORDER = [
+    "owner",
+    "hr_admin",
+    "ops_manager",
+    "dept_manager",
+    "accountant",
+    "employee",
+  ];
   return roles.data
     .map((r) => ({
       ...r,
       permissions: perms.data.filter((p) => p.role_id === r.id).map((p) => p.permission_key),
-      memberCount: new Set(assignments.data.filter((a) => a.role_id === r.id).map((a) => a.member_id)).size,
+      memberCount: new Set(
+        assignments.data.filter((a) => a.role_id === r.id).map((a) => a.member_id),
+      ).size,
     }))
     .sort((a, b) => {
       const ai = a.system_key ? SYSTEM_ORDER.indexOf(a.system_key) : 99;

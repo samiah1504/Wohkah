@@ -85,7 +85,9 @@ describe("permissions", () => {
 
   it("never exposes invitation token hashes to clients", async () => {
     await expectDbError(
-      asUser({ userId: owner.id }, (db) => db.query("select token_hash from public.company_invitations")),
+      asUser({ userId: owner.id }, (db) =>
+        db.query("select token_hash from public.company_invitations"),
+      ),
       /permission denied/,
     );
   });
@@ -171,13 +173,14 @@ describe("privilege escalation is impossible", () => {
   });
 
   it("stops a non-owner suspending an owner", async () => {
-    const ownerMember = await asAdmin(async (db) =>
-      (
-        await db.query<{ id: string }>(
-          "select id from public.company_members where company_id = $1 and user_id = $2",
-          [company.id, owner.id],
-        )
-      ).rows[0]!.id,
+    const ownerMember = await asAdmin(
+      async (db) =>
+        (
+          await db.query<{ id: string }>(
+            "select id from public.company_members where company_id = $1 and user_id = $2",
+            [company.id, owner.id],
+          )
+        ).rows[0]!.id,
     );
     await expectDbError(
       asUser({ userId: hr.id }, (db) =>
@@ -278,10 +281,10 @@ describe("the last owner rule", () => {
         "insert into public.member_roles (company_id, member_id, role_id) values ($1, $2, $3)",
         [company.id, next.memberId, ownerRole],
       );
-      await db.query(
-        `delete from public.member_roles where role_id = $1 and member_id <> $2`,
-        [ownerRole, next.memberId],
-      );
+      await db.query(`delete from public.member_roles where role_id = $1 and member_id <> $2`, [
+        ownerRole,
+        next.memberId,
+      ]);
     });
     const owners = await asAdmin(async (db) =>
       (

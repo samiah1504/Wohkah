@@ -2,7 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, Skeleton } from "@/components/ui/display";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Alert,
+  Skeleton,
+} from "@/components/ui/display";
 import { LoginForm } from "@/modules/identity/components/auth-forms";
 import { getSessionUser, safeNextPath } from "@/lib/auth/session";
 
@@ -23,9 +31,9 @@ export default function LoginPage(props: PageProps<"/login">) {
         <Suspense fallback={<Skeleton className="h-64" />}>
           <LoginContent searchParams={props.searchParams} />
         </Suspense>
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-center text-sm">
           New to WOHKAH?{" "}
-          <Link href="/register" className="font-semibold text-walnut hover:underline">
+          <Link href="/register" className="text-walnut font-semibold hover:underline">
             Create an account
           </Link>
         </p>

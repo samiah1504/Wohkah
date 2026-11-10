@@ -22,7 +22,7 @@ export function SettingsTabs({ tabs }: { tabs: SettingsTab[] }) {
                   "-mb-px inline-block border-b-2 px-3 py-2 text-sm font-semibold transition-colors",
                   active
                     ? "border-primary text-walnut"
-                    : "border-transparent text-muted-foreground hover:text-foreground",
+                    : "text-muted-foreground hover:text-foreground border-transparent",
                 )}
               >
                 {t.label}

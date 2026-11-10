@@ -9,7 +9,14 @@ import {
   CardTitle,
   Skeleton,
 } from "@/components/ui/display";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { requireUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import {
@@ -69,10 +76,16 @@ async function AccountSections() {
       <Card>
         <CardHeader>
           <CardTitle>Profile</CardTitle>
-          <CardDescription>Your name is visible to colleagues in workspaces you share.</CardDescription>
+          <CardDescription>
+            Your name is visible to colleagues in workspaces you share.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <ProfileForm fullName={profile?.full_name ?? ""} phone={profile?.phone ?? null} email={user.email} />
+          <ProfileForm
+            fullName={profile?.full_name ?? ""}
+            phone={profile?.phone ?? null}
+            email={user.email}
+          />
         </CardContent>
       </Card>
 
@@ -97,7 +110,9 @@ async function AccountSections() {
       <Card>
         <CardHeader>
           <CardTitle>Recent sign-in activity</CardTitle>
-          <CardDescription>If something here wasn&apos;t you, change your password now.</CardDescription>
+          <CardDescription>
+            If something here wasn&apos;t you, change your password now.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {events && events.length > 0 ? (
@@ -127,7 +142,7 @@ async function AccountSections() {
               </TableBody>
             </Table>
           ) : (
-            <p className="text-sm text-muted-foreground">No activity recorded yet.</p>
+            <p className="text-muted-foreground text-sm">No activity recorded yet.</p>
           )}
         </CardContent>
       </Card>

@@ -3,7 +3,14 @@ import { NetworkIcon } from "lucide-react";
 import { TenantPage } from "@/components/shell/tenant-page";
 import { ActionButton } from "@/components/action-forms";
 import { Badge, EmptyState } from "@/components/ui/display";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { listDepartments } from "@/modules/workspace/server/queries";
 import { DepartmentDialog } from "@/modules/workspace/components/settings-forms";
 import { setDepartmentArchived } from "@/modules/workspace/server/actions";
@@ -21,7 +28,7 @@ export default function DepartmentsPage(props: PageProps<"/w/[slug]/settings/dep
         return (
           <div className="grid gap-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Departments group your people. Archived departments are kept for history.
               </p>
               <DepartmentDialog slug={slug} departments={active} />
@@ -46,13 +53,12 @@ export default function DepartmentsPage(props: PageProps<"/w/[slug]/settings/dep
                   {all.map((d) => (
                     <TableRow key={d.id} className={d.archived_at ? "opacity-60" : undefined}>
                       <TableCell className="font-medium">
-                        {d.name}{" "}
-                        {d.archived_at ? <Badge variant="neutral">Archived</Badge> : null}
+                        {d.name} {d.archived_at ? <Badge variant="neutral">Archived</Badge> : null}
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
                         {d.parent_id ? byId.get(d.parent_id) : "—"}
                       </TableCell>
-                      <TableCell className="hidden max-w-xs truncate text-muted-foreground md:table-cell">
+                      <TableCell className="text-muted-foreground hidden max-w-xs truncate md:table-cell">
                         {d.description ?? "—"}
                       </TableCell>
                       <TableCell className="text-right whitespace-nowrap">

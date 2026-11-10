@@ -114,7 +114,12 @@ export function CreateCompanyForm({ rootDomain }: { rootDomain: string }) {
             ))}
           </NativeSelect>
         </Field>
-        <Field label="Industry" htmlFor="industry" error={state.fieldErrors?.industry} className="sm:col-span-2">
+        <Field
+          label="Industry"
+          htmlFor="industry"
+          error={state.fieldErrors?.industry}
+          className="sm:col-span-2"
+        >
           <NativeSelect id="industry" name="industry" defaultValue={state.values?.industry ?? ""}>
             <option value="">Choose…</option>
             {INDUSTRIES.map((i) => (

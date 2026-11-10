@@ -3,7 +3,14 @@ import { Building2Icon } from "lucide-react";
 import { TenantPage } from "@/components/shell/tenant-page";
 import { ActionButton } from "@/components/action-forms";
 import { Badge, EmptyState } from "@/components/ui/display";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { limitMessage, limitOf } from "@/lib/entitlements";
 import { asAddress, listBranches } from "@/modules/workspace/server/queries";
 import { BranchDialog } from "@/modules/workspace/components/settings-forms";
@@ -23,13 +30,17 @@ export default function BranchesPage(props: PageProps<"/w/[slug]/settings/branch
         return (
           <div className="grid gap-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {activeCount} active
                 {limit !== null ? ` of ${limit} allowed on the ${ctx.plan.name} plan` : ""}.
               </p>
               <BranchDialog
                 slug={slug}
-                disabledReason={atLimit && limit !== null ? limitMessage("branches", limit, ctx.plan.name) : undefined}
+                disabledReason={
+                  atLimit && limit !== null
+                    ? limitMessage("branches", limit, ctx.plan.name)
+                    : undefined
+                }
               />
             </div>
             {all.length === 0 ? (
@@ -54,14 +65,15 @@ export default function BranchesPage(props: PageProps<"/w/[slug]/settings/branch
                     return (
                       <TableRow key={b.id} className={b.archived_at ? "opacity-60" : undefined}>
                         <TableCell className="font-medium">
-                          {b.name}{" "}
-                          {b.is_headquarters ? <Badge>Head office</Badge> : null}{" "}
+                          {b.name} {b.is_headquarters ? <Badge>Head office</Badge> : null}{" "}
                           {b.archived_at ? <Badge variant="neutral">Archived</Badge> : null}
                           {b.code ? (
-                            <span className="ml-1 text-xs text-muted-foreground">{b.code}</span>
+                            <span className="text-muted-foreground ml-1 text-xs">{b.code}</span>
                           ) : null}
                         </TableCell>
-                        <TableCell className="hidden md:table-cell">{address.city ?? "—"}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {address.city ?? "—"}
+                        </TableCell>
                         <TableCell className="hidden md:table-cell">{b.phone ?? "—"}</TableCell>
                         <TableCell className="text-right whitespace-nowrap">
                           {!b.archived_at ? (

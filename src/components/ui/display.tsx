@@ -7,7 +7,7 @@ function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card"
-      className={cn("rounded-xl border bg-surface text-surface-foreground shadow-xs", className)}
+      className={cn("bg-surface text-surface-foreground rounded-xl border shadow-xs", className)}
       {...props}
     />
   );
@@ -19,7 +19,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"h3">) {
   return <h3 className={cn("text-lg leading-tight font-bold", className)} {...props} />;
 }
 function CardDescription({ className, ...props }: React.ComponentProps<"p">) {
-  return <p className={cn("text-sm text-muted-foreground", className)} {...props} />;
+  return <p className={cn("text-muted-foreground text-sm", className)} {...props} />;
 }
 function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return <div className={cn("p-6", className)} {...props} />;
@@ -80,7 +80,7 @@ function Separator({
     <SeparatorPrimitive.Root
       orientation={orientation}
       className={cn(
-        "shrink-0 bg-border",
+        "bg-border shrink-0",
         orientation === "horizontal" ? "h-px w-full" : "h-full w-px",
         className,
       )}
@@ -103,8 +103,10 @@ function Avatar({
     <AvatarPrimitive.Root
       className={cn("relative flex size-9 shrink-0 overflow-hidden rounded-full", className)}
     >
-      {src ? <AvatarPrimitive.Image src={src} alt={name} className="aspect-square size-full" /> : null}
-      <AvatarPrimitive.Fallback className="flex size-full items-center justify-center bg-primary text-xs font-bold text-walnut">
+      {src ? (
+        <AvatarPrimitive.Image src={src} alt={name} className="aspect-square size-full" />
+      ) : null}
+      <AvatarPrimitive.Fallback className="bg-primary text-walnut flex size-full items-center justify-center text-xs font-bold">
         {text}
       </AvatarPrimitive.Fallback>
     </AvatarPrimitive.Root>
@@ -112,7 +114,7 @@ function Avatar({
 }
 
 function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("animate-pulse rounded-md bg-subtle", className)} {...props} />;
+  return <div className={cn("bg-subtle animate-pulse rounded-md", className)} {...props} />;
 }
 
 function EmptyState({
@@ -127,10 +129,10 @@ function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed bg-surface/60 px-6 py-12 text-center">
+    <div className="bg-surface/60 flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed px-6 py-12 text-center">
       {icon ? <div className="text-muted-foreground [&_svg]:size-8">{icon}</div> : null}
       <p className="font-heading font-bold">{title}</p>
-      {description ? <p className="max-w-sm text-sm text-muted-foreground">{description}</p> : null}
+      {description ? <p className="text-muted-foreground max-w-sm text-sm">{description}</p> : null}
       {action ? <div className="mt-2">{action}</div> : null}
     </div>
   );

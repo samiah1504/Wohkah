@@ -3,7 +3,14 @@ import Link from "next/link";
 import { ScrollTextIcon } from "lucide-react";
 import { TenantPage } from "@/components/shell/tenant-page";
 import { EmptyState } from "@/components/ui/display";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { formatDateTime } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 
@@ -40,7 +47,10 @@ function summarise(changes: unknown): string {
     .slice(0, 4);
   return entries
     .map(([k, v]) => {
-      const value = Array.isArray(v) && v.length === 2 ? `${JSON.stringify(v[0])} → ${JSON.stringify(v[1])}` : JSON.stringify(v);
+      const value =
+        Array.isArray(v) && v.length === 2
+          ? `${JSON.stringify(v[0])} → ${JSON.stringify(v[1])}`
+          : JSON.stringify(v);
       return `${k}: ${value}`;
     })
     .join("; ");
@@ -52,7 +62,8 @@ export default function AuditPage(props: PageProps<"/w/[slug]/settings/audit">) 
       {async (ctx) => {
         const sp = await props.searchParams;
         // Keyset pagination on the identity column (newest first).
-        const before = typeof sp.before === "string" && /^\d+$/.test(sp.before) ? Number(sp.before) : null;
+        const before =
+          typeof sp.before === "string" && /^\d+$/.test(sp.before) ? Number(sp.before) : null;
         const supabase = await createClient();
         let query = supabase
           .from("audit_logs")
@@ -66,7 +77,9 @@ export default function AuditPage(props: PageProps<"/w/[slug]/settings/audit">) 
         const rows = data.slice(0, PAGE_SIZE);
         const hasMore = data.length > PAGE_SIZE;
 
-        const actorIds = [...new Set(rows.map((r) => r.actor_user_id).filter((x): x is string => !!x))];
+        const actorIds = [
+          ...new Set(rows.map((r) => r.actor_user_id).filter((x): x is string => !!x)),
+        ];
         const { data: actors } = actorIds.length
           ? await supabase.from("profiles").select("id, full_name").in("id", actorIds)
           : { data: [] };
@@ -77,9 +90,9 @@ export default function AuditPage(props: PageProps<"/w/[slug]/settings/audit">) 
         }
         return (
           <div className="grid gap-4">
-            <p className="text-sm text-muted-foreground">
-              Every change to workspace settings, members and roles is recorded here and can&apos;t be
-              edited or deleted.
+            <p className="text-muted-foreground text-sm">
+              Every change to workspace settings, members and roles is recorded here and can&apos;t
+              be edited or deleted.
             </p>
             <Table>
               <TableHeader>
@@ -93,12 +106,14 @@ export default function AuditPage(props: PageProps<"/w/[slug]/settings/audit">) 
               <TableBody>
                 {rows.map((r) => (
                   <TableRow key={r.id}>
-                    <TableCell className="whitespace-nowrap">{formatDateTime(r.created_at, ctx.company.timezone)}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {formatDateTime(r.created_at, ctx.company.timezone)}
+                    </TableCell>
                     <TableCell>
-                      {r.actor_user_id ? (names.get(r.actor_user_id) || "A former member") : "System"}
+                      {r.actor_user_id ? names.get(r.actor_user_id) || "A former member" : "System"}
                     </TableCell>
                     <TableCell>{describe(r.action, r.entity_type)}</TableCell>
-                    <TableCell className="hidden max-w-md truncate font-mono text-xs text-muted-foreground lg:table-cell">
+                    <TableCell className="text-muted-foreground hidden max-w-md truncate font-mono text-xs lg:table-cell">
                       {summarise(r.changes)}
                     </TableCell>
                   </TableRow>
@@ -108,7 +123,7 @@ export default function AuditPage(props: PageProps<"/w/[slug]/settings/audit">) 
             {hasMore ? (
               <Link
                 href={`/w/${ctx.company.slug}/settings/audit?before=${rows.at(-1)!.id}`}
-                className="justify-self-center text-sm font-semibold text-walnut hover:underline"
+                className="text-walnut justify-self-center text-sm font-semibold hover:underline"
               >
                 Older entries →
               </Link>

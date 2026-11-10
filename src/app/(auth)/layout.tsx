@@ -4,7 +4,7 @@ import { SetupNotice } from "@/components/setup-notice";
 
 export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (
-    <div className="flex min-h-screen flex-col items-center bg-background px-4 py-10 sm:py-16">
+    <div className="bg-background flex min-h-screen flex-col items-center px-4 py-10 sm:py-16">
       <Link href="/" aria-label="WOHKAH home" className="mb-8">
         <Logo withTagline />
       </Link>

@@ -10,7 +10,7 @@ export default function CheckEmailPage(props: PageProps<"/register/check-email">
   return (
     <Card>
       <CardHeader>
-        <MailCheckIcon className="size-10 text-primary" aria-hidden />
+        <MailCheckIcon className="text-primary size-10" aria-hidden />
         <CardTitle className="text-2xl">Check your email</CardTitle>
         <CardDescription>
           <Suspense fallback="We've sent you a confirmation link.">
@@ -18,10 +18,12 @@ export default function CheckEmailPage(props: PageProps<"/register/check-email">
           </Suspense>
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-3 text-sm text-muted-foreground">
-        <p>Open the link in the email to confirm your address and finish setting up your account.</p>
+      <CardContent className="text-muted-foreground grid gap-3 text-sm">
+        <p>
+          Open the link in the email to confirm your address and finish setting up your account.
+        </p>
         <p>Can&apos;t find it? Check your spam folder. The link expires in 24 hours.</p>
-        <Link href="/login" className="font-semibold text-walnut hover:underline">
+        <Link href="/login" className="text-walnut font-semibold hover:underline">
           Back to sign in
         </Link>
       </CardContent>

@@ -14,7 +14,8 @@ import { BottomNav, SidebarNav, WorkspaceSwitcher, type NavItem } from "./worksp
 export function navItemsFor(ctx: TenantContext): NavItem[] {
   const base = `/w/${ctx.company.slug}`;
   const items: NavItem[] = [{ key: "home", label: "Home", href: base }];
-  if (can(ctx, "members.view")) items.push({ key: "members", label: "People", href: `${base}/members` });
+  if (can(ctx, "members.view"))
+    items.push({ key: "members", label: "People", href: `${base}/members` });
   if (can(ctx, "roles.view")) items.push({ key: "roles", label: "Roles", href: `${base}/roles` });
   if (
     canAny(ctx, [
@@ -46,7 +47,7 @@ export async function WorkspaceShell({
 
   return (
     <div className="flex min-h-screen">
-      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col gap-6 bg-sidebar p-4 lg:flex">
+      <aside className="bg-sidebar sticky top-0 hidden h-screen w-64 shrink-0 flex-col gap-6 p-4 lg:flex">
         <div className="px-2 pt-1">
           <Logo tone="light" />
         </div>
@@ -58,7 +59,7 @@ export async function WorkspaceShell({
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b bg-surface px-3 lg:hidden">
+        <header className="bg-surface sticky top-0 z-30 flex h-14 items-center gap-2 border-b px-3 lg:hidden">
           <div className="min-w-0 flex-1">
             <WorkspaceSwitcher current={current} workspaces={workspaces} tone="light" />
           </div>

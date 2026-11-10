@@ -115,10 +115,10 @@ export type Company = { id: string; slug: string };
 export async function createCompany(ownerId: string, name = "Test Co"): Promise<Company> {
   const slug = `t-${uid()}`;
   const id = await asUser({ userId: ownerId }, async (db) => {
-    const res = await db.query<{ id: string }>(
-      "select public.create_company($1, $2) as id",
-      [name, slug],
-    );
+    const res = await db.query<{ id: string }>("select public.create_company($1, $2) as id", [
+      name,
+      slug,
+    ]);
     return res.rows[0]!.id;
   });
   return { id, slug };

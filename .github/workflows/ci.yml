@@ -1,0 +1,111 @@
+# WOHKAH continuous integration.
+#
+# Tiers (agreed in Phase 0, see DEPLOYMENT.md):
+#  - every push:          checks + database security tests (~5 min)
+#  - pull requests, main, manual run: + full end-to-end suite (~10–15 min)
+#
+# Production deployment is added as a final job, gated on all of these, when
+# the production environment exists (Phase 11). Nothing here touches hosted
+# Supabase projects: every job uses a throwaway local stack.
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  checks:
+    name: Typecheck, lint, unit tests, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm test
+      - run: pnpm build
+
+  database:
+    name: Database security tests (real Supabase Postgres)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Start Supabase (database only) and apply migrations
+        run: >-
+          pnpm exec supabase start
+          -x gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+      - name: Tenant isolation and RLS tests
+        run: pnpm test:db
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+      - name: Generated database types are up to date
+        run: |
+          pnpm exec supabase gen types typescript --local --schema public > "$RUNNER_TEMP/database.types.ts"
+          pnpm exec prettier --stdin-filepath src/lib/supabase/database.types.ts < "$RUNNER_TEMP/database.types.ts" > "$RUNNER_TEMP/formatted.ts"
+          diff -u src/lib/supabase/database.types.ts "$RUNNER_TEMP/formatted.ts" \
+            || (echo "::error::Run 'pnpm db:types' and commit the result." && exit 1)
+
+  e2e:
+    name: End-to-end (full Supabase stack)
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    needs: [checks, database]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Start Supabase
+        run: pnpm exec supabase start -x imgproxy,studio,edge-runtime,logflare,vector,supavisor
+      - name: Configure the app for the local stack
+        run: |
+          eval "$(pnpm exec supabase status -o env)"
+          {
+            echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL"
+            echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY"
+            echo "SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY"
+            echo "NEXT_PUBLIC_APP_URL=http://localhost:3000"
+            echo "APP_ROOT_DOMAIN=localhost:3000"
+            echo "MAILPIT_URL=${MAILPIT_URL:-http://127.0.0.1:54324}"
+          } > .env.local
+      - run: pnpm build
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: End-to-end tests
+        run: pnpm test:e2e --trace off
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7

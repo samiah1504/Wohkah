@@ -7,7 +7,10 @@ type DbError = { code?: string; message?: string } | null | undefined;
  * Internal details (table names, SQL) are never shown; unknown errors are
  * logged by the caller and replaced with a generic message.
  */
-export function userMessageFor(error: DbError, fallback = "Something went wrong. Please try again."): string {
+export function userMessageFor(
+  error: DbError,
+  fallback = "Something went wrong. Please try again.",
+): string {
   if (!error) return fallback;
   const msg = error.message ?? "";
 

@@ -32,7 +32,10 @@ export const resetPasswordSchema = z
   });
 
 export const mfaCodeSchema = z.object({
-  code: z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code from your authenticator app."),
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Enter the 6-digit code from your authenticator app."),
 });
 
 export const profileSchema = z.object({

@@ -13,7 +13,9 @@ afterAll(() => pool.end());
 describe("catalogues", () => {
   it("permission keys match the permissions table", async () => {
     const keys = await asAdmin(async (db) =>
-      (await db.query<{ key: string }>("select key from public.permissions")).rows.map((r) => r.key),
+      (await db.query<{ key: string }>("select key from public.permissions")).rows.map(
+        (r) => r.key,
+      ),
     );
     expect([...keys].sort()).toEqual([...PERMISSIONS].sort());
   });
@@ -26,34 +28,36 @@ describe("catalogues", () => {
   });
 
   it("every plan defines every feature", async () => {
-    const missing = await asAdmin(async (db) =>
-      (
-        await db.query<{ code: string; key: string }>(
-          `select p.code, f.key from public.subscription_plans p cross join public.features f
+    const missing = await asAdmin(
+      async (db) =>
+        (
+          await db.query<{ code: string; key: string }>(
+            `select p.code, f.key from public.subscription_plans p cross join public.features f
            where not exists (
              select 1 from public.plan_features pf where pf.plan_id = p.id and pf.feature_key = f.key
            )`,
-        )
-      ).rows,
+          )
+        ).rows,
     );
     expect(missing).toEqual([]);
   });
 
   it("stores the approved prices (kobo) and ₦1,000 per extra employee on every plan", async () => {
-    const plans = await asAdmin(async (db) =>
-      (
-        await db.query<{
-          code: string;
-          monthly: string;
-          annual: string | null;
-          included: number;
-          extra: string;
-        }>(
-          `select code, monthly_price_minor as monthly, annual_price_minor as annual,
+    const plans = await asAdmin(
+      async (db) =>
+        (
+          await db.query<{
+            code: string;
+            monthly: string;
+            annual: string | null;
+            included: number;
+            extra: string;
+          }>(
+            `select code, monthly_price_minor as monthly, annual_price_minor as annual,
                   included_employees as included, extra_employee_price_minor as extra
            from public.subscription_plans order by sort_order`,
-        )
-      ).rows,
+          )
+        ).rows,
     );
     expect(plans).toEqual([
       { code: "free", monthly: "0", annual: null, included: 3, extra: "100000" },

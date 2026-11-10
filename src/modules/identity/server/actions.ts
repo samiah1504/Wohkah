@@ -184,7 +184,9 @@ export async function resetPassword(_prev: FormState, formData: FormData): Promi
       });
     }
     if (error.code === "weak_password") {
-      return errorState("Choose a stronger password.", { fieldErrors: { password: error.message } });
+      return errorState("Choose a stronger password.", {
+        fieldErrors: { password: error.message },
+      });
     }
     if (error.code === "reauthentication_needed" || error.code === "insufficient_aal") {
       return errorState(
@@ -287,9 +289,12 @@ export async function confirmMfaEnrollment(
     code: parsed.data.code,
   });
   if (error) {
-    return errorState("That code didn't work. Make sure your phone's time is correct and try again.", {
-      fieldErrors: { code: "Invalid or expired code." },
-    });
+    return errorState(
+      "That code didn't work. Make sure your phone's time is correct and try again.",
+      {
+        fieldErrors: { code: "Invalid or expired code." },
+      },
+    );
   }
   await recordLoginEvent("mfa_enrolled", { userId: user.id });
   return { status: "success", message: "Two-step verification is now on for your account." };

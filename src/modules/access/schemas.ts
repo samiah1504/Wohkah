@@ -32,5 +32,12 @@ export const roleIdSchema = z.object({ roleId: z.uuid() });
 /** Checkbox groups arrive as repeated form fields. */
 export function uuidsFrom(formData: FormData, name: string): string[] {
   const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  return [...new Set(formData.getAll(name).map(String).filter((v) => uuid.test(v)))];
+  return [
+    ...new Set(
+      formData
+        .getAll(name)
+        .map(String)
+        .filter((v) => uuid.test(v)),
+    ),
+  ];
 }

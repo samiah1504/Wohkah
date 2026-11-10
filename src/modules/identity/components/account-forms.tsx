@@ -70,9 +70,19 @@ export function ChangePasswordForm() {
         hint="At least 10 characters, with upper and lowercase letters and a number."
         error={state.fieldErrors?.password}
       >
-        <Input id="password" name="password" type="password" autoComplete="new-password" {...errorProps(state, "password")} />
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          {...errorProps(state, "password")}
+        />
       </Field>
-      <Field label="Confirm new password" htmlFor="confirmPassword" error={state.fieldErrors?.confirmPassword}>
+      <Field
+        label="Confirm new password"
+        htmlFor="confirmPassword"
+        error={state.fieldErrors?.confirmPassword}
+      >
         <Input
           id="confirmPassword"
           name="confirmPassword"
@@ -106,7 +116,7 @@ export function MfaSettings({
     return (
       <div className="grid gap-4">
         <div className="flex items-center gap-2">
-          <ShieldCheckIcon className="size-5 text-success" aria-hidden />
+          <ShieldCheckIcon className="text-success size-5" aria-hidden />
           <span className="font-medium">Two-step verification is on.</span>
           <Badge variant="success">Protected</Badge>
         </div>
@@ -119,7 +129,7 @@ export function MfaSettings({
             </SubmitButton>
           </form>
         ) : (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             To turn it off, sign out and sign in again with your authenticator code.
           </p>
         )}
@@ -130,7 +140,7 @@ export function MfaSettings({
   if (confirmState.status === "success") {
     return (
       <div className="flex items-center gap-2">
-        <ShieldCheckIcon className="size-5 text-success" aria-hidden />
+        <ShieldCheckIcon className="text-success size-5" aria-hidden />
         <span className="font-medium">Two-step verification is on.</span>
       </div>
     );
@@ -139,7 +149,7 @@ export function MfaSettings({
   const e = enrollment?.enrollment;
   return (
     <div className="grid gap-4">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Add a second step at sign-in using an authenticator app such as Google Authenticator,
         Microsoft Authenticator or 1Password. Strongly recommended for owners and administrators.
       </p>
@@ -155,14 +165,18 @@ export function MfaSettings({
           </Button>
         </div>
       ) : (
-        <div className="grid gap-4 rounded-lg border bg-subtle/40 p-4 sm:grid-cols-[180px_1fr]">
+        <div className="bg-subtle/40 grid gap-4 rounded-lg border p-4 sm:grid-cols-[180px_1fr]">
           {/* Supabase returns the QR code as an SVG data URL. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={e.qrCode} alt="QR code for your authenticator app" className="size-44 rounded bg-white p-2" />
+          <img
+            src={e.qrCode}
+            alt="QR code for your authenticator app"
+            className="size-44 rounded bg-white p-2"
+          />
           <div className="grid content-start gap-3">
             <p className="text-sm">
               1. Scan the QR code with your authenticator app, or enter this key:{" "}
-              <code className="rounded bg-surface px-1.5 py-0.5 text-xs break-all">{e.secret}</code>
+              <code className="bg-surface rounded px-1.5 py-0.5 text-xs break-all">{e.secret}</code>
             </p>
             <p className="text-sm">2. Enter the 6-digit code it shows.</p>
             <form action={confirmAction} className="grid gap-3" noValidate>

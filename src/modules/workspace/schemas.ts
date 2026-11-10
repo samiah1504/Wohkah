@@ -87,7 +87,10 @@ export const companyProfileSchema = z
       .transform((v) => (v ? v : null))
       .pipe(
         z
-          .url({ protocol: /^https?$/, message: "Enter a full web address, e.g. https://example.com" })
+          .url({
+            protocol: /^https?$/,
+            message: "Enter a full web address, e.g. https://example.com",
+          })
           .nullable(),
       ),
     industry,

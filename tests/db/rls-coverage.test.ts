@@ -26,18 +26,19 @@ describe("RLS coverage", () => {
   });
 
   it("gives anon no privileges outside the public pricing catalogue", async () => {
-    const rows = await asAdmin(async (db) =>
-      (
-        await db.query<{ table_name: string; privilege_type: string }>(
-          `select table_name, privilege_type
+    const rows = await asAdmin(
+      async (db) =>
+        (
+          await db.query<{ table_name: string; privilege_type: string }>(
+            `select table_name, privilege_type
            from information_schema.role_table_grants
            where grantee = 'anon' and table_schema = 'public'
            union
            select table_name, privilege_type
            from information_schema.column_privileges
            where grantee = 'anon' and table_schema = 'public'`,
-        )
-      ).rows,
+          )
+        ).rows,
     );
     const offending = rows.filter(
       (r) => !(ANON_READABLE.has(r.table_name) && r.privilege_type === "SELECT"),
@@ -96,12 +97,13 @@ describe("RLS coverage", () => {
   });
 
   it("keeps the private app schema out of reach of anon", async () => {
-    const hasUsage = await asAdmin(async (db) =>
-      (
-        await db.query<{ ok: boolean }>(
-          "select has_schema_privilege('anon', 'app', 'usage') as ok",
-        )
-      ).rows[0]!.ok,
+    const hasUsage = await asAdmin(
+      async (db) =>
+        (
+          await db.query<{ ok: boolean }>(
+            "select has_schema_privilege('anon', 'app', 'usage') as ok",
+          )
+        ).rows[0]!.ok,
     );
     expect(hasUsage).toBe(false);
   });

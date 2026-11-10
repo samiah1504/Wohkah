@@ -4,7 +4,14 @@ import { Suspense } from "react";
 import { MailWarningIcon } from "lucide-react";
 import { Logo, CriftAttribution } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton } from "@/components/ui/display";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Skeleton,
+} from "@/components/ui/display";
 import { getSessionUser } from "@/lib/auth/session";
 import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
@@ -50,8 +57,8 @@ async function Invitation({ params }: { params: PageProps<"/invite/[token]">["pa
       <CardHeader>
         <CardTitle className="text-2xl">Join {invite.company_name}</CardTitle>
         <CardDescription>
-          You&apos;ve been invited to the {invite.company_name} workspace on WOHKAH. This invitation is for{" "}
-          <strong className="text-foreground">{invite.email}</strong> and expires on{" "}
+          You&apos;ve been invited to the {invite.company_name} workspace on WOHKAH. This invitation
+          is for <strong className="text-foreground">{invite.email}</strong> and expires on{" "}
           {formatDate(invite.expires_at.slice(0, 10))}.
         </CardDescription>
       </CardHeader>
@@ -59,12 +66,16 @@ async function Invitation({ params }: { params: PageProps<"/invite/[token]">["pa
         {!user ? (
           <>
             <Button asChild>
-              <Link href={`/register?next=${encodeURIComponent(next)}&email=${encodeURIComponent(invite.email)}`}>
+              <Link
+                href={`/register?next=${encodeURIComponent(next)}&email=${encodeURIComponent(invite.email)}`}
+              >
                 Create your account
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href={`/login?next=${encodeURIComponent(next)}&email=${encodeURIComponent(invite.email)}`}>
+              <Link
+                href={`/login?next=${encodeURIComponent(next)}&email=${encodeURIComponent(invite.email)}`}
+              >
                 I already have a WOHKAH account
               </Link>
             </Button>
@@ -93,11 +104,11 @@ function Invalid() {
   return (
     <Card>
       <CardHeader>
-        <MailWarningIcon className="size-10 text-warning" aria-hidden />
+        <MailWarningIcon className="text-warning size-10" aria-hidden />
         <CardTitle className="text-2xl">This invitation isn&apos;t valid</CardTitle>
         <CardDescription>
-          It may have expired, been used already, or been withdrawn. Ask the person who invited you to
-          send a new one.
+          It may have expired, been used already, or been withdrawn. Ask the person who invited you
+          to send a new one.
         </CardDescription>
       </CardHeader>
       <CardContent>

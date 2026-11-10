@@ -48,6 +48,6 @@ export function Logo({
 
 export function CriftAttribution({ className }: { className?: string }) {
   return (
-    <p className={cn("text-xs text-muted-foreground", className)}>A product of Crift Concepts</p>
+    <p className={cn("text-muted-foreground text-xs", className)}>A product of Crift Concepts</p>
   );
 }

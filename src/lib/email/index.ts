@@ -2,8 +2,7 @@ import "server-only";
 import { env, isEmailConfigured } from "@/lib/env";
 
 export type EmailResult =
-  | { sent: true; id: string }
-  | { sent: false; reason: "not_configured" | "failed" };
+  { sent: true; id: string } | { sent: false; reason: "not_configured" | "failed" };
 
 /**
  * Transactional email through Resend's REST API (ADR-0008).
@@ -42,13 +41,18 @@ export async function sendEmail(input: {
     const body = (await res.json()) as { id?: string };
     return { sent: true, id: body.id ?? "" };
   } catch (err) {
-    console.error("[email] send failed", { error: err instanceof Error ? err.message : String(err) });
+    console.error("[email] send failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
     return { sent: false, reason: "failed" };
   }
 }
 
 const escape = (s: string) =>
-  s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+  s.replace(
+    /[&<>"']/g,
+    (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!,
+  );
 
 /** Minimal branded layout (WOHKAH colours, inline styles for email clients). */
 export function brandedEmail(opts: {
@@ -57,7 +61,9 @@ export function brandedEmail(opts: {
   cta?: { label: string; url: string };
   footnote?: string;
 }): { html: string; text: string } {
-  const p = opts.paragraphs.map((t) => `<p style="margin:0 0 16px;line-height:1.6">${escape(t)}</p>`).join("");
+  const p = opts.paragraphs
+    .map((t) => `<p style="margin:0 0 16px;line-height:1.6">${escape(t)}</p>`)
+    .join("");
   const cta = opts.cta
     ? `<p style="margin:24px 0"><a href="${escape(opts.cta.url)}" style="background:#D69E00;color:#2B1D18;padding:12px 20px;border-radius:8px;font-weight:700;text-decoration:none;display:inline-block">${escape(opts.cta.label)}</a></p>
        <p style="margin:0 0 16px;font-size:12px;color:#78665B;word-break:break-all">Or paste this link into your browser: ${escape(opts.cta.url)}</p>`
@@ -72,6 +78,12 @@ export function brandedEmail(opts: {
     </div>
     <p style="font-size:12px;color:#78665B;margin:24px 0 0">Your staff, well managed. · A product of Crift Concepts</p>
   </div></body></html>`;
-  const text = [opts.heading, "", ...opts.paragraphs, ...(opts.cta ? ["", `${opts.cta.label}: ${opts.cta.url}`] : []), ...(opts.footnote ? ["", opts.footnote] : [])].join("\n");
+  const text = [
+    opts.heading,
+    "",
+    ...opts.paragraphs,
+    ...(opts.cta ? ["", `${opts.cta.label}: ${opts.cta.url}`] : []),
+    ...(opts.footnote ? ["", opts.footnote] : []),
+  ].join("\n");
   return { html, text };
 }

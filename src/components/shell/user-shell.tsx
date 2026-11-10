@@ -10,7 +10,7 @@ import { UserMenu } from "./user-menu";
 export function UserShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b bg-surface">
+      <header className="bg-surface border-b">
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
           <Link href="/workspaces" aria-label="Your workspaces">
             <Logo />

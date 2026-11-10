@@ -125,7 +125,9 @@ export async function acceptInvitation(_prev: FormState, formData: FormData): Pr
   const supabase = await createClient();
   const { data: slug, error } = await supabase.rpc("accept_invitation", { p_token: token });
   if (error || !slug) {
-    return errorState(userMessageFor(error, "We couldn't accept the invitation. Please try again."));
+    return errorState(
+      userMessageFor(error, "We couldn't accept the invitation. Please try again."),
+    );
   }
   redirect(`/w/${slug}`);
 }
@@ -257,7 +259,11 @@ export async function setRolePermissions(_prev: FormState, formData: FormData) {
 
       if (toAdd.length) {
         const { error: e } = await supabase.from("role_permissions").insert(
-          toAdd.map((key) => ({ company_id: ctx.company.id, role_id: data.roleId, permission_key: key })),
+          toAdd.map((key) => ({
+            company_id: ctx.company.id,
+            role_id: data.roleId,
+            permission_key: key,
+          })),
         );
         check(e, "add permissions");
       }

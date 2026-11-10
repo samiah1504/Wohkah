@@ -16,7 +16,10 @@ export default function ForgotPasswordPage() {
       </CardHeader>
       <CardContent className="grid gap-4">
         <ForgotPasswordForm />
-        <Link href="/login" className="text-center text-sm font-semibold text-walnut hover:underline">
+        <Link
+          href="/login"
+          className="text-walnut text-center text-sm font-semibold hover:underline"
+        >
           Back to sign in
         </Link>
       </CardContent>

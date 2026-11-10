@@ -23,7 +23,9 @@ describe("create_company", () => {
   it("requires a confirmed email address", async () => {
     const u = await createUser({ confirmed: false });
     await expectDbError(
-      asUser({ userId: u.id }, (db) => db.query("select public.create_company('X Ltd', $1)", [`x-${uid()}`])),
+      asUser({ userId: u.id }, (db) =>
+        db.query("select public.create_company('X Ltd', $1)", [`x-${uid()}`]),
+      ),
       /email_not_confirmed/,
     );
   });
@@ -36,7 +38,9 @@ describe("create_company", () => {
     );
     const c = await createCompany(u.id);
     await expectDbError(
-      asUser({ userId: u.id }, (db) => db.query("select public.create_company('Dup', $1)", [c.slug])),
+      asUser({ userId: u.id }, (db) =>
+        db.query("select public.create_company('Dup', $1)", [c.slug]),
+      ),
       /slug_taken/,
     );
   });
@@ -65,13 +69,13 @@ describe("invitations", () => {
     const owner = await createUser();
     const company = await createCompany(owner.id, "Preview Ltd");
     const token = await invite(company.id, owner.id, "guest@test.wohkah.local");
-    const rows = await asAnon(async (db) =>
-      (await db.query("select * from public.invitation_preview($1)", [token])).rows,
+    const rows = await asAnon(
+      async (db) => (await db.query("select * from public.invitation_preview($1)", [token])).rows,
     );
     expect(rows).toHaveLength(1);
     expect(rows[0].company_name).toBe("Preview Ltd");
-    const none = await asAnon(async (db) =>
-      (await db.query("select * from public.invitation_preview('wrong-token')")).rows,
+    const none = await asAnon(
+      async (db) => (await db.query("select * from public.invitation_preview('wrong-token')")).rows,
     );
     expect(none).toEqual([]);
   });
@@ -84,20 +88,28 @@ describe("invitations", () => {
     const token = await invite(company.id, owner.id, invitee.email);
 
     await expectDbError(
-      asUser({ userId: stranger.id }, (db) => db.query("select public.accept_invitation($1)", [token])),
+      asUser({ userId: stranger.id }, (db) =>
+        db.query("select public.accept_invitation($1)", [token]),
+      ),
       /invitation_email_mismatch/,
     );
-    const slug = await asUser({ userId: invitee.id }, async (db) =>
-      (await db.query("select public.accept_invitation($1) as s", [token])).rows[0]!.s,
+    const slug = await asUser(
+      { userId: invitee.id },
+      async (db) =>
+        (await db.query("select public.accept_invitation($1) as s", [token])).rows[0]!.s,
     );
     expect(slug).toBe(company.slug);
     await expectDbError(
-      asUser({ userId: invitee.id }, (db) => db.query("select public.accept_invitation($1)", [token])),
+      asUser({ userId: invitee.id }, (db) =>
+        db.query("select public.accept_invitation($1)", [token]),
+      ),
       /invitation_invalid/,
     );
     // Default role is Employee.
-    const ctx = await asUser({ userId: invitee.id }, async (db) =>
-      (await db.query("select public.workspace_context($1) as c", [company.slug])).rows[0]!.c,
+    const ctx = await asUser(
+      { userId: invitee.id },
+      async (db) =>
+        (await db.query("select public.workspace_context($1) as c", [company.slug])).rows[0]!.c,
     );
     expect(ctx.roles.map((r: { system_key: string }) => r.system_key)).toEqual(["employee"]);
   });
@@ -114,7 +126,9 @@ describe("invitations", () => {
       ),
     );
     await expectDbError(
-      asUser({ userId: invitee.id }, (db) => db.query("select public.accept_invitation($1)", [token])),
+      asUser({ userId: invitee.id }, (db) =>
+        db.query("select public.accept_invitation($1)", [token]),
+      ),
       /invitation_invalid/,
     );
 
@@ -127,7 +141,9 @@ describe("invitations", () => {
       ),
     );
     await expectDbError(
-      asUser({ userId: invitee2.id }, (db) => db.query("select public.accept_invitation($1)", [token2])),
+      asUser({ userId: invitee2.id }, (db) =>
+        db.query("select public.accept_invitation($1)", [token2]),
+      ),
       /invitation_invalid/,
     );
   });
@@ -140,13 +156,17 @@ describe("profiles", () => {
     const colleague = await addMember(company, owner.id);
     const stranger = await createUser();
 
-    const seen = await asUser({ userId: colleague.id }, async (db) =>
-      (await db.query("select full_name from public.profiles where id = $1", [owner.id])).rows,
+    const seen = await asUser(
+      { userId: colleague.id },
+      async (db) =>
+        (await db.query("select full_name from public.profiles where id = $1", [owner.id])).rows,
     );
     expect(seen).toEqual([{ full_name: "Ada Owner" }]);
 
-    const hidden = await asUser({ userId: stranger.id }, async (db) =>
-      (await db.query("select full_name from public.profiles where id = $1", [owner.id])).rows,
+    const hidden = await asUser(
+      { userId: stranger.id },
+      async (db) =>
+        (await db.query("select full_name from public.profiles where id = $1", [owner.id])).rows,
     );
     expect(hidden).toEqual([]);
   });
@@ -176,22 +196,27 @@ describe("audit log", () => {
       ]),
     );
 
-    const logs = await asUser({ userId: owner.id }, async (db) =>
-      (
-        await db.query(
-          `select actor_user_id, action, changes from public.audit_logs
+    const logs = await asUser(
+      { userId: owner.id },
+      async (db) =>
+        (
+          await db.query(
+            `select actor_user_id, action, changes from public.audit_logs
            where company_id = $1 and action = 'departments.insert'`,
-          [company.id],
-        )
-      ).rows,
+            [company.id],
+          )
+        ).rows,
     );
     expect(logs).toHaveLength(1);
     expect(logs[0].actor_user_id).toBe(owner.id);
     expect(logs[0].changes.name).toBe("Finance");
 
     for (const user of [employee, outsider]) {
-      const rows = await asUser({ userId: user.id }, async (db) =>
-        (await db.query("select id from public.audit_logs where company_id = $1", [company.id])).rows,
+      const rows = await asUser(
+        { userId: user.id },
+        async (db) =>
+          (await db.query("select id from public.audit_logs where company_id = $1", [company.id]))
+            .rows,
       );
       expect(rows).toEqual([]);
     }
@@ -202,7 +227,10 @@ describe("audit log", () => {
       asAdmin((db) => db.query("update public.audit_logs set action = 'tampered'")),
       /append-only/,
     );
-    await expectDbError(asAdmin((db) => db.query("delete from public.audit_logs")), /append-only/);
+    await expectDbError(
+      asAdmin((db) => db.query("delete from public.audit_logs")),
+      /append-only/,
+    );
     await expectDbError(
       asService((db) => db.query("delete from public.audit_logs")),
       /append-only/,
@@ -229,8 +257,9 @@ describe("rate limiting", () => {
   it("counts attempts per window and can only be used by the server", async () => {
     const key = `test:${uid()}`;
     const hit = () =>
-      asService(async (db) =>
-        (await db.query("select * from public.rate_limit_hit($1, 2, 60)", [key])).rows[0]!,
+      asService(
+        async (db) =>
+          (await db.query("select * from public.rate_limit_hit($1, 2, 60)", [key])).rows[0]!,
       );
     expect((await hit()).allowed).toBe(true);
     expect((await hit()).allowed).toBe(true);
@@ -257,8 +286,10 @@ describe("platform admins", () => {
       ]),
     );
     const visible = (aal: "aal1" | "aal2") =>
-      asUser({ userId: admin.id, aal }, async (db) =>
-        (await db.query("select id from public.companies where id = $1", [company.id])).rowCount,
+      asUser(
+        { userId: admin.id, aal },
+        async (db) =>
+          (await db.query("select id from public.companies where id = $1", [company.id])).rowCount,
       );
     expect(await visible("aal1")).toBe(0);
     expect(await visible("aal2")).toBe(1);
@@ -286,8 +317,10 @@ describe("member directory", () => {
     const outsider = await createUser();
     await createCompany(outsider.id);
 
-    const rows = await asUser({ userId: owner.id }, async (db) =>
-      (await db.query("select * from public.workspace_member_directory($1)", [company.id])).rows,
+    const rows = await asUser(
+      { userId: owner.id },
+      async (db) =>
+        (await db.query("select * from public.workspace_member_directory($1)", [company.id])).rows,
     );
     expect(rows.map((r) => r.email).sort()).toEqual([owner.email, employee.email].sort());
 

@@ -78,7 +78,7 @@ async function Home({ params, searchParams }: PageProps<"/w/[slug]">) {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <CalendarDaysIcon className="size-4 text-primary" /> Upcoming holidays
+                <CalendarDaysIcon className="text-primary size-4" /> Upcoming holidays
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -94,7 +94,7 @@ async function Home({ params, searchParams }: PageProps<"/w/[slug]">) {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-muted-foreground">No upcoming holidays added yet.</p>
+                <p className="text-muted-foreground text-sm">No upcoming holidays added yet.</p>
               )}
             </CardContent>
           </Card>
@@ -155,9 +155,9 @@ function SetupChecklist({
         <CardDescription>
           {doneCount} of {steps.length} steps complete
         </CardDescription>
-        <div className="mt-2 h-2 overflow-hidden rounded-full bg-subtle" aria-hidden>
+        <div className="bg-subtle mt-2 h-2 overflow-hidden rounded-full" aria-hidden>
           <div
-            className="h-full rounded-full bg-primary transition-all"
+            className="bg-primary h-full rounded-full transition-all"
             style={{ width: `${(doneCount / steps.length) * 100}%` }}
           />
         </div>
@@ -167,13 +167,13 @@ function SetupChecklist({
           {steps.map((s) => (
             <li key={s.label} className="flex items-center gap-3 rounded-lg border p-3">
               {s.done ? (
-                <CheckCircle2Icon className="size-5 shrink-0 text-success" aria-label="Done" />
+                <CheckCircle2Icon className="text-success size-5 shrink-0" aria-label="Done" />
               ) : (
-                <CircleIcon className="size-5 shrink-0 text-muted-foreground" aria-label="To do" />
+                <CircleIcon className="text-muted-foreground size-5 shrink-0" aria-label="To do" />
               )}
               <div className="min-w-0 flex-1">
                 <p className="font-medium">{s.label}</p>
-                <p className="text-xs text-muted-foreground">{s.detail}</p>
+                <p className="text-muted-foreground text-xs">{s.detail}</p>
               </div>
               {s.href && s.allowed ? (
                 <Button asChild size="sm" variant={s.done ? "ghost" : "default"}>
@@ -198,8 +198,12 @@ function EmployeeWelcome() {
           company turns them on.
         </CardDescription>
       </CardHeader>
-      <CardContent className="text-sm text-muted-foreground">
-        Keep your profile up to date from <Link href="/account" className="font-medium text-walnut underline">Profile</Link>.
+      <CardContent className="text-muted-foreground text-sm">
+        Keep your profile up to date from{" "}
+        <Link href="/account" className="text-walnut font-medium underline">
+          Profile
+        </Link>
+        .
       </CardContent>
     </Card>
   );
@@ -216,7 +220,9 @@ function PlanCard({ ctx, members }: { ctx: TenantContext; members?: number }) {
         </CardTitle>
         <CardDescription>
           {members !== undefined ? `${members} workspace member${members === 1 ? "" : "s"}. ` : ""}
-          {admins === null ? "Unlimited administrators." : `Up to ${admins} administrator${admins === 1 ? "" : "s"}.`}
+          {admins === null
+            ? "Unlimited administrators."
+            : `Up to ${admins} administrator${admins === 1 ? "" : "s"}.`}
         </CardDescription>
       </CardHeader>
       <CardContent>

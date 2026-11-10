@@ -16,20 +16,42 @@ import {
 import { ActionDialog } from "@/components/action-forms";
 import { FormMessage, SubmitButton, errorProps } from "@/components/forms";
 import { initialFormState } from "@/lib/forms";
-import { inviteMember, saveRole, setMemberRoles, setRolePermissions, type InviteState } from "../server/actions";
+import {
+  inviteMember,
+  saveRole,
+  setMemberRoles,
+  setRolePermissions,
+  type InviteState,
+} from "../server/actions";
 
-export type RoleOption = { id: string; name: string; systemKey: string | null; description?: string | null };
+export type RoleOption = {
+  id: string;
+  name: string;
+  systemKey: string | null;
+  description?: string | null;
+};
 
 function RoleCheckboxes({ roles, selected }: { roles: RoleOption[]; selected: string[] }) {
   return (
     <fieldset className="grid gap-2">
       <legend className="mb-1 text-sm font-medium">Roles</legend>
       {roles.map((r) => (
-        <label key={r.id} className="flex cursor-pointer items-start gap-3 rounded-lg border p-3 has-[:checked]:border-primary has-[:checked]:bg-primary/5">
-          <input type="checkbox" name="roleIds" value={r.id} defaultChecked={selected.includes(r.id)} className="mt-0.5 accent-[var(--brand-yellow)]" />
+        <label
+          key={r.id}
+          className="has-[:checked]:border-primary has-[:checked]:bg-primary/5 flex cursor-pointer items-start gap-3 rounded-lg border p-3"
+        >
+          <input
+            type="checkbox"
+            name="roleIds"
+            value={r.id}
+            defaultChecked={selected.includes(r.id)}
+            className="mt-0.5 accent-[var(--brand-yellow)]"
+          />
           <span>
             <span className="block text-sm font-medium">{r.name}</span>
-            {r.description ? <span className="block text-xs text-muted-foreground">{r.description}</span> : null}
+            {r.description ? (
+              <span className="text-muted-foreground block text-xs">{r.description}</span>
+            ) : null}
           </span>
         </label>
       ))}
@@ -60,8 +82,8 @@ export function InviteDialog({ slug, roles }: { slug: string; roles: RoleOption[
         <DialogHeader>
           <DialogTitle>Invite someone to this workspace</DialogTitle>
           <DialogDescription>
-            They&apos;ll get a link to join. If they already have a WOHKAH account, they can use the same
-            login.
+            They&apos;ll get a link to join. If they already have a WOHKAH account, they can use the
+            same login.
           </DialogDescription>
         </DialogHeader>
         <InviteForm key={formKey} slug={slug} roles={roles} onDone={() => setOpen(false)} />
@@ -70,7 +92,15 @@ export function InviteDialog({ slug, roles }: { slug: string; roles: RoleOption[
   );
 }
 
-function InviteForm({ slug, roles, onDone }: { slug: string; roles: RoleOption[]; onDone: () => void }) {
+function InviteForm({
+  slug,
+  roles,
+  onDone,
+}: {
+  slug: string;
+  roles: RoleOption[];
+  onDone: () => void;
+}) {
   const [state, action] = useActionState<InviteState, FormData>(inviteMember, initialFormState);
   const employee = roles.find((r) => r.systemKey === "employee");
 
@@ -86,7 +116,12 @@ function InviteForm({ slug, roles, onDone }: { slug: string; roles: RoleOption[]
       <div className="grid gap-4">
         <FormMessage state={state} />
         <div className="flex gap-2">
-          <Input readOnly value={state.inviteLink} aria-label="Invitation link" onFocus={(e) => e.currentTarget.select()} />
+          <Input
+            readOnly
+            value={state.inviteLink}
+            aria-label="Invitation link"
+            onFocus={(e) => e.currentTarget.select()}
+          />
           <Button
             type="button"
             variant="outline"
@@ -98,11 +133,13 @@ function InviteForm({ slug, roles, onDone }: { slug: string; roles: RoleOption[]
             <CopyIcon /> Copy
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           The link works once, only for that email address, and expires in 7 days.
         </p>
         <div className="flex justify-end">
-          <Button type="button" onClick={onDone}>Done</Button>
+          <Button type="button" onClick={onDone}>
+            Done
+          </Button>
         </div>
       </div>
     );
@@ -113,7 +150,15 @@ function InviteForm({ slug, roles, onDone }: { slug: string; roles: RoleOption[]
       {state.status === "error" ? <FormMessage state={state} /> : null}
       <input type="hidden" name="slug" value={slug} />
       <Field label="Email address" htmlFor="invite-email" error={state.fieldErrors?.email}>
-        <Input id="invite-email" name="email" type="email" autoComplete="off" autoFocus defaultValue={state.values?.email} {...errorProps(state, "email")} />
+        <Input
+          id="invite-email"
+          name="email"
+          type="email"
+          autoComplete="off"
+          autoFocus
+          defaultValue={state.values?.email}
+          {...errorProps(state, "email")}
+        />
       </Field>
       <RoleCheckboxes roles={roles} selected={employee ? [employee.id] : []} />
       <div className="flex justify-end">
@@ -159,7 +204,13 @@ export function MemberRolesDialog({
 // ---------------------------------------------------------------------------
 // Custom roles
 // ---------------------------------------------------------------------------
-export function RoleDialog({ slug, role }: { slug: string; role?: { id: string; name: string; description: string | null } }) {
+export function RoleDialog({
+  slug,
+  role,
+}: {
+  slug: string;
+  role?: { id: string; name: string; description: string | null };
+}) {
   return (
     <ActionDialog
       title={role ? "Edit role" : "Create a custom role"}
@@ -181,10 +232,25 @@ export function RoleDialog({ slug, role }: { slug: string; role?: { id: string; 
       {(state) => (
         <>
           <Field label="Role name" htmlFor="role-name" error={state.fieldErrors?.name}>
-            <Input id="role-name" name="name" autoFocus defaultValue={state.values?.name ?? role?.name ?? ""} {...errorProps(state, "name")} />
+            <Input
+              id="role-name"
+              name="name"
+              autoFocus
+              defaultValue={state.values?.name ?? role?.name ?? ""}
+              {...errorProps(state, "name")}
+            />
           </Field>
-          <Field label="Description" htmlFor="role-description" error={state.fieldErrors?.description}>
-            <Textarea id="role-description" name="description" rows={2} defaultValue={state.values?.description ?? role?.description ?? ""} />
+          <Field
+            label="Description"
+            htmlFor="role-description"
+            error={state.fieldErrors?.description}
+          >
+            <Textarea
+              id="role-description"
+              name="description"
+              rows={2}
+              defaultValue={state.values?.description ?? role?.description ?? ""}
+            />
           </Field>
         </>
       )}
@@ -192,7 +258,13 @@ export function RoleDialog({ slug, role }: { slug: string; role?: { id: string; 
   );
 }
 
-export type PermissionOption = { key: string; module: string; description: string; isSensitive: boolean; heldByMe: boolean };
+export type PermissionOption = {
+  key: string;
+  module: string;
+  description: string;
+  isSensitive: boolean;
+  heldByMe: boolean;
+};
 
 export function RolePermissionsDialog({
   slug,
@@ -224,11 +296,17 @@ export function RolePermissionsDialog({
         <div className="grid max-h-[55vh] gap-4 overflow-y-auto pr-1">
           {modules.map((m) => (
             <fieldset key={m} className="grid gap-2">
-              <legend className="mb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">{m}</legend>
+              <legend className="text-muted-foreground mb-1 text-xs font-semibold tracking-wide uppercase">
+                {m}
+              </legend>
               {catalog
                 .filter((p) => p.module === m)
                 .map((p) => (
-                  <label key={p.key} className="flex items-start gap-3 text-sm aria-disabled:opacity-50" aria-disabled={!p.heldByMe}>
+                  <label
+                    key={p.key}
+                    className="flex items-start gap-3 text-sm aria-disabled:opacity-50"
+                    aria-disabled={!p.heldByMe}
+                  >
                     {/* Disabled inputs aren't submitted: keep permissions the editor can't change. */}
                     {!p.heldByMe && granted.includes(p.key) ? (
                       <input type="hidden" name="permissions" value={p.key} />
@@ -243,7 +321,9 @@ export function RolePermissionsDialog({
                     />
                     <span>
                       {p.description}
-                      {p.isSensitive ? <span className="ml-1 text-xs font-semibold text-warning">Sensitive</span> : null}
+                      {p.isSensitive ? (
+                        <span className="text-warning ml-1 text-xs font-semibold">Sensitive</span>
+                      ) : null}
                     </span>
                   </label>
                 ))}

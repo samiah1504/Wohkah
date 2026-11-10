@@ -18,13 +18,13 @@ export default function HomePage() {
       </header>
 
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-4 py-16 sm:px-6">
-        <p className="text-sm font-semibold tracking-wide text-primary uppercase">
+        <p className="text-primary text-sm font-semibold tracking-wide uppercase">
           Workforce management for growing teams
         </p>
-        <h1 className="mt-3 max-w-3xl font-heading text-4xl font-extrabold text-walnut sm:text-6xl">
+        <h1 className="font-heading text-walnut mt-3 max-w-3xl text-4xl font-extrabold sm:text-6xl">
           Your staff, well managed.
         </h1>
-        <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
+        <p className="text-muted-foreground mt-5 max-w-2xl text-lg">
           Everything your team needs to work better, together: people records, attendance, leave,
           payroll, tasks and messaging in one secure workspace.
         </p>
@@ -40,9 +40,7 @@ export default function HomePage() {
 
       <footer className="border-t">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-6 sm:px-6">
-          <p className="text-xs text-muted-foreground">
-            © 2026 WOHKAH. All rights reserved.
-          </p>
+          <p className="text-muted-foreground text-xs">© 2026 WOHKAH. All rights reserved.</p>
           <CriftAttribution />
         </div>
       </footer>

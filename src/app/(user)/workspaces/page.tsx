@@ -54,7 +54,7 @@ async function WorkspaceList({
     <div className="grid gap-4">
       {notice ? <Alert variant="success">{notice}</Alert> : null}
       {workspaces.length === 0 ? (
-        <Card className="p-6 text-sm text-muted-foreground">
+        <Card className="text-muted-foreground p-6 text-sm">
           You&apos;re not a member of any workspace yet. Create one, or ask your employer to invite
           you.
         </Card>
@@ -64,18 +64,18 @@ async function WorkspaceList({
             <li key={w.slug}>
               <Link
                 href={`/w/${w.slug}`}
-                className="group flex items-center gap-4 rounded-xl border bg-surface p-4 transition-colors hover:border-primary"
+                className="group bg-surface hover:border-primary flex items-center gap-4 rounded-xl border p-4 transition-colors"
               >
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary font-heading text-lg font-extrabold text-walnut">
+                <span className="bg-primary font-heading text-walnut flex size-11 shrink-0 items-center justify-center rounded-lg text-lg font-extrabold">
                   {w.name.slice(0, 1).toUpperCase()}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-heading font-bold">{w.name}</span>
-                  <span className="block truncate text-sm text-muted-foreground">
+                  <span className="font-heading block truncate font-bold">{w.name}</span>
+                  <span className="text-muted-foreground block truncate text-sm">
                     {w.roleNames.join(", ") || "Member"}
                   </span>
                 </span>
-                <ArrowRightIcon className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                <ArrowRightIcon className="text-muted-foreground size-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </li>
           ))}

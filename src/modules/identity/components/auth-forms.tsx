@@ -41,7 +41,7 @@ export function LoginForm({ next, defaultEmail }: { next?: string; defaultEmail?
         />
       </Field>
       <div className="-mt-1 text-right">
-        <Link href="/forgot-password" className="text-sm font-medium text-walnut hover:underline">
+        <Link href="/forgot-password" className="text-walnut text-sm font-medium hover:underline">
           Forgot your password?
         </Link>
       </div>
@@ -92,9 +92,8 @@ export function RegisterForm({ next, defaultEmail }: { next?: string; defaultEma
           {...errorProps(state, "password")}
         />
       </Field>
-      <p className="text-xs text-muted-foreground">
-        By creating an account you agree to the Terms of Service and acknowledge the Privacy
-        Notice.
+      <p className="text-muted-foreground text-xs">
+        By creating an account you agree to the Terms of Service and acknowledge the Privacy Notice.
       </p>
       <SubmitButton pendingLabel="Creating account…">Create account</SubmitButton>
     </form>

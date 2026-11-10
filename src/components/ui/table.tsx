@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
-    <div className="relative w-full overflow-x-auto rounded-xl border bg-surface">
+    <div className="bg-surface relative w-full overflow-x-auto rounded-xl border">
       <table className={cn("w-full caption-bottom text-sm", className)} {...props} />
     </div>
   );
@@ -15,13 +15,15 @@ function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   return <tbody className={cn("[&_tr:last-child]:border-0", className)} {...props} />;
 }
 function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
-  return <tr className={cn("border-b transition-colors hover:bg-subtle/30", className)} {...props} />;
+  return (
+    <tr className={cn("hover:bg-subtle/30 border-b transition-colors", className)} {...props} />
+  );
 }
 function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   return (
     <th
       className={cn(
-        "h-10 px-4 text-left align-middle text-xs font-semibold tracking-wide whitespace-nowrap text-muted-foreground uppercase",
+        "text-muted-foreground h-10 px-4 text-left align-middle text-xs font-semibold tracking-wide whitespace-nowrap uppercase",
         className,
       )}
       {...props}
