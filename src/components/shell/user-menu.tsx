@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTransition } from "react";
 import { LogOutIcon, UserIcon, LayoutGridIcon } from "lucide-react";
 import { Avatar } from "@/components/ui/display";
 import {
@@ -24,6 +25,7 @@ export function UserMenu({
   align?: "start" | "end";
   tone?: "light" | "dark";
 }) {
+  const [signingOut, startTransition] = useTransition();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -59,13 +61,11 @@ export function UserMenu({
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <form action={signOut}>
-          <DropdownMenuItem asChild>
-            <button type="submit" className="w-full">
-              <LogOutIcon /> Sign out
-            </button>
-          </DropdownMenuItem>
-        </form>
+        {/* Call the action directly: the menu unmounts on select, before a
+            nested form could submit. */}
+        <DropdownMenuItem disabled={signingOut} onSelect={() => startTransition(() => signOut())}>
+          <LogOutIcon /> {signingOut ? "Signing out…" : "Sign out"}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

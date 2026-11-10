@@ -11,7 +11,7 @@ test("a user cannot open a workspace they don't belong to", async ({ browser }) 
   await login(page, a.email);
   for (const path of [`/w/${bravo}`, `/w/${bravo}/members`, `/w/${bravo}/settings/company`]) {
     await page.goto(path);
-    await expect(page.getByRole("heading", { name: "Workspace not found" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
     await expect(page.getByText("Bravo Ltd")).toHaveCount(0);
   }
 });

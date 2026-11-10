@@ -15,7 +15,7 @@ test("an owner sets up departments, branches and holidays; changes are audited",
   await page.getByLabel("Name").fill("Operations");
   await page.getByRole("button", { name: "Save" }).click();
   await expectToast(page, "Department saved.");
-  await expect(page.getByRole("cell", { name: "Operations" })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Operations", exact: true })).toBeVisible();
 
   // Branches: the Free plan allows one.
   await page.goto(`/w/${slug}/settings/branches`);
@@ -33,7 +33,7 @@ test("an owner sets up departments, branches and holidays; changes are audited",
   await page.getByLabel("Holiday").fill("Independence Day");
   await page.getByRole("button", { name: "Add" }).click();
   await expectToast(page, "Holiday added.");
-  await expect(page.getByRole("cell", { name: "Independence Day" })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "Independence Day", exact: true })).toBeVisible();
 
   // Company profile validation and save
   await page.goto(`/w/${slug}/settings/company`);
