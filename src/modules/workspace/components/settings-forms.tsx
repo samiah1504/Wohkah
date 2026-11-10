@@ -407,13 +407,9 @@ export function BranchDialog({
   branch?: Branch;
   disabledReason?: string;
 }) {
-  if (!branch && disabledReason) {
-    return (
-      <Button disabled title={disabledReason}>
-        <PlusIcon /> Add branch
-      </Button>
-    );
-  }
+  // Keep the dialog mounted even when the plan limit is reached: saving the
+  // last allowed branch flips the page to "at limit", and unmounting here
+  // would swallow the success confirmation.
   return (
     <ActionDialog
       title={branch ? "Edit branch" : "Add a branch"}
@@ -425,7 +421,7 @@ export function BranchDialog({
             <PencilIcon /> Edit
           </Button>
         ) : (
-          <Button>
+          <Button disabled={Boolean(disabledReason)} title={disabledReason}>
             <PlusIcon /> Add branch
           </Button>
         )

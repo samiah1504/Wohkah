@@ -1,6 +1,7 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { supabaseConfig } from "@/lib/env";
 import { requestMeta } from "@/lib/request-meta";
 import type { Database } from "./database.types";
@@ -15,6 +16,10 @@ import type { Database } from "./database.types";
  * the session on every request so that's safe.
  */
 export async function createClient() {
+  // Session-bound clients only exist at request time. Marking that explicitly
+  // keeps prefetch/prerender passes from running the auth client (which reads
+  // the clock) and aborting its requests half-way.
+  await connection();
   const { url, publishableKey } = supabaseConfig();
   const cookieStore = await cookies();
   const meta = await requestMeta();
