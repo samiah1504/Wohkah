@@ -86,8 +86,13 @@ Must be reviewed by qualified counsel before launch. The engineering commitments
   the example).
 - Browser-visible variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
   `NEXT_PUBLIC_SENTRY_DSN`, `NEXT_PUBLIC_APP_URL`. **Nothing else.**
-- The service-role key, Paystack secret, Inngest keys, Resend key and Vercel token are server-only and
-  differ for each environment.
+- The service-role key, Paystack secret, jobs worker secret, Resend key and Vercel token are server-only
+  and differ for each environment.
+- The jobs worker route (`/api/jobs/worker`) accepts only requests carrying `JOBS_WORKER_SECRET`
+  (compared in constant time). Supabase Cron reads the secret from Supabase Vault, never from a
+  migration file.
+- Rate limits (Postgres-backed) cover login, sign-up, password reset, invitation sends, OTP
+  verification and public endpoints.
 - Secret scanning runs in CI.
 
 ## 7. Operational security (Phase 11)

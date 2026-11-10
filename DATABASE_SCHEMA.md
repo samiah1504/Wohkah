@@ -94,6 +94,12 @@ create policy bank_details_select on employee_bank_details for select to authent
 | `login_events` | Sign-in, failure, MFA and password reset events (from an Auth hook and the app) |
 | `access_events` | Sensitive reads: payslip downloads, salary views, document downloads, support access |
 
+### Rate limiting
+
+| Table | Notes |
+|---|---|
+| `rate_limit_buckets` | `key text` (for example `login:ip:<hash>` or `reset:email:<hash>`), `window_start timestamptz`, `count int`, primary key `(key, window_start)`. Written only through `app.rate_limit_hit(key, limit, window)`, which increments and checks atomically in one statement. Not reachable by clients. Old windows are deleted by Supabase Cron. IPs and emails are stored hashed. |
+
 ### Entitlements foundation (proposed for Phase 1)
 
 | Table | Notes |
@@ -125,7 +131,8 @@ Seed prices (minor units, NGN):
 | 7 Docs / performance / lifecycle | `document_folders`, `company_documents`, `document_versions`, `document_permissions`, `document_acknowledgements`, `performance_cycles`, `performance_goals`, `kpis`, `performance_reviews`, `self_assessments`, `performance_feedback`, `improvement_plans`, `employee_loans`, `loan_schedules`, `loan_repayments`, `assets`, `asset_categories`, `asset_assignments`, `asset_returns`, `asset_maintenance`, `training_programmes`, `training_materials`, `training_assignments`, `training_completions`, `certificates`, `recognitions`, `offboarding_cases`, `offboarding_checklist_items`, `exit_interviews` |
 | 8 Reports | `report_exports` (job status, file path, filters, expires_at). Reports read through permission-checked SQL views/functions. |
 | 9 Billing / domains | `subscription_items`, `subscription_invoices`, `invoice_lines`, `payment_transactions`, `payment_methods` (provider token references only, **never card data**), `webhook_events` (`provider`, `event_id` unique, payload, processed_at), `usage_records` (daily active-employee counts), `company_domains` (hostname unique where active), `domain_verifications`, `company_branding` |
-| 10 Notifications / automation | `notifications`, `notification_preferences`, `notification_templates`, `notification_deliveries` (channel, status, attempts, idempotency key), `outbox_events`, `jobs` |
+| 3 (first use) Background jobs | `outbox_events`, `jobs` (user-visible status and progress), `job_dead_letters`, plus `pgmq` queues and `pg_cron` schedules (ADR-0005) |
+| 10 Notifications / automation | `notifications`, `notification_preferences`, `notification_templates`, `notification_deliveries` (channel, status, attempts, idempotency key) |
 | 11 Platform | `platform_announcements`, `support_tickets`, `support_messages`, `system_settings`, `supported_countries` |
 
 **Excluded:** no expense or expense-claim tables (Rule 10).

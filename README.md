@@ -28,7 +28,7 @@ A product of **Crift Concepts**.
 ## Proposed stack
 
 Next.js 16 (App Router) · React 19 · strict TypeScript · Tailwind CSS v4 · shadcn/ui · Radix · Lucide ·
-Supabase (Postgres + RLS, Auth, Storage, Realtime) · Vercel · Inngest (jobs) · Paystack (payments) ·
+Supabase (Postgres + RLS, Auth, Storage, Realtime, Cron, Queues) · Vercel · Paystack (payments) ·
 Resend (email) · Sentry · Vitest · Playwright · pgTAP.
 
 ## Brand

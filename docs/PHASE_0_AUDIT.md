@@ -67,12 +67,12 @@ Additions the prompt leaves open (each one justified in an ADR and each needing 
 
 | Need | Recommendation | Alternative | ADR |
 |---|---|---|---|
-| Background jobs and scheduling | Postgres **transactional outbox**, with **Inngest** as the durable executor | Supabase `pg_cron` + `pgmq` and a Vercel worker route | 0005 |
-| Payments (Nigeria) | **Paystack**, behind a `PaymentProvider` adapter | Flutterwave | 0006 |
+| Background jobs and scheduling | ✅ **Supabase Cron + Supabase Queues** with a transactional outbox and a worker route | Inngest (rejected: extra vendor) | 0005 |
+| Payments (Nigeria) | ✅ **Paystack**, behind a `PaymentProvider` adapter | Flutterwave (approved alternative) | 0006 |
 | E-signature | Built-in **evidence-based click-to-sign** with a provider adapter for later external providers | Dropbox Sign, DocuSign or a Nigerian provider | 0007 |
-| Transactional email | **Resend** (React Email templates) | Postmark | 0008 |
-| Rate limiting | **Upstash Redis** rate limiting | Counter table in Postgres | 0008 |
-| Error monitoring | **Sentry** | Vercel observability only | 0008 |
+| Transactional email | ✅ **Resend** (React Email templates) | Postmark | 0008 |
+| Rate limiting | ✅ **Counter table in Supabase Postgres** | Upstash (rejected: extra vendor) | 0008 |
+| Error monitoring | ✅ **Sentry** | Vercel observability only | 0008 |
 | PDF output (payslips, contracts, reports) | `@react-pdf/renderer` | Headless Chromium (too heavy for serverless) | 0008 |
 | DOCX templates | `docxtemplater` | Convert to HTML templates only | 0008 |
 | Excel export | `exceljs` | CSV only | 0008 |
@@ -194,8 +194,6 @@ it is built. Payment integration stays in Phase 9.
 | Vercel | 1 | Project linked to the repo | Pro needed for commercial use, wildcard domains and cron |
 | Resend (email) | 1 (auth email via Supabase SMTP), 3 (invites) | API key, verified sending domain | Free tier for development |
 | Sentry | 1 | DSN, auth token (source maps) | Free or Team tier |
-| Upstash Redis | 1 | REST URL and token | Free tier for development |
-| Inngest | 3 (reminders), 5 (payroll) | Event and signing keys | Free tier for development |
 | Paystack | 9 | Secret key, public key, webhook secret (test and live) | Per-transaction fees |
 | Vercel Domains API | 9 | API token, team ID | Included |
 | DNS for `wohkah.com` | 1 (app), 9 (wildcard) | Registrar access | — |
@@ -209,8 +207,9 @@ it is built. Payment integration stays in Phase 9.
 
 ## Decisions requiring approval before Phase 1
 
-1. **Approve the stack and ADRs 0001–0008**, especially Inngest (jobs), Paystack (payments), Resend
-   (email), Upstash (rate limiting) and Sentry (monitoring).
+1. ✅ **Decided 2026-11-10:** Paystack for payments (Flutterwave as the alternative), Resend for email,
+   Sentry for error monitoring, Supabase Postgres for rate limiting, and Supabase Cron + Queues for
+   background jobs. Upstash and Inngest are not used.
 2. **Approve URL-based workspace routing** (`app.wohkah.com/w/[slug]`, with `slug.wohkah.com` and custom
    domains rewritten onto it), as in ADR-0003.
 3. **Approve moving the entitlements foundation into Phase 1** (§9 above).

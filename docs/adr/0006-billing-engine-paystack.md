@@ -1,6 +1,7 @@
 # ADR-0006: In-house billing engine with Paystack as the payment collector
 
-**Status:** Proposed (needs approval). **Date:** 2026-11-07
+**Status:** Accepted. **Date:** 2026-11-07, accepted 2026-11-10 (Paystack primary; Flutterwave kept
+as the alternative)
 
 ## Context
 Pricing combines a plan price with ₦1,000 per active employee above the plan's included count, monthly or
@@ -26,7 +27,9 @@ overage well.
   are impossible.
 - **Lifecycle:** `trialing → active → past_due → grace → expired/canceled`. When a paid plan expires, the
   company falls back to Free entitlements. Data is never deleted.
-- A `PaymentProvider` adapter interface allows Flutterwave or others later.
+- A `PaymentProvider` adapter interface (checkout, charge saved authorisation, verify transaction, verify
+  webhook, refund) keeps Paystack-specific code in one module. **Flutterwave** is the approved
+  alternative and can be added as a second adapter without changing the billing engine.
 
 ## Consequences
 - More code than native subscriptions, but correct per-seat billing and full control of proration.
@@ -35,4 +38,7 @@ overage well.
 
 ## Alternatives considered
 - Paystack Plans with quantity: can't express overage plus add-ons cleanly.
+- Flutterwave: comparable capability. Kept as the approved alternative adapter.
+- Monnify: strong for bank transfers through dedicated accounts, but saved-card renewals may need extra
+  account enablement. Not chosen.
 - Stripe: limited support for Nigerian merchant onboarding and local payment methods.

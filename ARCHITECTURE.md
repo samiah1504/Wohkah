@@ -23,12 +23,15 @@ email).
                 │                    │ entitlements │         │             │
                 │                    │ audit, money │         │             │
                 └────────────────────┴──────┬───────┴─────────┼─────────────┘
-                     user JWT (RLS applies) │                 │ signed webhooks
-                ┌───────────────────────────▼──────┐   ┌──────▼───────┐
-                │ Supabase                          │   │ Inngest      │ durable jobs,
-                │  Postgres + RLS (security edge)   │◀──│ (executor)   │ cron, retries
-                │  Auth  Storage  Realtime          │   └──────────────┘
-                └───────────────────────────────────┘   Paystack · Resend · Sentry · Upstash
+                     user JWT (RLS applies) │       ▲         │ signed webhooks (Paystack)
+                ┌───────────────────────────▼───────┴─────────▼─────────────┐
+                │ Supabase                                                   │
+                │  Postgres + RLS (security edge)   Auth  Storage  Realtime  │
+                │  Cron (pg_cron) ──wakes──▶ /api/jobs/worker every minute   │
+                │  Queues (pgmq): outbox → queues → retries → dead letter    │
+                │  rate_limit_buckets (rate limiting)                        │
+                └────────────────────────────────────────────────────────────┘
+                     External: Paystack (payments) · Resend (email) · Sentry (errors)
 ```
 
 ## 2. Core principles
@@ -77,7 +80,7 @@ src/
     admin/                    # Super Admin (Crift Concepts): separate layout, aal2 required
     api/
       webhooks/paystack/      # signature verified and idempotent
-      inngest/                # job executor endpoint (signed)
+      jobs/worker/            # queue worker, called by Supabase Cron (shared-secret auth)
       health/
   modules/
     workspace/  identity/  access/  employees/  recruitment/  onboarding/  contracts/
@@ -93,7 +96,7 @@ src/
     money/      Money type, arithmetic, formatting (kobo ↔ naira)
     jobs/       enqueue() via the outbox, job definitions
     storage/    signed upload and download helpers, MIME and size validation
-    rate-limit/
+    rate-limit/ Postgres-backed limiter (app.rate_limit_hit)
   components/ui/              # shadcn/ui with WOHKAH tokens
   proxy.ts
 supabase/
@@ -108,7 +111,6 @@ Cross-module calls go through these public services, never by reaching into anot
 from a query. Examples: payroll calls `attendance.getApprovedSummary()` and `leave.getUnpaidDays()`, and
 lifecycle offboarding calls `assets.getOutstanding()` and `loans.getOutstanding()`. An ESLint
 `no-restricted-imports` rule enforces this.
-
 ## 5. Request flow and tenancy
 
 ```
@@ -165,12 +167,15 @@ Plan entitlements are **data**, not code, so they can be changed without a deplo
 ## 8. Background jobs and automation (ADR-0005)
 
 - **Transactional outbox:** domain writes insert an `outbox_events` row *in the same transaction* (for
-  example `leave.approved` or `employee.hired`). A dispatcher forwards events to Inngest, so no event is
-  lost if the HTTP call fails.
-- **Inngest** runs durable functions with retries, step-level idempotency, cron schedules (contract
-  expiry, onboarding reminders, accruals, billing cycles) and concurrency keys per company.
-- Long tasks (payroll calculation, large exports, bulk notifications) run as chunked jobs. A `jobs`
-  table holds user-visible status and progress.
+  example `leave.approved` or `employee.hired`), which also puts a message on a **Supabase Queue
+  (`pgmq`)**. No event is lost if a request crashes.
+- **Supabase Cron (`pg_cron`)** schedules recurring work (contract expiry, onboarding reminders,
+  accruals, billing cycles) and wakes the worker route `/api/jobs/worker` every minute through `pg_net`.
+- **The worker** reads batches with a visibility timeout, retries failures with increasing delays, and
+  moves a message to a dead-letter queue after the maximum number of attempts. The Super Admin health view
+  shows dead letters and can retry them. Handlers are idempotent, keyed by event ID.
+- Long tasks (payroll calculation, large exports, bulk notifications) are split into chunked messages. A
+  `jobs` table holds user-visible status and progress.
 - Jobs that need the service role use it only inside the job module, always with an explicit
   `company_id`, and always audited.
 

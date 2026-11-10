@@ -1,11 +1,11 @@
 # ADR-0008: Supporting services
 
-**Status:** Proposed (needs approval). **Date:** 2026-11-07
+**Status:** Accepted. **Date:** 2026-11-07, accepted 2026-11-10
 
 | Need | Choice | Why | Fallback |
 |---|---|---|---|
 | Transactional email | **Resend** + React Email | Simple API, React templates in WOHKAH branding, also usable as Supabase Auth SMTP | Postmark |
-| Rate limiting | **Upstash Redis** (`@upstash/ratelimit`) | Works on serverless and at the edge, cheap | Postgres counter table |
+| Rate limiting | **Supabase Postgres** (`rate_limit_buckets` table + `app.rate_limit_hit()` function) | No extra vendor. One atomic SQL call per check, shared across all serverless instances. Expired buckets are cleaned up by Supabase Cron | Vercel Firewall rate-limit rules for edge protection |
 | Error monitoring | **Sentry** (`@sentry/nextjs`) | Server and client errors, traces, release tracking. PII scrubbing on | Vercel logs only |
 | PDF generation | `@react-pdf/renderer` | Serverless-friendly, no headless browser | Chromium in a job worker |
 | DOCX contract templates | `docxtemplater` | Merge fields into uploaded DOCX templates | HTML templates only |
