@@ -6,8 +6,8 @@ reported (master prompt, PART 13). Status key: ✅ Completed · 🟡 Partially c
 
 | Phase | Name | Status |
 |---|---|---|
-| 0 | Project audit and architecture | ✅ Completed. Waiting for approval |
-| 1 | Foundation and multi-tenancy (plus the entitlements foundation) | ⬜ |
+| 0 | Project audit and architecture | ✅ Completed and approved |
+| 1 | Foundation and multi-tenancy (plus the entitlements foundation) | ✅ Acceptance criteria met ([report](docs/PHASE_1_REPORT.md)); follow-ups listed there |
 | 2 | Employee management | ⬜ |
 | 3 | Recruitment, onboarding, contracts, job descriptions | ⬜ |
 | 4 | GPS attendance and shift scheduling | ⬜ |
@@ -138,6 +138,6 @@ legal pages, and the production go-live checklist.
 | Document | Created |
 |---|---|
 | README.md, ARCHITECTURE.md, DATABASE_SCHEMA.md, SECURITY.md, DEVELOPMENT_ROADMAP.md, CHANGELOG.md, ADRs | Phase 0 ✅ |
-| `.env.example` | Phase 0 (draft), finalised in Phase 1 |
-| API_DOCUMENTATION.md | Phase 1, with the first route handlers and RPCs |
-| DEPLOYMENT.md | Phase 1 (environments, CI), completed in Phase 11 |
+| `.env.example` | Phase 1 ✅ |
+| API_DOCUMENTATION.md | Phase 1 ✅ |
+| DEPLOYMENT.md | Phase 1 ✅ (environments, CI); completed in Phase 11 |
