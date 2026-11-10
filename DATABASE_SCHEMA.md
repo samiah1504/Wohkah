@@ -17,7 +17,7 @@ Status: **Proposed (Phase 0)**. Tables are created **incrementally by phase** th
 | Retention | `archived_at timestamptz` instead of deleting. Financial and legal tables (payroll, payslips, contracts, signatures, loans, audit) **block DELETE and post-lock UPDATE** through policy *and* trigger. |
 | Indexes | Every FK and every `company_id` (leading column of composite indexes used by RLS). Partial unique indexes for business rules (one open attendance record per employee). |
 | Naming | `snake_case`, plural tables, `<thing>_id` FKs, `idx_<table>_<cols>`, `<table>_<rule>_check`. |
-| RLS | Enabled on **every** table in `public`, `force row level security`. No table is reachable without a policy. |
+| RLS | Enabled on **every** table in `public` (not FORCED: the API roles are always subject to RLS, while the migration owner, which owns the SECURITY DEFINER helpers, must bypass it to avoid policy recursion). No table is reachable by API roles without a policy. Privileges are also granted explicitly per table and column. |
 | Functions | Security helpers live in a private `app` schema (not exposed through the API) as `security definer`, `stable` and `set search_path = ''`. |
 | Migrations | One concern per file, forward-only in production. Each migration documents its rollback steps in a header comment. Generated TS types (`supabase gen types`) are committed. |
 

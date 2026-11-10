@@ -8,8 +8,9 @@ and a user in several companies must see only the selected workspace. Workspaces
 `company.wohkah.com` and at customer custom domains.
 
 ## Decision
-1. **Shared database, shared schema, a `company_id` column on every tenant table**, with RLS enabled and
-   forced on every table.
+1. **Shared database, shared schema, a `company_id` column on every tenant table**, with RLS enabled on
+   every table. RLS is not FORCED, so the migration owner that owns the helper functions bypasses it;
+   the API roles (`anon`, `authenticated`) are always subject to it.
 2. Policies call `security definer` helpers in a private `app` schema: `is_member`, `has_permission`,
    `has_permission_for` (department or branch scope) and `can_access_employee`. The helpers wrap
    `auth.uid()` in `(select …)` so the planner caches it, and the matching indexes exist.
