@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useEffectEvent, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -81,12 +81,16 @@ function DialogForm({
   children: (state: FormState) => React.ReactNode;
 }) {
   const [state, formAction] = useActionState(action, initialFormState);
+  // Handle each result exactly once, even if onSuccess changes identity.
+  const handled = useRef<FormState | null>(null);
+  const succeed = useEffectEvent(() => onSuccess());
   useEffect(() => {
-    if (state.status === "success") {
+    if (state.status === "success" && handled.current !== state) {
+      handled.current = state;
       if (state.message) toast.success(state.message);
-      onSuccess();
+      succeed();
     }
-  }, [state, onSuccess]);
+  }, [state]);
 
   return (
     <form action={formAction} className="grid gap-4" noValidate>

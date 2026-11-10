@@ -1,7 +1,33 @@
 # WOHKAH — Database Architecture
 
-Status: **Proposed (Phase 0)**. Tables are created **incrementally by phase** through migrations in
-`supabase/migrations/`. This document is updated whenever a migration lands.
+Status: **Phase 1 implemented** (sections 2–3). Later phases (section 4) are still a plan. Tables
+are created **incrementally by phase** through migrations in `supabase/migrations/`. This document is
+updated whenever a migration lands.
+
+## Migrations (Phase 1)
+
+| File | Contents |
+|---|---|
+| `20261110000100_foundation.sql` | `app` schema, enums, generic triggers (`updated_at`, immutable `company_id`, append-only) |
+| `20261110000200_core_tables.sql` | All Phase 1 tables, indexes and composite foreign keys |
+| `20261110000300_security_helpers.sql` | RLS helper functions and entitlement resolution |
+| `20261110000400_reference_data.sql` | Permission catalogue, system role templates, features, the five plans and their entitlements |
+| `20261110000500_rls_policies.sql` | RLS on every table, explicit table and column grants, all policies |
+| `20261110000600_integrity_and_audit.sql` | Profile creation, escalation guards, owner rule, plan limits, department cycles, audit trigger |
+| `20261110000700_rpc.sql` | `create_company`, invitations, `workspace_context`, `is_slug_available`, `rate_limit_hit` |
+| `20261110000800_member_directory.sql` | `workspace_member_directory` (emails only for `members.view`) |
+
+Each file documents its rollback steps in its header. Production is forward-only.
+
+**Differences from the Phase 0 design:**
+
+- `member_roles` uses separate `department_id` and `branch_id` columns (each with a composite
+  foreign key) instead of one polymorphic `scope_id`, so scoped roles get real referential integrity.
+- RLS is enabled but not FORCED (see conventions below).
+- Clients never write `company_id` on update and never read `company_invitations.token_hash`:
+  enforced with column-level grants as well as policies.
+- Added `role_templates`, `features` and `rate_limit_buckets`; `departments.head_employee_id`
+  waits for Phase 2 (employees).
 
 ## 1. Conventions
 
@@ -77,7 +103,7 @@ create policy bank_details_select on employee_bank_details for select to authent
 | `permissions` | `key text pk`, `module`, `description`, `is_sensitive` | Global catalogue, seeded by migration. Read-only to clients. |
 | `roles` | `id`, `company_id`, `name`, `system_key` (`owner`, `hr_admin`, `ops_manager`, `dept_manager`, `accountant`, `employee`, or null for custom roles), `is_locked` | The Owner role can't be deleted or emptied. |
 | `role_permissions` | `role_id`, `permission_key`, `company_id` | Composite FK to `roles (company_id, id)` |
-| `member_roles` | `id`, `company_id`, `member_id`, `role_id`, `scope_type` (`company`, `department`, `branch`), `scope_id` | Check constraint: `scope_id` is null exactly when `scope_type = 'company'`. A trigger ensures each company always has ≥1 active Owner. |
+| `member_roles` | `id`, `company_id`, `member_id`, `role_id`, `scope_type` (`company`, `department`, `branch`), `department_id`, `branch_id`, `created_by` | Check constraint: exactly the column matching `scope_type` is set. The Owner role is company-scope only. A deferred trigger ensures each company always has ≥1 active Owner. Client inserts and deletes must pass the escalation check (`app.can_grant_role`). |
 
 ### Platform
 
@@ -100,7 +126,7 @@ create policy bank_details_select on employee_bank_details for select to authent
 |---|---|
 | `rate_limit_buckets` | `key text` (for example `login:ip:<hash>` or `reset:email:<hash>`), `window_start timestamptz`, `count int`, primary key `(key, window_start)`. Written only through `app.rate_limit_hit(key, limit, window)`, which increments and checks atomically in one statement. Not reachable by clients. Old windows are deleted by Supabase Cron. IPs and emails are stored hashed. |
 
-### Entitlements foundation (proposed for Phase 1)
+### Entitlements foundation
 
 | Table | Notes |
 |---|---|

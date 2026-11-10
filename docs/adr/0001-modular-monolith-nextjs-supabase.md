@@ -17,6 +17,14 @@ Router, Supabase and Vercel, and asks for a modular monolith.
 - pnpm as the package manager, with dependency versions pinned exactly.
 - TypeScript: the latest version that is compatible with Next.js, typescript-eslint and Vitest when Phase 1
   starts (TS 7 if supported, otherwise the latest 5.x/6.x).
+  **Resolved in Phase 1:** the Next.js 16.4 template pins TypeScript 5.9, so WOHKAH uses 5.9 (strict,
+  plus `noUncheckedIndexedAccess`). Revisit TypeScript 7 when Next.js adopts it.
+- Next.js 16 with Cache Components enabled (the template default, and mandatory in the next major).
+  Rule for Phase 1: tenant data is never cached on the server; every session read sits inside a
+  `<Suspense>` boundary.
+- shadcn/ui components are written into `src/components/ui` by hand in the shadcn style, because
+  the shadcn registry is unreachable from the development environment. They are ordinary source files
+  either way.
 
 ## Consequences
 - A simple deployment and a single source of truth. Domain boundaries keep a later extraction possible.

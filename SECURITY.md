@@ -2,6 +2,32 @@
 
 Status: **Proposed (Phase 0)**. Each phase adds verified controls to this document.
 
+## 0. Implemented and tested in Phase 1
+
+| Control | Where | Proven by |
+|---|---|---|
+| RLS on every table; anon reads only the pricing catalogue | migration 5 | `tests/db/rls-coverage.test.ts` (catalog checks cover future tables automatically) |
+| Company A can't read or change Company B data in any tenant table | RLS + column grants | `tests/db/tenant-isolation.test.ts` (iterates every table with `company_id`), `tests/e2e/tenancy.spec.ts` |
+| Cross-tenant references impossible | composite foreign keys | `tenant-isolation.test.ts` |
+| Browser-supplied company ids ignored | `TenantContext` from URL slug + session; `company_id` not updatable | `tenant-isolation.test.ts`, e2e |
+| Multi-company users act only in the selected workspace | per-workspace permissions, URL-scoped context | `tenant-isolation.test.ts` §5, e2e workspace switch |
+| No privilege escalation (roles, permissions, Owner) | triggers + `app.can_grant_role` | `tests/db/access-control.test.ts` |
+| At least one active owner; owners managed only by owners | deferred constraint triggers | `access-control.test.ts` |
+| Plan limits enforced in the database | triggers + RLS (`admins`, `branches`, `custom_roles`) | `access-control.test.ts`, `tests/e2e/workspace.spec.ts` |
+| Append-only audit log of administrative changes | generic audit trigger; UPDATE/DELETE blocked for every role | `tests/db/workspace-and-audit.test.ts` |
+| Invitations: 256-bit tokens, stored hashed, single use, email-bound, 7-day expiry | `company_invitations`, `accept_invitation` | `workspace-and-audit.test.ts`, e2e |
+| Platform admin access requires an aal2 (MFA) session | `app.is_platform_admin` | `workspace-and-audit.test.ts` |
+| Rate limits (login, sign-up, reset, MFA, invitations, workspace creation); fail closed | `rate_limit_hit` + `src/lib/rate-limit` | `workspace-and-audit.test.ts` |
+| No account enumeration on login, sign-up or reset | identity actions | `tests/e2e/auth.spec.ts` |
+| Open-redirect protection on `next` | `safeNextPath` | unit tests |
+| Service-role client restricted to allow-listed modules | ESLint `no-restricted-imports` | `pnpm lint` in CI |
+| Session cookies never cached by CDNs | proxy sets `Cache-Control: private, no-store` | — |
+| Baseline security headers (HSTS, no framing, nosniff, referrer, permissions) | `next.config.ts` | — |
+
+**Not yet in place (planned):** nonce-based Content-Security-Policy and Sentry (before launch),
+storage policies (Phase 2, with the first file uploads), support-access approval flow (Phase 11),
+data-subject request workflow (Phase 7), breach runbook (Phase 11).
+
 ## 1. Threat model (top concerns)
 
 | Threat | Control |
@@ -40,8 +66,9 @@ Status: **Proposed (Phase 0)**. Each phase adds verified controls to this docume
 
 ## 4. Tenant isolation test suite (required by the master prompt, Phase 1+)
 
-These run in CI on every PR, as pgTAP (`supabase/tests`) and Vitest integration tests using real user
-JWTs:
+These run in CI on every push (`tests/db`, Vitest + `pg`, executing as the `authenticated` role with
+real JWT claims exactly as PostgREST does) and in the end-to-end suite (`tests/e2e`). Items 3 and 4
+arrive with Phase 2, when employee records and file storage exist:
 
 1. Company A user cannot SELECT any Company B row in any tenant table. The test iterates over **every
    table with a `company_id` column**, so new tables are covered automatically.

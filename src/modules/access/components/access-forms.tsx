@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useEffectEvent, useRef, useState } from "react";
 import { toast } from "sonner";
 import { CopyIcon, PencilIcon, PlusIcon, ShieldIcon, UserPlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -104,12 +104,16 @@ function InviteForm({
   const [state, action] = useActionState<InviteState, FormData>(inviteMember, initialFormState);
   const employee = roles.find((r) => r.systemKey === "employee");
 
+  // Handle each result exactly once, even if onDone changes identity.
+  const handled = useRef<InviteState | null>(null);
+  const done = useEffectEvent(() => onDone());
   useEffect(() => {
-    if (state.status === "success" && !state.inviteLink) {
+    if (state.status === "success" && !state.inviteLink && handled.current !== state) {
+      handled.current = state;
       if (state.message) toast.success(state.message);
-      onDone();
+      done();
     }
-  }, [state, onDone]);
+  }, [state]);
 
   if (state.status === "success" && state.inviteLink) {
     return (
