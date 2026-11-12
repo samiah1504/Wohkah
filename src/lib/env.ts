@@ -26,8 +26,9 @@ function read() {
     supabasePublishableKey:
       blank(e.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) ?? blank(e.NEXT_PUBLIC_SUPABASE_ANON_KEY),
     supabaseSecretKey: blank(e.SUPABASE_SECRET_KEY) ?? blank(e.SUPABASE_SERVICE_ROLE_KEY),
-    appUrl: blank(e.NEXT_PUBLIC_APP_URL),
-    rootDomain: blank(e.APP_ROOT_DOMAIN),
+    // Tolerate a trailing slash ("https://x.app/") so links never get "//".
+    appUrl: blank(e.NEXT_PUBLIC_APP_URL)?.replace(/\/+$/, ""),
+    rootDomain: blank(e.APP_ROOT_DOMAIN)?.replace(/^https?:\/\//, "").replace(/\/+$/, ""),
     resendApiKey: blank(e.RESEND_API_KEY),
     emailFrom: blank(e.EMAIL_FROM),
   });
