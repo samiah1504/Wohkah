@@ -28,7 +28,9 @@ function read() {
     supabaseSecretKey: blank(e.SUPABASE_SECRET_KEY) ?? blank(e.SUPABASE_SERVICE_ROLE_KEY),
     // Tolerate a trailing slash ("https://x.app/") so links never get "//".
     appUrl: blank(e.NEXT_PUBLIC_APP_URL)?.replace(/\/+$/, ""),
-    rootDomain: blank(e.APP_ROOT_DOMAIN)?.replace(/^https?:\/\//, "").replace(/\/+$/, ""),
+    rootDomain: blank(e.APP_ROOT_DOMAIN)
+      ?.replace(/^https?:\/\//, "")
+      .replace(/\/+$/, ""),
     resendApiKey: blank(e.RESEND_API_KEY),
     emailFrom: blank(e.EMAIL_FROM),
   });
