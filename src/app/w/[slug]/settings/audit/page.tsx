@@ -40,20 +40,56 @@ function describe(action: string, entityType: string) {
   return `${ENTITY_LABELS[entityType] ?? entityType} ${VERBS[op] ?? op}`;
 }
 
+/**
+ * Friendly labels for the fields people change. Anything not listed here
+ * (ids, internal keys such as system_key, flags) is never shown to customers.
+ */
+const FIELD_LABELS: Record<string, string> = {
+  name: "Name",
+  legal_name: "Legal name",
+  description: "Description",
+  email: "Email",
+  business_email: "Business email",
+  phone: "Phone",
+  website: "Website",
+  industry: "Industry",
+  size_band: "Company size",
+  timezone: "Time zone",
+  currency: "Currency",
+  country_code: "Country",
+  work_start: "Work starts",
+  work_end: "Work ends",
+  holiday_date: "Date",
+  code: "Code",
+  status: "Status",
+  is_headquarters: "Head office",
+  archived_at: "Archived",
+};
+
+function display(v: unknown): string | null {
+  if (v === null || v === undefined || v === "") return "none";
+  if (typeof v === "boolean") return v ? "yes" : "no";
+  if (typeof v === "string") return /^\d{4}-\d{2}-\d{2}T/.test(v) ? v.slice(0, 10) : v;
+  if (typeof v === "number") return String(v);
+  return null; // objects and lists aren't summarised
+}
+
 function summarise(changes: unknown): string {
   if (!changes || typeof changes !== "object") return "";
-  const entries = Object.entries(changes as Record<string, unknown>)
-    .filter(([k]) => !["id", "company_id"].includes(k))
-    .slice(0, 4);
-  return entries
-    .map(([k, v]) => {
-      const value =
-        Array.isArray(v) && v.length === 2
-          ? `${JSON.stringify(v[0])} → ${JSON.stringify(v[1])}`
-          : JSON.stringify(v);
-      return `${k}: ${value}`;
-    })
-    .join("; ");
+  const parts: string[] = [];
+  for (const [k, v] of Object.entries(changes as Record<string, unknown>)) {
+    const label = FIELD_LABELS[k];
+    if (!label) continue;
+    if (Array.isArray(v) && v.length === 2) {
+      const [before, after] = [display(v[0]), display(v[1])];
+      if (before !== null && after !== null) parts.push(`${label}: ${before} → ${after}`);
+    } else {
+      const value = display(v);
+      if (value !== null) parts.push(`${label}: ${value}`);
+    }
+    if (parts.length === 4) break;
+  }
+  return parts.join("; ");
 }
 
 export default function AuditPage(props: PageProps<"/w/[slug]/settings/audit">) {
@@ -113,7 +149,7 @@ export default function AuditPage(props: PageProps<"/w/[slug]/settings/audit">) 
                       {r.actor_user_id ? names.get(r.actor_user_id) || "A former member" : "System"}
                     </TableCell>
                     <TableCell>{describe(r.action, r.entity_type)}</TableCell>
-                    <TableCell className="text-muted-foreground hidden max-w-md truncate font-mono text-xs lg:table-cell">
+                    <TableCell className="text-muted-foreground hidden max-w-md truncate text-xs lg:table-cell">
                       {summarise(r.changes)}
                     </TableCell>
                   </TableRow>
