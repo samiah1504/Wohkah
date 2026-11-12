@@ -80,7 +80,7 @@ export function RegisterForm({ next, defaultEmail }: { next?: string; defaultEma
       <Field
         label="Password"
         htmlFor="password"
-        hint="At least 10 characters, with upper and lowercase letters and a number."
+        hint="At least 10 characters, with uppercase and lowercase letters, a number and a symbol."
         error={state.fieldErrors?.password}
       >
         <Input
@@ -130,7 +130,7 @@ export function ResetPasswordForm() {
       <Field
         label="New password"
         htmlFor="password"
-        hint="At least 10 characters, with upper and lowercase letters and a number."
+        hint="At least 10 characters, with uppercase and lowercase letters, a number and a symbol."
         error={state.fieldErrors?.password}
       >
         <Input

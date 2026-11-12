@@ -67,7 +67,7 @@ export function ChangePasswordForm() {
       <Field
         label="New password"
         htmlFor="password"
-        hint="At least 10 characters, with upper and lowercase letters and a number."
+        hint="At least 10 characters, with uppercase and lowercase letters, a number and a symbol."
         error={state.fieldErrors?.password}
       >
         <Input

@@ -1,13 +1,14 @@
 import { z } from "zod";
 
-/** Matches supabase/config.toml: 10+ characters with upper, lower and a digit. */
+/** Matches Supabase Auth settings: 10+ characters with upper, lower, a digit and a symbol. */
 export const passwordSchema = z
   .string()
   .min(10, "Use at least 10 characters.")
   .max(72, "Use at most 72 characters.")
   .regex(/[a-z]/, "Include a lowercase letter.")
   .regex(/[A-Z]/, "Include an uppercase letter.")
-  .regex(/[0-9]/, "Include a number.");
+  .regex(/[0-9]/, "Include a number.")
+  .regex(/[^A-Za-z0-9]/, "Include a symbol, such as ! or -.");
 
 const email = z.string().trim().toLowerCase().pipe(z.email("Enter a valid email address."));
 
