@@ -67,7 +67,7 @@ export function SidebarNav({ items }: { items: NavItem[] }) {
   );
 }
 
-/** Mobile bottom navigation (employee portal is mobile-first). */
+/** Mobile bottom navigation (the staff portal is mobile-first). */
 export function BottomNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
   return (

@@ -1,6 +1,7 @@
 import { Logo } from "@/components/brand/logo";
 import { Alert } from "@/components/ui/display";
 import { canAny, can } from "@/lib/permissions";
+import { NAV } from "@/lib/copy/navigation";
 import { listMyWorkspaces, requireTenant, type TenantContext } from "@/lib/tenancy";
 import { getProfileName } from "./user-shell";
 import { UserMenu } from "./user-menu";
@@ -13,10 +14,11 @@ import { BottomNav, SidebarNav, WorkspaceSwitcher, type NavItem } from "./worksp
  */
 export function navItemsFor(ctx: TenantContext): NavItem[] {
   const base = `/w/${ctx.company.slug}`;
-  const items: NavItem[] = [{ key: "home", label: "Home", href: base }];
+  const items: NavItem[] = [{ key: "home", label: NAV.home.label, href: base }];
   if (can(ctx, "members.view"))
-    items.push({ key: "members", label: "People", href: `${base}/members` });
-  if (can(ctx, "roles.view")) items.push({ key: "roles", label: "Roles", href: `${base}/roles` });
+    items.push({ key: "members", label: NAV.access.label, href: `${base}/members` });
+  if (can(ctx, "roles.view"))
+    items.push({ key: "roles", label: NAV.roles.label, href: `${base}/roles` });
   if (
     canAny(ctx, [
       "company.settings.manage",
@@ -27,9 +29,9 @@ export function navItemsFor(ctx: TenantContext): NavItem[] {
       "audit.view",
     ])
   ) {
-    items.push({ key: "settings", label: "Settings", href: `${base}/settings` });
+    items.push({ key: "settings", label: NAV.settings.label, href: `${base}/settings` });
   }
-  items.push({ key: "profile", label: "Profile", href: "/account" });
+  items.push({ key: "profile", label: NAV.profile.label, href: "/account" });
   return items;
 }
 

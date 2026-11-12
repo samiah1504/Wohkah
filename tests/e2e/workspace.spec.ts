@@ -66,7 +66,7 @@ test("the Free plan's one-administrator limit is enforced", async ({ browser }) 
   await ownerPage.goto(`/w/${slug}/members`);
   await ownerPage.getByRole("button", { name: "Invite people" }).click();
   await ownerPage.getByLabel("Email address").fill(hire.email);
-  await ownerPage.getByLabel(/HR Administrator/).check();
+  await ownerPage.getByLabel(/Staff Manager/).check();
   await ownerPage.getByRole("button", { name: "Send invitation" }).click();
   const link = await ownerPage.getByLabel("Invitation link").inputValue();
 
@@ -87,5 +87,5 @@ test("custom roles are not available on the Free plan", async ({ browser }) => {
     page.getByText(/Custom roles and editing role permissions are available on the Growth plan/),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Create role" })).toHaveCount(0);
-  await expect(page.getByRole("columnheader", { name: "HR Administrator" })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Staff Manager" })).toBeVisible();
 });

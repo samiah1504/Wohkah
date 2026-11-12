@@ -16,6 +16,8 @@ const schema = z.object({
   rootDomain: z.string().min(1).default("localhost:3000"),
   resendApiKey: z.string().min(10).optional(),
   emailFrom: z.string().default("WOHKAH <no-reply@wohkah.com>"),
+  /** Public contact address shown on the website. */
+  contactEmail: z.email().optional(),
 });
 
 function read() {
@@ -33,6 +35,7 @@ function read() {
       .replace(/\/+$/, ""),
     resendApiKey: blank(e.RESEND_API_KEY),
     emailFrom: blank(e.EMAIL_FROM),
+    contactEmail: blank(e.NEXT_PUBLIC_CONTACT_EMAIL),
   });
 }
 

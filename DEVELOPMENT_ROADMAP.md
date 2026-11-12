@@ -19,7 +19,8 @@ reported (master prompt, PART 13). Status key: ✅ Completed · 🟡 Partially c
 | 10 | Notifications, automation, integrations | ⬜ |
 | 11 | Super Admin, security hardening, production launch | ⬜ |
 
-Every phase follows the same loop (Rule 1): review → plan → migrations → RLS policies with tests → services
+Every phase starts by reading [PRODUCT_LANGUAGE_AND_POSITIONING.md](PRODUCT_LANGUAGE_AND_POSITIONING.md)
+(mandatory: customer-facing wording) and then follows the same loop (Rule 1): review → plan → migrations → RLS policies with tests → services
 → UI → typecheck, lint, unit, integration, RLS and e2e tests → docs and CHANGELOG → phase report.
 
 ---

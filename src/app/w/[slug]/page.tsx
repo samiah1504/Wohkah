@@ -71,7 +71,7 @@ async function Home({ params, searchParams }: PageProps<"/w/[slug]">) {
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {summary ? <SetupChecklist ctx={ctx} summary={summary} /> : <EmployeeWelcome />}
+        {summary ? <SetupChecklist ctx={ctx} summary={summary} /> : <StaffWelcome />}
 
         <div className="grid content-start gap-6">
           {can(ctx, "subscription.view") ? <PlanCard ctx={ctx} members={summary?.members} /> : null}
@@ -188,14 +188,14 @@ function SetupChecklist({
   );
 }
 
-function EmployeeWelcome() {
+function StaffWelcome() {
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
-        <CardTitle>Your employee portal</CardTitle>
+        <CardTitle>Your staff portal</CardTitle>
         <CardDescription>
-          This is your home for work at this company. Self-service features appear here as your
-          company turns them on.
+          This is your home for work at this company. Your attendance, leave, salary slips and tasks
+          will appear here as they become available.
         </CardDescription>
       </CardHeader>
       <CardContent className="text-muted-foreground text-sm">

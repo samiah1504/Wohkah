@@ -5,6 +5,25 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Public website and product language (2026-11-12)
+
+#### Added
+- `PRODUCT_LANGUAGE_AND_POSITIONING.md`: mandatory audience, positioning and wording rules for every
+  screen, email and page; referenced from AGENTS.md, CLAUDE.md, README, ARCHITECTURE and the roadmap.
+- Shared customer wording in `src/lib/copy/` (role names, navigation labels, plan feature labels,
+  feature release status) and public pricing in `src/lib/plans.ts`, both checked against the database.
+- Redesigned public website: navigation, hero, product preview (labelled sample data), problems and
+  solution, features with "Coming soon" labels, who it's for, how it works, benefits, pricing with
+  monthly/yearly switch and extra-staff example, FAQs, final call to action, footer.
+- About, Contact, Privacy (draft) and Terms (draft) pages.
+- SEO: page titles and descriptions, Open Graph sharing image, sitemap, robots rules, structured data.
+- Tests: website end-to-end tests, a language-policy test on rendered pages, plan maths unit tests.
+
+#### Changed
+- Customer-facing wording across the app: "Staff Manager" and "Staff Member" roles (migration
+  `20261112000100`), "Team Access" instead of "People", "staff portal", "staff" instead of
+  "employees", plan feature labels.
+
 ### Phase 1: Foundation and multi-tenancy (2026-11-10)
 
 #### Added

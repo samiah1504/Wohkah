@@ -6,7 +6,9 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { PERMISSIONS } from "@/lib/permissions";
 import { FEATURES } from "@/lib/entitlements";
-import { asAdmin, pool } from "./helpers";
+import { SYSTEM_ROLE_COPY } from "@/lib/copy/terms";
+import { PLANS } from "@/lib/plans";
+import { asAdmin, createCompany, createUser, pool } from "./helpers";
 
 afterAll(() => pool.end());
 
@@ -69,5 +71,65 @@ describe("catalogues", () => {
     for (const p of plans.filter((x) => x.annual)) {
       expect(Number(p.annual)).toBe(Number(p.monthly) * 10);
     }
+  });
+});
+
+describe("customer-facing wording matches the database", () => {
+  it("new workspaces get the system role names and descriptions from src/lib/copy", async () => {
+    const owner = await createUser();
+    const company = await createCompany(owner.id);
+    const roles = await asAdmin(
+      async (db) =>
+        (
+          await db.query<{ system_key: string; name: string; description: string }>(
+            "select system_key, name, description from public.roles where company_id = $1",
+            [company.id],
+          )
+        ).rows,
+    );
+    for (const r of roles) {
+      const copy = SYSTEM_ROLE_COPY[r.system_key as keyof typeof SYSTEM_ROLE_COPY];
+      expect(copy, r.system_key).toBeDefined();
+      expect({ name: r.name, description: r.description }).toEqual(copy);
+    }
+  });
+
+  it("the public pricing (src/lib/plans.ts) matches the configured plans", async () => {
+    const rows = await asAdmin(
+      async (db) =>
+        (
+          await db.query<{
+            code: string;
+            name: string;
+            monthly: string;
+            annual: string | null;
+            included: number;
+            extra: string;
+          }>(
+            `select code, name, monthly_price_minor as monthly, annual_price_minor as annual,
+                  included_employees as included, extra_employee_price_minor as extra
+           from public.subscription_plans where is_public and is_active order by sort_order`,
+          )
+        ).rows,
+    );
+    expect(
+      rows.map((r) => ({
+        code: r.code,
+        name: r.name,
+        monthlyMinor: Number(r.monthly),
+        annualMinor: r.annual === null ? null : Number(r.annual),
+        includedStaff: r.included,
+        extraStaffMinor: Number(r.extra),
+      })),
+    ).toEqual(
+      PLANS.map(({ code, name, monthlyMinor, annualMinor, includedStaff, extraStaffMinor }) => ({
+        code,
+        name,
+        monthlyMinor,
+        annualMinor,
+        includedStaff,
+        extraStaffMinor,
+      })),
+    );
   });
 });

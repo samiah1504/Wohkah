@@ -3,9 +3,12 @@
 **Your staff, well managed.**
 *Everything your team needs to work better, together.*
 
-WOHKAH is a multi-tenant workforce management and team collaboration SaaS platform for small and growing
-businesses. It covers HR, onboarding, contracts, GPS attendance, payroll, leave, tasks, messaging,
-meetings, documents, performance and more.
+WOHKAH is a staff management platform for small business owners (about 5–50 staff, no HR
+department). It brings staff records, attendance, salaries, leave, tasks, messages and documents
+together in one simple place.
+
+Customer-facing wording follows [PRODUCT_LANGUAGE_AND_POSITIONING.md](PRODUCT_LANGUAGE_AND_POSITIONING.md).
+Internal code keeps technical names (`employees`, `payroll_runs` and so on).
 
 A product of **Crift Concepts**.
 
@@ -19,6 +22,7 @@ plan entitlements and the audit log. See [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_RO
 
 | Document | Purpose |
 |---|---|
+| [PRODUCT_LANGUAGE_AND_POSITIONING.md](PRODUCT_LANGUAGE_AND_POSITIONING.md) | **Mandatory.** Who WOHKAH is for and the wording every screen must use |
 | [docs/PHASE_0_AUDIT.md](docs/PHASE_0_AUDIT.md) | Repository audit, risks, external services, **decisions requiring approval** |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture, module layout, tenancy, jobs, realtime, branding |
 | [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md) | Database conventions, RLS helpers, Phase 1 schema, later-phase inventory |

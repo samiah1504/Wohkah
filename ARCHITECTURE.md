@@ -4,6 +4,14 @@
 
 Status: **Proposed (Phase 0)**. Nothing here is implemented yet.
 
+## 0. Product language
+
+Everything customers read (screens, emails, notifications, marketing) follows
+[`PRODUCT_LANGUAGE_AND_POSITIONING.md`](PRODUCT_LANGUAGE_AND_POSITIONING.md), using the shared
+dictionary in `src/lib/copy/` (terminology, role names, navigation labels, feature status) and
+`src/lib/plans.ts` (public pricing, checked against the database). Code, database and API names stay
+technical: the translation happens at the interface.
+
 ## 1. Architectural style
 
 WOHKAH is a **modular monolith**: one Next.js application and one Supabase project per environment. The

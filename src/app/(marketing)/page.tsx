@@ -1,49 +1,100 @@
-import Link from "next/link";
-import { Logo, CriftAttribution } from "@/components/brand/logo";
-import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
+import { ProductPreview } from "@/components/marketing/product-preview";
+import { Pricing } from "@/components/marketing/pricing";
+import { Faq, FAQS } from "@/components/marketing/faq";
+import {
+  Benefits,
+  Features,
+  FinalCta,
+  Hero,
+  HowItWorks,
+  ProblemSolution,
+  SectionHeading,
+  WhoItsFor,
+} from "@/components/marketing/sections";
+import { PLANS } from "@/lib/plans";
+
+export const metadata: Metadata = {
+  title: { absolute: "WOHKAH | Staff management software for small businesses" },
+  description:
+    "Manage your staff, track attendance, organise salaries, assign tasks and keep everyone connected from one simple platform. Built for small businesses with no HR department.",
+  alternates: { canonical: "/" },
+};
+
+/** Structured data for search engines: the product, its plans and the FAQ. */
+function JsonLd() {
+  const data = [
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      name: "WOHKAH",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      description:
+        "Staff management software for small businesses: staff records, attendance, salaries, leave, tasks and staff communication.",
+      publisher: { "@type": "Organization", name: "Crift Concepts" },
+      offers: PLANS.map((p) => ({
+        "@type": "Offer",
+        name: p.name,
+        price: (p.monthlyMinor / 100).toFixed(0),
+        priceCurrency: "NGN",
+      })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.text },
+      })),
+    },
+  ];
+  return (
+    <script
+      type="application/ld+json"
+      // Static, server-generated content (no user input).
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
+    />
+  );
+}
 
 export default function HomePage() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
-        <Logo />
-        <nav className="flex items-center gap-2">
-          <Button asChild variant="ghost">
-            <Link href="/login">Log in</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/register">Get started</Link>
-          </Button>
-        </nav>
-      </header>
-
-      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col justify-center px-4 py-16 sm:px-6">
-        <p className="text-primary text-sm font-semibold tracking-wide uppercase">
-          Workforce management for growing teams
-        </p>
-        <h1 className="font-heading text-walnut mt-3 max-w-3xl text-4xl font-extrabold sm:text-6xl">
-          Your staff, well managed.
-        </h1>
-        <p className="text-muted-foreground mt-5 max-w-2xl text-lg">
-          Everything your team needs to work better, together: people records, attendance, leave,
-          payroll, tasks and messaging in one secure workspace.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <Button asChild size="lg">
-            <Link href="/register">Create your workspace</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline">
-            <Link href="/login">I already have an account</Link>
-          </Button>
+    <>
+      <JsonLd />
+      <Hero />
+      <section aria-label="Product preview" className="px-4 pt-6 pb-20 sm:px-6 sm:pb-28">
+        <div className="mx-auto max-w-6xl">
+          <ProductPreview />
         </div>
-      </main>
-
-      <footer className="border-t">
-        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-6 sm:px-6">
-          <p className="text-muted-foreground text-xs">© 2026 WOHKAH. All rights reserved.</p>
-          <CriftAttribution />
+      </section>
+      <ProblemSolution />
+      <Features />
+      <WhoItsFor />
+      <HowItWorks />
+      <Benefits />
+      <section id="pricing" className="scroll-mt-20 py-16 sm:py-24">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+          <SectionHeading
+            eyebrow="Pricing"
+            title="Simple pricing that grows with your team"
+            description="Start free. Upgrade when your business grows. Every plan uses the same salary calculations; bigger plans include more staff and more control."
+          />
+          <div className="mt-10">
+            <Pricing />
+          </div>
         </div>
-      </footer>
-    </div>
+      </section>
+      <section id="faqs" className="bg-sand/50 scroll-mt-20 py-16 sm:py-24">
+        <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
+          <SectionHeading eyebrow="FAQs" title="Frequently asked questions" />
+          <div className="mt-10">
+            <Faq />
+          </div>
+        </div>
+      </section>
+      <FinalCta />
+    </>
   );
 }

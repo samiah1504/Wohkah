@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { can, isPermission } from "@/lib/permissions";
+import { NAV } from "@/lib/copy/navigation";
 import { hasFeature } from "@/lib/entitlements";
 import { listPermissionCatalog, listRoles } from "@/modules/access/server/queries";
 import { RoleDialog, RolePermissionsDialog } from "@/modules/access/components/access-forms";
@@ -40,8 +41,8 @@ export default function RolesPage(props: PageProps<"/w/[slug]/roles">) {
         return (
           <>
             <PageHeader
-              title="Roles and permissions"
-              description="Each member can have one or more roles. A role is a set of permissions."
+              title={NAV.roles.title}
+              description={NAV.roles.description}
               actions={canManage ? <RoleDialog slug={slug} /> : null}
             />
             {!customAllowed && can(ctx, "roles.manage") ? (

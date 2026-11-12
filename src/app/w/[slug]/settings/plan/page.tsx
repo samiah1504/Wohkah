@@ -77,9 +77,9 @@ export default function PlanPage(props: PageProps<"/w/[slug]/settings/plan">) {
                       ? "Free forever"
                       : `${naira(current.monthly_price_minor)} per month`}
                     {" · "}
-                    {current.included_employees} employees included, then{" "}
-                    {naira(current.extra_employee_price_minor)} per additional active employee per
-                    month.
+                    {current.included_employees} staff included, then{" "}
+                    {naira(current.extra_employee_price_minor)} per additional active staff member
+                    per month.
                   </CardDescription>
                 ) : null}
               </CardHeader>
@@ -132,7 +132,7 @@ export default function PlanPage(props: PageProps<"/w/[slug]/settings/plan">) {
                           or {naira(p.annual_price_minor)} /year
                         </p>
                       ) : null}
-                      <CardDescription>{p.included_employees} employees included</CardDescription>
+                      <CardDescription>{p.included_employees} staff included</CardDescription>
                     </CardHeader>
                   </Card>
                 ))}

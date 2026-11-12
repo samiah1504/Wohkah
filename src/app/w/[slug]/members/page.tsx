@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { can, isPermission } from "@/lib/permissions";
+import { NAV } from "@/lib/copy/navigation";
 import { formatDate } from "@/lib/dates";
 import {
   getMemberDirectory,
@@ -34,7 +35,7 @@ import {
 } from "@/modules/access/components/access-forms";
 import { revokeInvitation, setMemberStatus } from "@/modules/access/server/actions";
 
-export const metadata: Metadata = { title: "People" };
+export const metadata: Metadata = { title: NAV.access.title };
 
 export default function MembersPage(props: PageProps<"/w/[slug]/members">) {
   return (
@@ -66,8 +67,8 @@ export default function MembersPage(props: PageProps<"/w/[slug]/members">) {
         return (
           <>
             <PageHeader
-              title="People"
-              description={`${members.filter((m) => m.status === "active").length} active members in ${ctx.company.name}.`}
+              title={NAV.access.title}
+              description={`${NAV.access.description} ${members.filter((m) => m.status === "active").length} active.`}
               actions={
                 can(ctx, "members.invite") ? <InviteDialog slug={slug} roles={grantable} /> : null
               }
@@ -91,7 +92,7 @@ export default function MembersPage(props: PageProps<"/w/[slug]/members">) {
                             {i.role_ids
                               .map((id) => roleName.get(id))
                               .filter(Boolean)
-                              .join(", ") || "Employee"}{" "}
+                              .join(", ") || "Staff Member"}{" "}
                             · expires {formatDate(i.expires_at.slice(0, 10))}
                           </p>
                         </div>

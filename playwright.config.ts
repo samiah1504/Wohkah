@@ -19,6 +19,11 @@ export default defineConfig({
     baseURL: `http://localhost:${port}`,
     trace: "off",
     screenshot: "only-on-failure",
+    // Optional: use an already-installed Chromium instead of Playwright's own
+    // download (e.g. E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium). CI leaves it unset.
+    ...(process.env.E2E_CHROMIUM_PATH
+      ? { launchOptions: { executablePath: process.env.E2E_CHROMIUM_PATH } }
+      : {}),
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {

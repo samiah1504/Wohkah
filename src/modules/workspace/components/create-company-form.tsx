@@ -109,7 +109,7 @@ export function CreateCompanyForm({ rootDomain }: { rootDomain: string }) {
             <option value="">Choose…</option>
             {SIZE_BANDS.map((s) => (
               <option key={s} value={s}>
-                {s} employees
+                {s} staff
               </option>
             ))}
           </NativeSelect>

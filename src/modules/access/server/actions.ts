@@ -169,7 +169,7 @@ export async function setMemberRoles(_prev: FormState, formData: FormData) {
     run: async ({ ctx, data, supabase }) => {
       const desired = uuidsFrom(formData, "roleIds");
       if (desired.length === 0) {
-        throw new ActionError("Choose at least one role. Use Employee for basic access.");
+        throw new ActionError("Choose at least one role. Use Staff Member for basic access.");
       }
       const { data: current, error } = await supabase
         .from("member_roles")

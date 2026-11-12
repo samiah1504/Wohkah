@@ -1,3 +1,5 @@
+import { FEATURE_COPY } from "@/lib/copy/terms";
+
 /**
  * Plan entitlements, resolved server-side per request from the database
  * (plans and features are data: ARCHITECTURE.md §7). The database also
@@ -24,20 +26,10 @@ export type FeatureState = { enabled: boolean; limit: number | null };
 export type Entitlements = Partial<Record<Feature, FeatureState>>;
 export type HasEntitlements = { features: Entitlements; plan: { code: string; name: string } };
 
-export const FEATURE_LABELS: Record<Feature, string> = {
-  admins: "Administrators",
-  branches: "Branches",
-  work_locations: "Work locations",
-  storage_mb: "Storage",
-  custom_domains: "Custom domains",
-  custom_roles: "Custom roles",
-  advanced_onboarding: "Onboarding workflows",
-  job_descriptions: "Job descriptions",
-  digital_contracts: "Digital contracts",
-  advanced_approvals: "Advanced approvals",
-  advanced_reporting: "Advanced reporting",
-  advanced_analytics: "Workforce analytics",
-};
+/** Customer-facing labels live in the shared copy dictionary. */
+export const FEATURE_LABELS: Record<Feature, string> = Object.fromEntries(
+  FEATURES.map((f) => [f, FEATURE_COPY[f].label]),
+) as Record<Feature, string>;
 
 export class EntitlementError extends Error {
   constructor(message: string) {
@@ -73,16 +65,11 @@ export function assertLimit(ctx: HasEntitlements, feature: Feature, currentCount
   }
 }
 
-const SINGULAR: Partial<Record<Feature, string>> = {
-  admins: "administrator",
-  branches: "branch",
-  work_locations: "work location",
-  custom_domains: "custom domain",
-};
-
 export function limitMessage(feature: Feature, limit: number, planName?: string): string {
   const label =
-    limit === 1 && SINGULAR[feature] ? SINGULAR[feature] : FEATURE_LABELS[feature].toLowerCase();
+    limit === 1 && FEATURE_COPY[feature].singular
+      ? FEATURE_COPY[feature].singular
+      : FEATURE_LABELS[feature].toLowerCase();
   const plan = planName ? `The ${planName} plan` : "Your plan";
   return limit === 0
     ? `${FEATURE_LABELS[feature]} aren't included in your plan. Upgrade to add them.`

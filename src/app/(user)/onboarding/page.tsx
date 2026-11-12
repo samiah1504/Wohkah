@@ -12,8 +12,8 @@ export default function OnboardingPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Set up your company workspace</CardTitle>
           <CardDescription>
-            You&apos;ll be the owner. You start on the Free plan (up to 3 employees) and can upgrade
-            at any time. You can change these details later.
+            You&apos;ll be the owner. You start on the Free plan (up to 3 staff) and can upgrade at
+            any time. You can change these details later.
           </CardDescription>
         </CardHeader>
         <CardContent>

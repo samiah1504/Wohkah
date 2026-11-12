@@ -43,11 +43,11 @@ test("an invited person joins a second workspace and switches between them", asy
   await personPage.getByRole("button", { name: /Accept and join Owner Industries/ }).click();
   await personPage.waitForURL(new RegExp(`/w/${ownerSlug}$`));
 
-  // As an Employee there: employee portal, no administration.
-  await expect(personPage.getByText("Your employee portal")).toBeVisible();
+  // As a Staff Member there: the staff portal, no administration.
+  await expect(personPage.getByText("Your staff portal")).toBeVisible();
   const sidebar = personPage.getByRole("navigation", { name: "Workspace" }).first();
   await expect(sidebar.getByRole("link", { name: "Settings" })).toHaveCount(0);
-  await expect(sidebar.getByRole("link", { name: "People" })).toHaveCount(0);
+  await expect(sidebar.getByRole("link", { name: "Team Access" })).toHaveCount(0);
   await personPage.goto(`/w/${ownerSlug}/settings/departments`);
   await expect(personPage.getByText("You don't have access to this page")).toBeVisible();
 
@@ -74,7 +74,7 @@ test("an invited person joins a second workspace and switches between them", asy
   await expect(personPage.getByText("This invitation isn't valid")).toBeVisible();
 });
 
-test("employee portal is usable on a phone", async ({ browser }) => {
+test("the staff portal is usable on a phone", async ({ browser }) => {
   const owner = await createConfirmedUser("Mobile Owner");
   const slug = await createWorkspaceAs(owner.email, "Mobile Co");
   const page = await newSession(browser, { ...devices["Pixel 7"] });
