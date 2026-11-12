@@ -1,0 +1,51 @@
+# Applies WOHKAH's database migrations to the DEVELOPMENT Supabase project.
+#
+# Manual only (Actions → "Deploy database (development)" → Run workflow).
+# Needs three repository secrets (Settings → Secrets and variables → Actions):
+#   SUPABASE_ACCESS_TOKEN      personal access token from supabase.com/dashboard/account/tokens
+#   SUPABASE_DEV_PROJECT_REF   the development project's reference ID
+#   SUPABASE_DEV_DB_PASSWORD   the development project's database password
+#
+# Production gets its own, separately gated workflow in Phase 11.
+name: Deploy database (development)
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: db-deploy-dev
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  migrate:
+    name: Apply migrations to the development project
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DEV_DB_PASSWORD }}
+      PROJECT_REF: ${{ secrets.SUPABASE_DEV_PROJECT_REF }}
+    steps:
+      - name: Check secrets are configured
+        run: |
+          missing=0
+          for v in SUPABASE_ACCESS_TOKEN SUPABASE_DB_PASSWORD PROJECT_REF; do
+            if [ -z "${!v}" ]; then echo "::error::Secret for $v is not set."; missing=1; fi
+          done
+          exit $missing
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Link the development project
+        run: pnpm exec supabase link --project-ref "$PROJECT_REF"
+      - name: Show migrations that will be applied
+        run: pnpm exec supabase db push --remote --dry-run --password "$SUPABASE_DB_PASSWORD"
+      - name: Apply migrations
+        run: pnpm exec supabase db push --remote --yes --password "$SUPABASE_DB_PASSWORD"
