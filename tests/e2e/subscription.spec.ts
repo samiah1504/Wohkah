@@ -123,6 +123,8 @@ test("trial expiry with more than 3 staff: choose who stays, pause the rest, rea
 
   await page.goto(`/w/${slug}/staff`);
   for (const name of ["Ada", "Bola", "Chidi", "Dayo", "Ese"]) await addStaff(page, name);
+  // Wait for the real count: an earlier "added" toast can still be on screen.
+  await expect(page.getByText("5 of 10 active staff places in use.")).toBeVisible();
 
   // The trial runs out (test fixture moves the end date into the past).
   const { error } = await admin
@@ -132,11 +134,6 @@ test("trial expiry with more than 3 staff: choose who stays, pause the rest, rea
   if (error) throw error;
 
   await page.goto(`/w/${slug}/staff`);
-  // TEMP diagnostic for CI
-  await page.waitForLoadState("networkidle");
-  console.log(
-    "DIAG staff page after expiry:\n" + (await page.locator("body").innerText()).slice(0, 2500),
-  );
   await expect(page.getByText(/more active staff \(5\) than your plan covers \(3\)/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Choose who stays active" })).toBeVisible();
   for (const name of ["Dayo", "Ese"]) await page.getByRole("checkbox", { name }).uncheck();
