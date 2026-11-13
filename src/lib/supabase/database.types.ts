@@ -1544,7 +1544,6 @@ export type Database = {
       };
       start_trial: { Args: { p_company: string; p_plan_code: string }; Returns: string };
       subscription_overview: { Args: { p_company: string }; Returns: Json };
-      workspace_allowances: { Args: { p_company: string }; Returns: Json };
       subscription_quote: {
         Args: {
           p_extra_locations: number;
@@ -1561,6 +1560,7 @@ export type Database = {
           reason: string;
         }[];
       };
+      workspace_allowances: { Args: { p_company: string }; Returns: Json };
       workspace_context: { Args: { p_slug: string }; Returns: Json };
       workspace_member_directory: {
         Args: { p_company: string };
