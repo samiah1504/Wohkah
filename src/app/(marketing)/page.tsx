@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
-import { ProductPreview } from "@/components/marketing/product-preview";
 import { Pricing } from "@/components/marketing/pricing";
 import { Faq, FAQS } from "@/components/marketing/faq";
+import { SectionHeading } from "@/components/marketing/sections";
 import {
-  Benefits,
-  Features,
+  BusinessStrip,
+  FeatureBands,
   FinalCta,
   Hero,
   HowItWorks,
-  ProblemSolution,
-  SectionHeading,
+  Story,
   WhoItsFor,
-} from "@/components/marketing/sections";
+} from "@/components/marketing/home/sections";
 import { PLANS } from "@/lib/plans/catalog";
 import { ComparisonTable } from "@/components/plans/comparison-table";
 
@@ -64,18 +63,17 @@ export default function HomePage() {
   return (
     <>
       <JsonLd />
+      {/* Without JavaScript, show everything that would otherwise animate in. */}
+      <noscript>
+        <style>{`[data-reveal]{opacity:1!important;transform:none!important}.wk-strike{transform:scaleX(1)!important}`}</style>
+      </noscript>
       <Hero />
-      <section aria-label="Product preview" className="px-4 pt-6 pb-20 sm:px-6 sm:pb-28">
-        <div className="mx-auto max-w-6xl">
-          <ProductPreview />
-        </div>
-      </section>
-      <ProblemSolution />
-      <Features />
+      <BusinessStrip />
+      <Story />
+      <FeatureBands />
       <WhoItsFor />
       <HowItWorks />
-      <Benefits />
-      <section id="pricing" className="scroll-mt-20 py-16 sm:py-24">
+      <section id="pricing" className="scroll-mt-20 py-20 sm:py-28">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
           <SectionHeading
             eyebrow="Pricing"

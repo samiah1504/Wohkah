@@ -5,6 +5,17 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Homepage redesign with motion (2026-11-14)
+
+#### Changed
+- New homepage: animated hero (staff clocking in, sample data), a moving strip of business types,
+  an "exercise book to WOHKAH" story, colour bands with a live scene per feature (attendance,
+  salary slip, leave approval, tasks and announcements), a "set up today" band for what works now
+  (roles you name yourself), swipeable "who it's for" cards and a bolder closing call to action.
+- No invented proof: no customer counts, testimonials or press logos. Sample data and "Coming
+  soon" are labelled. All animation stops for visitors who ask their device for less motion, and
+  content shows without JavaScript.
+
 ### Businesses define their own roles (2026-11-14)
 
 #### Changed
