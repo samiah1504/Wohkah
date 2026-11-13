@@ -86,6 +86,18 @@ export default function StaffPage(props: PageProps<"/w/[slug]/staff">) {
                 Staff who have left or are archived don&apos;t count.
               </p>
 
+              {typeof sp.paused === "string" ? (
+                <Alert variant="success">
+                  {sp.paused === "0"
+                    ? "No changes were needed."
+                    : `${sp.paused} staff member${sp.paused === "1" ? " is" : "s are"} now paused. Their records are kept and they can be reactivated after upgrading or adding staff places.`}
+                </Alert>
+              ) : typeof sp.reactivated === "string" ? (
+                <Alert variant="success">
+                  {sp.reactivated} staff member{sp.reactivated === "1" ? "" : "s"} reactivated.
+                </Alert>
+              ) : null}
+
               {selecting ? (
                 <Card className="border-destructive/40">
                   <CardHeader>

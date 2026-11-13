@@ -122,6 +122,15 @@ export default function SubscriptionPage(props: PageProps<"/w/[slug]/settings/su
                 here shortly. You won&apos;t be charged twice.
               </Alert>
             ) : null}
+            {sp.done === "trial" ? (
+              <Alert variant="success">Your 7-day free trial has started. No card needed.</Alert>
+            ) : sp.done === "applied" ? (
+              <Alert variant="success">Your plan has been changed.</Alert>
+            ) : sp.done === "scheduled" ? (
+              <Alert variant="success">
+                Your plan will change at the end of the period you&apos;ve paid for.
+              </Alert>
+            ) : null}
 
             {o.staff_selection_required ? (
               <Alert variant="destructive" className="flex flex-wrap items-center gap-3">
@@ -305,7 +314,7 @@ function CurrentPlan({
     <Card>
       <CardHeader>
         <CardTitle className="flex flex-wrap items-center gap-2">
-          {plan.name} plan
+          <span>{plan.name} plan</span>
           <Badge variant={o.status === "trialing" ? "default" : "success"}>
             {STATUS_LABELS[o.status] ?? o.status}
           </Badge>

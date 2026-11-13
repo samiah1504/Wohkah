@@ -75,7 +75,7 @@ test("pricing shows the approved plans, trial and add-on prices", async ({ page 
 
   // Comparison table: every plan column, current plan not highlighted publicly.
   const table = pricing.getByRole("table", { name: /Compare what each WOHKAH plan includes/ });
-  await expect(table.getByRole("columnheader")).toHaveCount(5);
+  await expect(table.locator("thead").getByRole("columnheader")).toHaveCount(5);
   await expect(table.getByRole("rowheader", { name: /Active staff included/ })).toBeVisible();
 
   await pricing

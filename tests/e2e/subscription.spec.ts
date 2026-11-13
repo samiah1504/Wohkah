@@ -53,7 +53,7 @@ test("an owner starts a 7-day trial and sees it on the subscription page", async
   await expect(page.getByText("Free plan", { exact: true })).toBeVisible();
   const growth = page.getByRole("heading", { name: "Growth", exact: true }).locator("xpath=../..");
   await growth.getByRole("button", { name: "Start 7-day free trial" }).click();
-  await expectToast(page, /Your free trial has started/);
+  await expect(page.getByText("Your 7-day free trial has started. No card needed.")).toBeVisible();
   await expect(page.getByText(/7 days left in your free trial/)).toBeVisible();
   await expect(page.getByText("Growth plan", { exact: true })).toBeVisible();
   // One trial per workspace.
@@ -119,7 +119,7 @@ test("trial expiry with more than 3 staff: choose who stays, pause the rest, rea
     .getByRole("heading", { name: "Starter", exact: true })
     .locator("xpath=../..");
   await starter.getByRole("button", { name: "Start 7-day free trial" }).click();
-  await expectToast(page, /Your free trial has started/);
+  await expect(page.getByText("Your 7-day free trial has started. No card needed.")).toBeVisible();
 
   await page.goto(`/w/${slug}/staff`);
   for (const name of ["Ada", "Bola", "Chidi", "Dayo", "Ese"]) await addStaff(page, name);
@@ -137,9 +137,7 @@ test("trial expiry with more than 3 staff: choose who stays, pause the rest, rea
   for (const name of ["Dayo", "Ese"]) await page.getByRole("checkbox", { name }).uncheck();
   await page.getByRole("checkbox", { name: "Ada" }).check();
   await page.getByRole("button", { name: "Keep selected staff active" }).click();
-  await expectToast(page, /2 staff members are now paused/);
-
-  await page.reload();
+  await expect(page.getByText(/2 staff members are now paused/)).toBeVisible();
   await expect(page.getByText("Paused because of the plan limit (2)")).toBeVisible();
   await expect(page.getByText(/There are no free staff places/)).toBeVisible();
 
@@ -163,7 +161,6 @@ test("trial expiry with more than 3 staff: choose who stays, pause the rest, rea
   await page.getByRole("checkbox", { name: "Dayo" }).check();
   await page.getByRole("checkbox", { name: "Ese" }).check();
   await page.getByRole("button", { name: "Reactivate selected" }).click();
-  await expectToast(page, "2 staff members reactivated.");
-  await page.reload();
+  await expect(page.getByText("2 staff members reactivated.")).toBeVisible();
   await expect(page.getByText("5 of 10 active staff places in use.")).toBeVisible();
 });

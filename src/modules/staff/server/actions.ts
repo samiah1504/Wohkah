@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { check, workspaceAction } from "@/lib/tenancy/actions";
 import type { FormState } from "@/lib/forms";
@@ -75,9 +76,16 @@ export async function setStaffStatus(_prev: FormState, formData: FormData) {
 const uuids = (formData: FormData, name: string) =>
   [...new Set(formData.getAll(name).map(String))].filter((v) => z.uuid().safeParse(v).success);
 
-/** Keep the chosen staff active; pause the rest because of the plan limit. */
+const staffPage = (formData: FormData, query: string) =>
+  `/w/${encodeURIComponent(String(formData.get("slug") ?? ""))}/staff?${query}`;
+
+/**
+ * Keep the chosen staff active; pause the rest because of the plan limit.
+ * Redirects on success because the selection form disappears once it's done.
+ */
 export async function selectActiveStaff(_prev: FormState, formData: FormData) {
-  return workspaceAction({
+  let paused = 0;
+  const result = await workspaceAction({
     formData,
     permission: "staff.manage",
     schema: z.object({
@@ -87,24 +95,22 @@ export async function selectActiveStaff(_prev: FormState, formData: FormData) {
         .or(z.literal("").transform(() => undefined)),
     }),
     run: async ({ ctx, data, supabase }) => {
-      const { data: paused, error } = await supabase.rpc("select_active_staff", {
+      const { data: n, error } = await supabase.rpc("select_active_staff", {
         p_company: ctx.company.id,
         p_keep: uuids(formData, "keep"),
         p_for_plan_code: data.forPlan,
       });
       check(error, "select staff");
-      return {
-        status: "success",
-        message: paused
-          ? `${paused} staff member${paused === 1 ? " is" : "s are"} now paused. Their records are kept and they can be reactivated after upgrading.`
-          : "No changes were needed.",
-      };
+      paused = n ?? 0;
     },
   });
+  if (result.status === "success") redirect(staffPage(formData, `paused=${paused}`));
+  return result;
 }
 
 export async function reactivateStaff(_prev: FormState, formData: FormData) {
-  return workspaceAction({
+  let count = 0;
+  const result = await workspaceAction({
     formData,
     permission: "staff.manage",
     schema: z.object({}),
@@ -114,12 +120,9 @@ export async function reactivateStaff(_prev: FormState, formData: FormData) {
         p_ids: uuids(formData, "ids"),
       });
       check(error, "reactivate staff");
-      return {
-        status: "success",
-        message: n
-          ? `${n} staff member${n === 1 ? "" : "s"} reactivated.`
-          : "Nothing to reactivate.",
-      };
+      count = n ?? 0;
     },
   });
+  if (result.status === "success") redirect(staffPage(formData, `reactivated=${count}`));
+  return result;
 }

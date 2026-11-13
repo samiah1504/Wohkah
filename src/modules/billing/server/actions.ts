@@ -10,8 +10,13 @@ import { initializeTransaction, isPaystackConfigured } from "@/lib/payments";
 const planCode = z.enum(["free", "starter", "growth", "business"]);
 const paidPlan = z.enum(["starter", "growth", "business"]);
 
+const subscriptionPage = (formData: FormData, done: string) =>
+  `/w/${encodeURIComponent(String(formData.get("slug") ?? ""))}/settings/subscription?done=${done}`;
+
+// These actions redirect on success: the button that started them disappears
+// once the plan changes, so the confirmation is shown on the page instead.
 export async function startTrial(_prev: FormState, formData: FormData) {
-  return workspaceAction({
+  const result = await workspaceAction({
     formData,
     permission: "subscription.manage",
     schema: z.object({ plan: paidPlan }),
@@ -24,28 +29,34 @@ export async function startTrial(_prev: FormState, formData: FormData) {
       check(error, "start trial");
     },
   });
+  if (result.status === "success") redirect(subscriptionPage(formData, "trial"));
+  return result;
 }
 
 export async function changeToLowerPlan(_prev: FormState, formData: FormData) {
-  return workspaceAction({
+  let outcome = "applied";
+  const result = await workspaceAction({
     formData,
     permission: "subscription.manage",
     schema: z.object({ plan: planCode }),
     run: async ({ ctx, data, supabase }) => {
-      const { data: result, error } = await supabase.rpc("change_to_lower_plan", {
+      const { data: change, error } = await supabase.rpc("change_to_lower_plan", {
         p_company: ctx.company.id,
         p_plan_code: data.plan,
       });
       check(error, "change plan");
+      outcome = change === "scheduled" ? "scheduled" : "applied";
       return {
         status: "success",
         message:
-          result === "scheduled"
+          change === "scheduled"
             ? "Your plan will change at the end of the period you've paid for."
             : "Your plan has been changed.",
       };
     },
   });
+  if (result.status === "success") redirect(subscriptionPage(formData, outcome));
+  return result;
 }
 
 export async function cancelScheduledChange(_prev: FormState, formData: FormData) {
