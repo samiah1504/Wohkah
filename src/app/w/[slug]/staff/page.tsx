@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { NAV } from "@/lib/copy/navigation";
+import { PRIMARY_FEATURES } from "@/lib/copy/features";
 import { can } from "@/lib/permissions";
 import { getPlan } from "@/lib/plans/catalog";
 import { staffPrompt } from "@/lib/upgrade";
@@ -175,7 +176,7 @@ export default function StaffPage(props: PageProps<"/w/[slug]/staff">) {
                   <EmptyState
                     icon={<UsersIcon />}
                     title="No staff yet"
-                    description="Add the people who work for your business. Full staff profiles arrive in the next release."
+                    description={`Add the people who work for your business.${PRIMARY_FEATURES.find((f) => f.key === "staff")?.available ? "" : " Full staff profiles are coming soon."}`}
                   />
                 ) : (
                   <Table>

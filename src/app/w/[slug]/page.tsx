@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { can } from "@/lib/permissions";
 import { ActionButton } from "@/components/action-forms";
 import { getPlan } from "@/lib/plans/catalog";
+import { PRIMARY_FEATURES } from "@/lib/copy/features";
 import { getSubscriptionOverview, listMyNotifications } from "@/modules/billing/server/queries";
 import { markNotificationRead } from "@/modules/billing/server/actions";
 import { requireTenant, type TenantContext } from "@/lib/tenancy";
@@ -195,8 +196,11 @@ function StaffWelcome() {
       <CardHeader>
         <CardTitle>Your staff portal</CardTitle>
         <CardDescription>
-          This is your home for work at this company. Your attendance, leave, salary slips and tasks
-          will appear here as they become available.
+          This is your home for work at this company: your attendance, leave, salary slips and
+          tasks.
+          {PRIMARY_FEATURES.some((f) => !f.available)
+            ? " Some of these are coming soon and appear here as soon as they're ready."
+            : ""}
         </CardDescription>
       </CardHeader>
       <CardContent className="text-muted-foreground text-sm">

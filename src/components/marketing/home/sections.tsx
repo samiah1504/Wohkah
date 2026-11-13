@@ -495,7 +495,8 @@ export function FeatureBands() {
             Everything you need to manage your team, in one place.
           </h2>
           <p data-reveal style={delay(100)} className="text-foreground/75 mt-4 text-lg">
-            Features still on the way are marked, so you always know what&apos;s ready to use today.
+            Attendance, salaries, leave, branches, staff records and team communication, working
+            together so you can see your whole team at a glance.
           </p>
         </Reveal>
 
@@ -610,7 +611,7 @@ export function FeatureBands() {
         {/* Later on */}
         <Reveal className="mt-8">
           <p data-reveal className="font-heading text-walnut text-xl font-extrabold">
-            Also on the way
+            And there&apos;s more
           </p>
           <ul className="mt-4 flex flex-wrap gap-2">
             {MORE_FEATURES.map((f, i) => (
@@ -622,9 +623,9 @@ export function FeatureBands() {
                 title={f.summary}
               >
                 {f.title}
-                <span className="text-muted-foreground text-xs font-medium">
-                  {f.available ? "Available" : "Coming soon"}
-                </span>
+                {f.available ? null : (
+                  <span className="text-muted-foreground text-xs font-medium">Coming soon</span>
+                )}
               </li>
             ))}
           </ul>

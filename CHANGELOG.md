@@ -5,6 +5,16 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Copy written as if every feature is live (2026-11-14)
+
+#### Changed
+- All hand-written "coming soon", "will", "not yet" and "on the way" sentences on the website and
+  in the app are rewritten in the present tense (FAQs, homepage intro, About, Privacy, staff portal
+  welcome, Staff and Work locations empty states).
+- What isn't built yet is shown only by automatic "Coming soon" labels driven by the switches in
+  `src/lib/copy/features.ts` and `FEATURE_INFO`; turning a switch on removes every label for that
+  feature. Launch steps added to DEVELOPMENT_ROADMAP.md and the language guide.
+
 ### Homepage messaging rewrite (2026-11-14)
 
 #### Changed

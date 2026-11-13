@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Pricing } from "@/components/marketing/pricing";
-import { Faq, FAQS } from "@/components/marketing/faq";
+import { Faq, FAQS, faqAnswer } from "@/components/marketing/faq";
 import { SectionHeading } from "@/components/marketing/sections";
 import {
   BusinessStrip,
@@ -47,7 +47,7 @@ function JsonLd() {
       mainEntity: FAQS.map((f) => ({
         "@type": "Question",
         name: f.q,
-        acceptedAnswer: { "@type": "Answer", text: f.text },
+        acceptedAnswer: { "@type": "Answer", text: faqAnswer(f) },
       })),
     },
   ];

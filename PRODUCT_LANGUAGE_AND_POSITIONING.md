@@ -164,8 +164,11 @@ headings and Inter for body text. Text on Deep Yellow is Dark Walnut, never whit
 3. Outcomes over features; features over specifications.
 4. **Never invent proof.** No fake testimonials, customer logos, user counts, star ratings, trust
    badges or statistics. Product previews that use sample data must say so.
-5. **Never sell what isn't built as if it exists.** Features that aren't available yet are marked
-   "Coming soon" (controlled in `src/lib/copy/features.ts`) until they ship.
+5. **Never sell what isn't built as if it exists.** Write all copy in the present tense, as WOHKAH
+   works when the feature is live, and never hand-write "coming soon", "will" or "not yet" into
+   sentences. Features that aren't available show an automatic "Coming soon" label from the
+   switches in `src/lib/copy/features.ts` and `FEATURE_INFO` in `src/lib/plans/catalog.ts` (see the
+   launch steps in DEVELOPMENT_ROADMAP.md).
 6. Prices and plan limits come from the configured plans (`src/lib/plans/catalog.ts`, checked
    against the database by tests). Never invent discounts or benefits.
 7. Use Nigerian business reality (naira, WhatsApp, branches, generators and markets) without

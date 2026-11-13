@@ -30,7 +30,7 @@ export default function AboutPage() {
           <li>Software for small businesses should be simple, not simplistic.</li>
           <li>Staff information is private. We protect it as if it were our own.</li>
           <li>Salaries must be calculated accurately on every plan, including the free one.</li>
-          <li>We&apos;ll tell you plainly what WOHKAH can and can&apos;t do yet.</li>
+          <li>We&apos;ll always tell you plainly what WOHKAH can and can&apos;t do.</li>
         </ul>
       </section>
       <section>

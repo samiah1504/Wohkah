@@ -23,6 +23,17 @@ Every phase starts by reading [PRODUCT_LANGUAGE_AND_POSITIONING.md](PRODUCT_LANG
 (mandatory: customer-facing wording) and then follows the same loop (Rule 1): review → plan → migrations → RLS policies with tests → services
 → UI → typecheck, lint, unit, integration, RLS and e2e tests → docs and CHANGELOG → phase report.
 
+**Going live with a feature (every phase).** Website and in-app copy is already written as if every
+feature is live; only switches say what isn't built yet. When a phase ships its feature:
+
+1. Set `available: true` for it in `src/lib/copy/features.ts` (homepage bands, FAQ notes, hero
+   caption and in-app notes follow it).
+2. Set `available: true` for the matching plan features in `FEATURE_INFO` in
+   `src/lib/plans/catalog.ts` (pricing cards and the comparison table follow it).
+3. Open the homepage, pricing and the related app screens and check no "Coming soon" remains for it.
+
+Never write "coming soon", "will", "not yet" or similar into copy by hand; use the switches.
+
 ---
 
 ## Phase 1 — Foundation and multi-tenancy

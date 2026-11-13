@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { can } from "@/lib/permissions";
+import { PRIMARY_FEATURES } from "@/lib/copy/features";
 import { workLocationPrompt } from "@/lib/upgrade";
 import { getWorkspaceAllowances } from "@/modules/billing/server/queries";
 import { asAddress, listBranches, listWorkLocations } from "@/modules/workspace/server/queries";
@@ -65,7 +66,7 @@ export default function WorkLocationsPage(props: PageProps<"/w/[slug]/settings/w
               <EmptyState
                 icon={<MapPinIcon />}
                 title="No work locations yet"
-                description="Add the shop, office or site where your staff work. Clock-in by location arrives with attendance."
+                description={`Add the shop, office or site where your staff work${PRIMARY_FEATURES.find((f) => f.key === "attendance")?.available ? " and clock in." : ". Clock-in by location is coming soon."}`}
               />
             ) : (
               <Table>

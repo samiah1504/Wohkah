@@ -1,13 +1,16 @@
 import Link from "next/link";
 import { PLANS, naira } from "@/lib/plans/catalog";
+import { PRIMARY_FEATURES } from "@/lib/copy/features";
 
 const starter = PLANS[1]!;
 
 /**
- * Answers must match what WOHKAH does today and approved product decisions.
- * Update them when a feature ships (see src/lib/copy/features.ts).
+ * Answers are written as WOHKAH works when the feature is live, so nothing has
+ * to be rewritten at launch. An answer about an unbuilt feature names it in
+ * `feature`; until its switch in src/lib/copy/features.ts is on, a "coming
+ * soon" note is added automatically.
  */
-export const FAQS: { q: string; text: string }[] = [
+export const FAQS: { q: string; text: string; feature?: string }[] = [
   {
     q: "What is WOHKAH?",
     text: "WOHKAH helps business owners manage their staff without the stress. It brings attendance, salaries, leave, staff records, tasks and team communication together in one place, instead of WhatsApp messages, notebooks and spreadsheets.",
@@ -22,19 +25,22 @@ export const FAQS: { q: string; text: string }[] = [
   },
   {
     q: "Can I manage my staff salaries?",
-    text: "Salary management is coming soon. You'll be able to set each staff member's salary, allowances and deductions, review and approve the monthly salaries, record payments, and share salary slips with your staff. Salaries are never marked as paid until you confirm payment.",
+    text: "Yes. Set each staff member's salary, allowances and deductions, see your total salary bill, review and approve the month's salaries, record who you've paid and share salary slips with your staff. Salaries are never marked as paid until you confirm payment. WOHKAH doesn't send money; you pay your staff the way you already do.",
+    feature: "salaries",
   },
   {
     q: "Can staff clock in using their phones?",
-    text: "This is coming soon. Staff will clock in and out from their phone's browser. WOHKAH checks they are at one of your approved work locations, and only checks their location when they clock in or out. It never tracks them in the background.",
+    text: "Yes. Staff clock in and out from their phone's browser. WOHKAH checks they are at one of your approved work locations, and only checks their location when they clock in or out. It never tracks them in the background.",
+    feature: "attendance",
   },
   {
     q: "Can I manage multiple branches?",
-    text: "Yes, available now. You can add your branches and approved work locations today. Free includes 1 branch, Starter up to 2, Growth up to 5 and Business up to 10. Branches and work locations are separate: a branch can have several approved work locations, and every plan can add extra work locations.",
+    text: "Yes. Add your branches and approved work locations, and see what's happening at each one. Free includes 1 branch, Starter up to 2, Growth up to 5 and Business up to 10. Branches and work locations are separate: a branch can have several approved work locations, and every plan can add extra work locations.",
   },
   {
     q: "Can staff access their own portal?",
-    text: "Yes. When you invite a staff member, they get their own login. Today they can sign in to your business account. Their portal will grow to include attendance, leave requests, salary slips and tasks as those features are released.",
+    text: "Yes. When you invite a staff member, they get their own login to the staff portal, where they clock in, request leave, see their salary slips and follow their tasks.",
+    feature: "staff",
   },
   {
     q: "Can I use WOHKAH on my phone?",
@@ -58,6 +64,14 @@ export const FAQS: { q: string; text: string }[] = [
   },
 ];
 
+const isLive = (key?: string) =>
+  !key || (PRIMARY_FEATURES.find((f) => f.key === key)?.available ?? true);
+
+/** The answer as customers read it, with the automatic note while a feature is unbuilt. */
+export function faqAnswer(f: (typeof FAQS)[number]): string {
+  return isLive(f.feature) ? f.text : `${f.text} This feature is coming soon.`;
+}
+
 export function Faq() {
   return (
     <div className="bg-surface divide-y rounded-2xl border">
@@ -72,7 +86,14 @@ export function Faq() {
               +
             </span>
           </summary>
-          <p className="text-muted-foreground pb-5 leading-relaxed">{f.text}</p>
+          <p className="text-muted-foreground pb-5 leading-relaxed">
+            {f.text}
+            {isLive(f.feature) ? null : (
+              <span className="bg-subtle text-walnut ml-2 rounded-full px-2 py-0.5 text-xs font-semibold whitespace-nowrap">
+                Coming soon
+              </span>
+            )}
+          </p>
         </details>
       ))}
       <div className="px-5 py-4 text-sm sm:px-6">

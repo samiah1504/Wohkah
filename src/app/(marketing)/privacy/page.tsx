@@ -40,8 +40,8 @@ export default function PrivacyPage() {
       <section>
         <h2>Location information</h2>
         <p className="mt-2">
-          When attendance features are released, a staff member&apos;s location will only be checked
-          at the moment they clock in or out. WOHKAH does not track staff in the background.
+          A staff member&apos;s location is only checked at the moment they clock in or out. WOHKAH
+          never tracks staff in the background.
         </p>
       </section>
       <section>
