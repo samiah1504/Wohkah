@@ -11,8 +11,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## WOHKAH rules for every agent and developer (mandatory)
 
 1. **Before any change to customer-facing text, and before starting any phase, read
-   `PRODUCT_LANGUAGE_AND_POSITIONING.md`.** WOHKAH is for small business owners (5–50 staff, no HR
-   department). Customers see "business account", "staff", "salaries", "salary slips", "staff
+   `PRODUCT_LANGUAGE_AND_POSITIONING.md`.** WOHKAH is for owners of small and growing
+   businesses (1–50 staff). Customers see "business account", "staff", "salaries", "salary slips", "staff
    portal", "approved work locations", "email address": never "workspace", "work email",
    "employees", "payroll", "payslips", "self-service" or "geofencing". This covers every place a
    customer can read text, including errors, emails, notifications and text stored in the database.

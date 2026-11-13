@@ -8,6 +8,7 @@ import {
   FinalCta,
   Hero,
   HowItWorks,
+  OwnerQuestions,
   Story,
   WhoItsFor,
 } from "@/components/marketing/home/sections";
@@ -17,7 +18,7 @@ import { ComparisonTable } from "@/components/plans/comparison-table";
 export const metadata: Metadata = {
   title: { absolute: "WOHKAH | Staff management software for small businesses" },
   description:
-    "Manage your staff, track attendance, organise salaries, assign tasks and keep everyone connected from one simple platform. Built for small businesses with no HR department.",
+    "Know who came to work, what you're paying in salaries, who you've paid and who's on leave. Staff management for small and growing businesses with 1–50 staff.",
   alternates: { canonical: "/" },
 };
 
@@ -70,6 +71,7 @@ export default function HomePage() {
       <Hero />
       <BusinessStrip />
       <Story />
+      <OwnerQuestions />
       <FeatureBands />
       <WhoItsFor />
       <HowItWorks />

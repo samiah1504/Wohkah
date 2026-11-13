@@ -3,8 +3,8 @@
 **Your staff, well managed.**
 *Everything your team needs to work better, together.*
 
-WOHKAH is a staff management platform for small business owners (about 5–50 staff, no HR
-department). It brings staff records, attendance, salaries, leave, tasks, messages and documents
+WOHKAH is a staff management platform for owners of small and growing businesses (1–50
+staff). It brings staff records, attendance, salaries, leave, tasks, messages and documents
 together in one simple place.
 
 > **Before you build or change anything customers can read** (pages, forms, buttons, errors,

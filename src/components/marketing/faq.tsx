@@ -10,15 +10,15 @@ const starter = PLANS[1]!;
 export const FAQS: { q: string; text: string }[] = [
   {
     q: "What is WOHKAH?",
-    text: "WOHKAH is staff management software for small businesses. It brings your staff records, attendance, salaries, leave, tasks and staff communication together in one simple place, instead of WhatsApp messages, notebooks and spreadsheets.",
+    text: "WOHKAH helps business owners manage their staff without the stress. It brings attendance, salaries, leave, staff records, tasks and team communication together in one place, instead of WhatsApp messages, notebooks and spreadsheets.",
   },
   {
     q: "Who can use WOHKAH?",
-    text: "Any business that has people to manage, especially businesses with about 5 to 50 staff: shops, restaurants, schools, salons, furniture makers, e-commerce and logistics businesses, agencies and service businesses. It also works for larger teams of 100 staff and more.",
+    text: "Businesses with 1 to 50 staff, from a shop with one sales assistant to a business with several branches: supermarkets, restaurants, schools, salons, pharmacies, furniture makers, logistics businesses, agencies and more. It keeps working as your team grows.",
   },
   {
-    q: "Do I need an HR manager to use WOHKAH?",
-    text: "No. WOHKAH is built for business owners and managers who look after their staff themselves. Everything uses everyday language, and you can set it up without training.",
+    q: "Do I need any special training to use WOHKAH?",
+    text: "No. WOHKAH uses everyday language and is built for business owners and managers, so you can set it up yourself in a few minutes. If someone already looks after your staff, they can use it too.",
   },
   {
     q: "Can I manage my staff salaries?",

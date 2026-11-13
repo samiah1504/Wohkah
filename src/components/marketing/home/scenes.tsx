@@ -238,22 +238,22 @@ function Row({
 }
 
 // ---------------------------------------------------------------------------
-// Salaries: a salary slip adds itself up.
+// Salaries (B): the month's salary bill, worked out and broken down.
 // ---------------------------------------------------------------------------
-const SLIP = [
-  { label: "Basic salary", amount: 120_000 },
-  { label: "Transport allowance", amount: 15_000 },
-  { label: "Lunch allowance", amount: 10_000 },
-  { label: "Salary advance repayment", amount: -20_000 },
+const BILL = [
+  { label: "Basic salaries", amount: 2_310_000 },
+  { label: "Allowances", amount: 412_000 },
+  { label: "Overtime", amount: 96_000 },
+  { label: "Deductions and advances", amount: -138_000 },
 ] as const;
 
-export function SalaryScene() {
+export function SalaryBillScene() {
   const [ref, seen] = useSeen<HTMLDivElement>();
-  const net = SLIP.reduce((s, l) => s + l.amount, 0);
-  const total = useCountUp(net, seen, 1600);
+  const total = BILL.reduce((s, l) => s + l.amount, 0);
+  const shown = useCountUp(total, seen, 1600);
+  const max = Math.max(...BILL.map((l) => Math.abs(l.amount)));
   return (
-    <div ref={ref} aria-hidden className="relative mx-auto w-full max-w-sm">
-      <div className="bg-espresso absolute inset-x-6 -top-3 h-6 rounded-t-xl" />
+    <div ref={ref} aria-hidden className="relative mx-auto w-full max-w-md">
       <div
         className={cn(
           "bg-surface text-foreground relative rounded-2xl p-5 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.6)] transition-all duration-1000",
@@ -262,39 +262,108 @@ export function SalaryScene() {
       >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-muted-foreground text-xs">Salary slip · November</p>
-            <p className="font-heading text-walnut text-lg font-extrabold">Chinedu Okafor</p>
-            <p className="text-muted-foreground text-xs">Workshop lead · Adeola Furniture</p>
+            <p className="text-muted-foreground text-xs">November salary bill · 18 staff</p>
+            <p className="font-heading text-walnut mt-1 text-4xl font-extrabold tabular-nums">
+              {naira(shown)}
+            </p>
           </div>
           <SampleTag />
         </div>
-        <ul className="mt-4 grid gap-2 border-y border-dashed py-3 text-sm">
-          {SLIP.map((l, i) => (
-            <li
-              key={l.label}
-              className={cn(
-                "flex justify-between gap-3 transition-all duration-500",
-                seen ? "opacity-100" : "opacity-0",
-              )}
-              style={{ transitionDelay: `${300 + i * 220}ms` }}
-            >
-              <span className="text-foreground/80">{l.label}</span>
-              <span
-                className={cn("font-semibold tabular-nums", l.amount < 0 && "text-destructive")}
-              >
-                {l.amount < 0 ? `−${naira(-l.amount)}` : naira(l.amount)}
-              </span>
+        <ul className="mt-5 grid gap-3">
+          {BILL.map((l, i) => (
+            <li key={l.label} className="grid gap-1">
+              <div className="flex justify-between gap-3 text-sm">
+                <span className="text-foreground/80">{l.label}</span>
+                <span
+                  className={cn("font-semibold tabular-nums", l.amount < 0 && "text-destructive")}
+                >
+                  {l.amount < 0 ? `−${naira(-l.amount)}` : naira(l.amount)}
+                </span>
+              </div>
+              <div className="bg-subtle h-2 overflow-hidden rounded-full">
+                <div
+                  className={cn(
+                    "h-full rounded-full transition-all duration-1000",
+                    l.amount < 0 ? "bg-destructive/70" : "bg-primary",
+                  )}
+                  style={{
+                    width: seen ? `${(Math.abs(l.amount) / max) * 100}%` : "0%",
+                    transitionDelay: `${300 + i * 200}ms`,
+                  }}
+                />
+              </div>
             </li>
           ))}
         </ul>
-        <div className="mt-3 flex items-end justify-between">
-          <span className="text-sm font-semibold">Take-home pay</span>
-          <span className="font-heading text-walnut text-3xl font-extrabold tabular-nums">
-            {naira(total)}
+        <div className="mt-5 grid grid-cols-2 gap-2 border-t pt-4 text-xs">
+          <div className="bg-background rounded-xl border p-3">
+            <p className="text-muted-foreground">October</p>
+            <p className="font-heading text-walnut text-base font-extrabold">₦2,610,000</p>
+          </div>
+          <div className="bg-background rounded-xl border p-3">
+            <p className="text-muted-foreground">December (estimate)</p>
+            <p className="font-heading text-walnut text-base font-extrabold">₦2,760,000</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Payments (C): who has been paid and who is still waiting.
+// ---------------------------------------------------------------------------
+const PAYEES = [
+  { name: "Chinedu O.", amount: 125_000 },
+  { name: "Halima B.", amount: 98_000 },
+  { name: "Tobi A.", amount: 86_500 },
+  { name: "Grace E.", amount: 110_000 },
+  { name: "Musa K.", amount: 92_000 },
+] as const;
+
+export function PaidScene() {
+  const [ref, seen] = useSeen<HTMLDivElement>();
+  const step = useCycle(PAYEES.length, 1400, seen);
+  const paid = step + 1;
+  return (
+    <div ref={ref} aria-hidden className="relative mx-auto w-full max-w-md">
+      <div className="bg-surface text-foreground rounded-2xl border p-5 shadow-[0_24px_50px_-26px_rgba(43,29,24,0.45)]">
+        <div className="flex items-center justify-between gap-3">
+          <p className="font-heading text-walnut font-extrabold">Salary day · 25 November</p>
+          <SampleTag />
+        </div>
+        <div className="mt-3 flex items-center gap-3 text-xs font-semibold">
+          <span className="bg-success/10 text-success rounded-full px-2.5 py-1 tabular-nums">
+            {paid} paid
+          </span>
+          <span className="bg-warning/10 text-warning rounded-full px-2.5 py-1 tabular-nums">
+            {PAYEES.length - paid} still waiting
           </span>
         </div>
-        <p className="bg-sand text-walnut mt-4 rounded-lg px-3 py-2 text-xs">
-          Waiting for your approval. Nothing is marked paid until you confirm it.
+        <ul className="mt-4 grid gap-2">
+          {PAYEES.map((p, i) => {
+            const isPaid = i < paid;
+            return (
+              <li
+                key={p.name}
+                className="flex items-center justify-between gap-3 rounded-xl border px-3 py-2 text-sm"
+              >
+                <span className="font-semibold">{p.name}</span>
+                <span className="text-muted-foreground tabular-nums">{naira(p.amount)}</span>
+                <span
+                  className={cn(
+                    "w-28 rounded-full px-2 py-0.5 text-center text-[11px] font-semibold transition-colors duration-500",
+                    isPaid ? "bg-success/10 text-success" : "bg-warning/10 text-warning",
+                  )}
+                >
+                  {isPaid ? "Paid" : "Awaiting payment"}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="text-muted-foreground mt-3 text-xs">
+          You pay staff the way you already do. WOHKAH keeps the record.
         </p>
       </div>
     </div>
@@ -505,6 +574,126 @@ export function RolesScene() {
               {r}
             </span>
           ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Branches (E): every location side by side.
+// ---------------------------------------------------------------------------
+const BRANCHES = [
+  { name: "Ikeja", lead: "Halima B.", staff: 9, at: 8 },
+  { name: "Lekki", lead: "Musa K.", staff: 6, at: 5 },
+  { name: "Wuse, Abuja", lead: "Aisha M.", staff: 5, at: 3 },
+] as const;
+
+export function BranchesScene() {
+  const [ref, seen] = useSeen<HTMLDivElement>();
+  const step = useCycle(4, 1500, seen);
+  return (
+    <div ref={ref} aria-hidden className="relative mx-auto grid w-full max-w-md gap-3">
+      <div className="flex items-center justify-between">
+        <p className="font-heading text-walnut font-extrabold">Your branches today</p>
+        <SampleTag />
+      </div>
+      {BRANCHES.map((b, i) => {
+        const at = step === 0 ? Math.max(0, b.at - 2) : step === 1 ? b.at - 1 : b.at;
+        return (
+          <div
+            key={b.name}
+            className={cn(
+              "bg-surface text-foreground rounded-2xl border p-4 shadow-[0_18px_40px_-26px_rgba(43,29,24,0.45)] transition-all duration-700",
+              seen ? "translate-x-0 opacity-100" : "translate-x-6 opacity-0",
+            )}
+            style={{ transitionDelay: `${i * 150}ms` }}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="font-semibold">{b.name}</p>
+                <p className="text-muted-foreground text-xs">Supervisor: {b.lead}</p>
+              </div>
+              <p className="font-heading text-walnut text-2xl font-extrabold tabular-nums">
+                {at}
+                <span className="text-muted-foreground text-sm font-medium">/{b.staff}</span>
+              </p>
+            </div>
+            <div className="bg-subtle mt-3 h-2 overflow-hidden rounded-full">
+              <div
+                className="bg-primary h-full rounded-full transition-all duration-700"
+                style={{ width: `${(at / b.staff) * 100}%` }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Staff records (G): one search, everything about a staff member.
+// ---------------------------------------------------------------------------
+const QUERY = "Halima";
+
+export function RecordsScene() {
+  const [ref, seen] = useSeen<HTMLDivElement>();
+  const reduced = useReducedMotion();
+  const [chars, setChars] = useState(0);
+  useEffect(() => {
+    if (!seen || reduced || chars >= QUERY.length) return;
+    const t = setTimeout(() => setChars((c) => c + 1), 160);
+    return () => clearTimeout(t);
+  }, [seen, reduced, chars]);
+  const typed = reduced ? QUERY : QUERY.slice(0, chars);
+  const found = typed.length === QUERY.length;
+  return (
+    <div ref={ref} aria-hidden className="mx-auto w-full max-w-md">
+      <div className="bg-surface text-foreground rounded-2xl border p-5 shadow-[0_24px_50px_-26px_rgba(43,29,24,0.45)]">
+        <div className="flex h-10 items-center gap-2 rounded-lg border px-3 text-sm">
+          <span className="text-muted-foreground">Search staff:</span>
+          <span className="font-semibold">{typed}</span>
+          <span className="wk-caret bg-walnut inline-block h-4 w-0.5" />
+        </div>
+        <div
+          className={cn(
+            "mt-4 transition-all duration-500",
+            found ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0",
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <span className="bg-sand text-walnut flex size-12 items-center justify-center rounded-full font-bold">
+              HB
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="font-heading text-walnut font-extrabold">Halima Bello</p>
+              <p className="text-muted-foreground text-xs">
+                Showroom supervisor · Ikeja · since 2021
+              </p>
+            </div>
+            <SampleTag />
+          </div>
+          <dl className="mt-4 grid grid-cols-2 gap-2 text-xs">
+            {[
+              ["Phone", "0803 *** 4421"],
+              ["Next of kin", "Bello Musa"],
+              ["Salary", "₦98,000 / month"],
+              ["Leave left", "9 days"],
+            ].map(([k, v]) => (
+              <div key={k} className="bg-background rounded-lg border p-2">
+                <dt className="text-muted-foreground">{k}</dt>
+                <dd className="font-semibold">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <ul className="mt-3 flex flex-wrap gap-1.5 text-[11px] font-semibold">
+            {["Employment letter.pdf", "Guarantor form.pdf", "ID card.jpg"].map((d) => (
+              <li key={d} className="bg-sand text-walnut rounded-full px-2.5 py-1">
+                {d}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

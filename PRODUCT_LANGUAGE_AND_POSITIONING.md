@@ -14,9 +14,15 @@ availability). Use it instead of writing labels by hand.
 
 ## 1. Who WOHKAH is for
 
-**Small business owners with about 5–50 staff, who have no HR department.** They supervise their
-staff themselves and run the business day to day. The product still supports businesses of up to
-100 staff and more, but our words are written for the small business owner.
+**Nigerian owners of small and growing businesses with 1–50 staff** (updated by the product owner,
+2026-11-14). That includes a shop with a single sales assistant and a business with several branches.
+Most owners supervise their staff themselves while also handling suppliers, stock, customers,
+deliveries, expenses and cash flow. Our words are written for that owner. WOHKAH keeps working as
+teams grow beyond 50.
+
+Don't position WOHKAH by whether a business has HR staff: it neither needs nor excludes them. Don't
+say "5–50 staff", "no HR department" or anything that makes a one-person team feel left out, and
+don't make it sound complicated or enterprise-only.
 
 Typical businesses: furniture makers, supermarkets, retail shops, restaurants, schools, salons,
 e-commerce sellers, logistics companies, warehouses, agencies, small manufacturers, professional
@@ -31,12 +37,17 @@ They want quick answers to everyday questions:
 - Who came to work today? Who was absent?
 - What is each staff member supposed to do?
 - How much should I pay my staff, and has everyone been paid?
+- How much is my total salary bill this month, and what will next month cost?
+- Who is still waiting for their salary?
+- Are my staff at their approved work locations?
+- What is happening at my other branches, and who is supervising each one?
 - Who asked for leave?
 - What tasks have I given out, and are they done?
 - Where are my staff records and documents?
 - How do I reach everyone at once?
 
-Many of them have never employed an HR manager, and they won't sit through training to use software.
+They won't sit through training to use software. The website should make them feel understood
+before it tries to sell them anything.
 
 ## 2. Positioning
 
@@ -44,6 +55,11 @@ Many of them have never employed an HR manager, and they won't sit through train
 attendance, manage salaries and communicate with their staff, from one simple platform.**
 
 - Tagline: **"Your staff, well managed."**
+- Central message: **"Running a business comes with enough headaches. Managing your staff shouldn't
+  be another one."** We sell peace of mind, organisation, visibility and control.
+- Tone: modern Nigerian business brand. Conversational, clear and professional; everyday Nigerian
+  business situations, with Pidgin and slang used sparingly, if at all.
+- Never suggest WOHKAH sends money. It records salary payments the business makes itself.
 - Pronounced "Worker". A product of **Crift Concepts**.
 - It should feel accessible, practical, professional and powerful. It should never feel like
   complicated enterprise HR software.

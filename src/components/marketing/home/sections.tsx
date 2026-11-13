@@ -2,7 +2,14 @@ import Link from "next/link";
 import { Caveat } from "next/font/google";
 import {
   ArmchairIcon,
+  ArrowDownIcon,
   ArrowRightIcon,
+  Building2Icon,
+  CalendarCheckIcon,
+  ClockAlertIcon,
+  ReceiptIcon,
+  UserCheckIcon,
+  WalletIcon,
   BriefcaseIcon,
   CheckIcon,
   GraduationCapIcon,
@@ -18,10 +25,13 @@ import { AVAILABLE_NOW, MORE_FEATURES, PRIMARY_FEATURES } from "@/lib/copy/featu
 import { Reveal } from "./motion";
 import {
   AttendanceScene,
+  BranchesScene,
   HeroScene,
   LeaveScene,
+  PaidScene,
+  RecordsScene,
   RolesScene,
-  SalaryScene,
+  SalaryBillScene,
   TasksScene,
 } from "./scenes";
 
@@ -59,39 +69,43 @@ export function Hero() {
             className="text-walnut inline-flex items-center gap-2 text-sm font-semibold"
           >
             <span className="bg-primary h-0.5 w-6" aria-hidden />
-            Staff management for small businesses
+            Staff management for small and growing businesses
           </p>
           <h1
             data-reveal
             style={delay(80)}
-            className="font-heading text-walnut mt-4 text-[2.6rem] leading-[1.02] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-[4.1rem]"
+            className="font-heading text-walnut mt-4 text-[2.4rem] leading-[1.04] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-[3.5rem]"
           >
-            Running a business is hard enough.{" "}
-            <span className="relative whitespace-nowrap">
-              <span className="relative z-10">Your staff</span>
-              <span
-                aria-hidden
-                className="bg-primary/70 absolute inset-x-0 bottom-1 -z-0 h-3 -rotate-1 rounded-sm sm:bottom-2 sm:h-4"
-              />
+            Running a business is already hard.{" "}
+            <span className="bg-[linear-gradient(transparent_60%,rgba(214,158,0,0.65)_60%,rgba(214,158,0,0.65)_92%,transparent_92%)] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
+              Managing your staff
             </span>{" "}
-            shouldn&apos;t be.
+            shouldn&apos;t make it harder.
           </h1>
           <p
             data-reveal
             style={delay(160)}
             className="text-foreground/80 mt-5 max-w-xl text-lg leading-relaxed sm:text-xl"
           >
-            Know who came to work, what you owe in salaries, who&apos;s on leave and what&apos;s
-            getting done, from your phone. Made for owners with 5 to 50 staff and no HR department.
+            From tracking attendance and managing leave to working out salaries and keeping your
+            team organised, WOHKAH takes the stress out of managing your staff.
+          </p>
+          <p
+            data-reveal
+            style={delay(200)}
+            className="text-walnut mt-3 max-w-xl text-lg leading-relaxed font-semibold"
+          >
+            Know who is working, who is absent, what you&apos;re paying and when you&apos;re paying
+            them. One place to keep your people and your business organised.
           </p>
           <div data-reveal style={delay(240)} className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-13 px-7 text-base">
               <Link href="/register">
-                Start Managing Your Staff <ArrowRightIcon />
+                Create your free account <ArrowRightIcon />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-13 px-7 text-base">
-              <Link href="#features">See how it works</Link>
+              <Link href="#how-it-works">See how it works</Link>
             </Button>
           </div>
           <p
@@ -103,14 +117,18 @@ export function Hero() {
               <CheckIcon className="text-success size-4" aria-hidden /> Free plan for up to 3 staff
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckIcon className="text-success size-4" aria-hidden /> No HR department required.
+              <CheckIcon className="text-success size-4" aria-hidden /> Made for businesses with
+              1–50 staff
             </span>
           </p>
         </Reveal>
         <div>
           <HeroScene />
           <p className="text-muted-foreground mt-4 text-center text-xs lg:text-left">
-            Preview with sample data. Attendance is coming soon.
+            Preview with sample data.
+            {PRIMARY_FEATURES.find((f) => f.key === "attendance")?.available
+              ? ""
+              : " Attendance is coming soon."}
           </p>
         </div>
       </div>
@@ -169,8 +187,8 @@ const NOTEBOOK = [
 
 const CHATS = [
   { text: "Oga, I go reach by 9", side: "left" },
-  { text: "Who get the shop key??", side: "right" },
-  { text: "Abeg when is salary coming?", side: "left" },
+  { text: "Who has the shop key?", side: "right" },
+  { text: "Sir, when is salary coming?", side: "left" },
 ] as const;
 
 export function Story() {
@@ -182,12 +200,25 @@ export function Story() {
             data-reveal
             className="font-heading text-walnut text-3xl leading-tight font-extrabold text-balance sm:text-5xl"
           >
-            Your staff records shouldn&apos;t live in an exercise book.
+            Before you deal with suppliers, customers and business expenses, you still have staff to
+            manage.
           </h2>
-          <p data-reveal style={delay(100)} className="text-foreground/75 mt-4 text-lg">
-            Attendance in a notebook. Instructions lost in WhatsApp. Salaries worked out on a
-            calculator at month-end. WOHKAH puts it in one place you can check from anywhere.
-          </p>
+          <div className="text-foreground/80 mt-5 grid gap-3 text-lg leading-relaxed">
+            <p data-reveal style={delay(100)}>
+              You have to know who showed up for work. Who came late? Who was absent? Who asked for
+              leave?
+            </p>
+            <p data-reveal style={delay(160)}>
+              At the end of the month, you still have to work out salaries, deductions and
+              allowances, and figure out exactly how much you&apos;re spending on your staff. And if
+              you have more than one branch, that&apos;s another level of monitoring.
+            </p>
+            <p data-reveal style={delay(220)} className="text-walnut font-semibold">
+              You didn&apos;t start your business to spend every day chasing attendance, working out
+              salaries by hand or trying to remember who you&apos;ve paid. WOHKAH takes that load
+              off your shoulders.
+            </p>
+          </div>
         </div>
 
         <div className="mt-14 grid items-center gap-12 lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
@@ -293,7 +324,7 @@ export function Story() {
 // Feature bands
 // ---------------------------------------------------------------------------
 type BandProps = {
-  tone: "sand" | "walnut" | "mint" | "blush";
+  tone: "sand" | "walnut" | "mint" | "blush" | "sky";
   title: string;
   text: string;
   points: string[];
@@ -307,6 +338,7 @@ const TONES: Record<BandProps["tone"], string> = {
   walnut: "bg-walnut text-sand",
   mint: "bg-[#e4efe2]",
   blush: "bg-[#f6e4da]",
+  sky: "bg-[#e5ecf4]",
 };
 
 function Band({ tone, title, text, points, available, scene, reverse }: BandProps) {
@@ -368,12 +400,90 @@ function Band({ tone, title, text, points, available, scene, reverse }: BandProp
 
 const byKey = (key: string) => PRIMARY_FEATURES.find((f) => f.key === key)!;
 
+// ---------------------------------------------------------------------------
+// The owner's questions, and what WOHKAH gives back
+// ---------------------------------------------------------------------------
+const QUESTIONS = [
+  {
+    icon: UserCheckIcon,
+    q: "Who came to work today?",
+    a: "See every clock-in as it happens, with the time and the place.",
+    tone: "bg-sand",
+  },
+  {
+    icon: ClockAlertIcon,
+    q: "Who resumed late? Who didn't show up?",
+    a: "Late arrivals and absences are flagged for you. No more calling round.",
+    tone: "bg-[#f6e4da]",
+  },
+  {
+    icon: WalletIcon,
+    q: "How much am I spending on salaries?",
+    a: "Your monthly salary bill, worked out and broken down.",
+    tone: "bg-[#e4efe2]",
+  },
+  {
+    icon: ReceiptIcon,
+    q: "Who is still waiting for their salary?",
+    a: "See who you've paid and who you haven't, at a glance.",
+    tone: "bg-[#e5ecf4]",
+  },
+  {
+    icon: CalendarCheckIcon,
+    q: "Who is on leave, and how many days are left?",
+    a: "Requests, approvals and leave balances in one place.",
+    tone: "bg-[#f6e4da]",
+  },
+  {
+    icon: Building2Icon,
+    q: "What's happening at my other branches?",
+    a: "Every branch on one screen, even when you're not there.",
+    tone: "bg-sand",
+  },
+];
+
+export function OwnerQuestions() {
+  return (
+    <Reveal as="section" className="pb-20 sm:pb-28">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+        <h2
+          data-reveal
+          className="font-heading text-walnut max-w-2xl text-2xl leading-tight font-extrabold text-balance sm:text-4xl"
+        >
+          The questions you ask every day, answered in one place.
+        </h2>
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {QUESTIONS.map(({ icon: Icon, q, a, tone }, i) => (
+            <li
+              key={q}
+              data-reveal
+              style={delay((i % 3) * 110)}
+              className={cn("flex flex-col rounded-3xl p-6", tone)}
+            >
+              <Icon className="text-walnut size-6" aria-hidden />
+              <p className="font-heading text-walnut mt-5 text-xl leading-snug font-extrabold">
+                {q}
+              </p>
+              <ArrowDownIcon className="text-primary my-3 size-5" aria-hidden />
+              <p className="text-foreground/85 font-medium">{a}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </Reveal>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Feature bands
+// ---------------------------------------------------------------------------
 export function FeatureBands() {
   const attendance = byKey("attendance");
   const salaries = byKey("salaries");
   const leave = byKey("leave");
   const tasks = byKey("tasks");
   const messages = byKey("messages");
+  const staff = byKey("staff");
   return (
     <section id="features" className="scroll-mt-20 pb-10">
       <div className="mx-auto grid w-full max-w-6xl gap-6 px-4 sm:px-6">
@@ -382,21 +492,17 @@ export function FeatureBands() {
             data-reveal
             className="font-heading text-walnut text-3xl leading-tight font-extrabold text-balance sm:text-5xl"
           >
-            The everyday jobs of running a team, done properly.
+            Everything you need to manage your team, in one place.
           </h2>
           <p data-reveal style={delay(100)} className="text-foreground/75 mt-4 text-lg">
-            We&apos;re building WOHKAH one job at a time. You can set up your business today, and
-            each feature below is clearly marked until it&apos;s ready for you.
+            Features still on the way are marked, so you always know what&apos;s ready to use today.
           </p>
         </Reveal>
 
         <Band
           tone="sand"
-          title="See who's at work before you get there."
-          text={
-            attendance.summary +
-            " Staff clock in on their own phones at your approved work locations."
-          }
+          title="Attendance without the daily chasing."
+          text="Stop calling your supervisors to ask who came in. Staff clock in and out on their own phones, and WOHKAH uses GPS to check they're at an approved work location. See attendance for every branch from one screen."
           points={attendance.points}
           available={attendance.available}
           scene={<AttendanceScene />}
@@ -404,28 +510,65 @@ export function FeatureBands() {
         <Band
           tone="walnut"
           reverse
-          title="Salaries worked out the same way, every month."
-          text={salaries.summary}
-          points={salaries.points}
+          title="Know exactly how much you're spending on salaries."
+          text="WOHKAH works out each staff member's salary with their allowances, overtime and deductions, then adds it all up. See your total salary bill for the month and what next month is likely to cost."
+          points={[
+            "Allowances, overtime, deductions and salary advances",
+            "Your total monthly salary bill, broken down",
+            "Review and approve before anything is final",
+          ]}
           available={salaries.available}
-          scene={<SalaryScene />}
+          scene={<SalaryBillScene />}
         />
         <Band
           tone="mint"
-          title="Leave requests in one place, not in your DMs."
-          text={leave.summary}
+          title="Know who you've paid and who's still waiting."
+          text="Keep a clear record of every salary payment: who has been paid, who is still waiting and when salaries are due. You pay your staff the way you already do. WOHKAH keeps the record so nothing is forgotten."
+          points={[
+            "Paid and awaiting payment at a glance",
+            "Salary due dates in one place",
+            "Salary slips staff can view on their phones",
+          ]}
+          available={salaries.available}
+          scene={<PaidScene />}
+        />
+        <Band
+          tone="blush"
+          reverse
+          title="Leave without the paperwork."
+          text="Staff request leave from their phones. You see who else is off before you approve, and everyone's leave balance updates on its own. No more forms, no more guessing."
           points={leave.points}
           available={leave.available}
           scene={<LeaveScene />}
         />
         <Band
-          tone="blush"
+          tone="sky"
+          title="Manage all your branches from one place."
+          text="Whether you have two shops or branches in different cities, see what's happening at every location without being there. Know who supervises each branch and keep everyone accountable."
+          points={[
+            "Add your branches today",
+            "Attendance for every branch side by side",
+            "A supervisor for each location",
+          ]}
+          available={attendance.available}
+          scene={<BranchesScene />}
+        />
+        <Band
+          tone="sand"
           reverse
-          title="Give instructions once. See them done."
-          text={`${tasks.summary} ${messages.summary}`}
+          title="Keep your whole team on the same page."
+          text="Send announcements everyone can see, give out tasks with deadlines and keep work conversations out of scattered WhatsApp groups."
           points={[...tasks.points.slice(0, 2), messages.points[1]!]}
           available={tasks.available && messages.available}
           scene={<TasksScene />}
+        />
+        <Band
+          tone="mint"
+          title="Every staff record in one place."
+          text="Stop searching through WhatsApp chats, notebooks and spreadsheets. Keep each staff member's details, salary, leave and documents together, and find them in seconds."
+          points={staff.points}
+          available={staff.available}
+          scene={<RecordsScene />}
         />
 
         {/* What works today */}
@@ -498,49 +641,49 @@ const INDUSTRIES = [
   {
     icon: ShoppingBagIcon,
     title: "Shops and supermarkets",
-    text: "See who opened the shop on time and share the week's duty rota.",
+    text: "Know who opened the shop on time, share the duty rota and keep sales staff accountable.",
     tone: "bg-sand",
   },
   {
     icon: UtensilsCrossedIcon,
     title: "Restaurants and kitchens",
-    text: "Plan kitchen and service shifts and pay cooks and waiters correctly.",
+    text: "Plan kitchen and service shifts, track late arrivals and pay cooks and waiters correctly.",
     tone: "bg-[#f6e4da]",
   },
   {
     icon: GraduationCapIcon,
     title: "Schools",
-    text: "Keep teachers' records organised, manage leave and share announcements.",
+    text: "Keep teacher attendance, staff records, leave and salaries organised while you focus on running your school.",
     tone: "bg-[#e4efe2]",
   },
   {
     icon: ScissorsIcon,
     title: "Salons and spas",
-    text: "Know which stylists are in today and keep schedules clear.",
+    text: "Know which stylists are working, track attendance, organise shifts and manage your team.",
     tone: "bg-[#e5ecf4]",
   },
   {
     icon: ArmchairIcon,
-    title: "Furniture and workshops",
-    text: "Track workshop attendance and assign production tasks.",
+    title: "Furniture makers and workshops",
+    text: "Track workshop attendance, organise your production team and keep staff accountable.",
     tone: "bg-sand",
   },
   {
     icon: PillIcon,
     title: "Pharmacies and clinics",
-    text: "Cover every shift and keep certificates and licences in one place.",
+    text: "Manage staff shifts, monitor attendance and keep staff records and licences organised.",
     tone: "bg-[#f6e4da]",
   },
   {
     icon: TruckIcon,
     title: "Logistics and e-commerce",
-    text: "Coordinate packers, riders and drivers across locations.",
+    text: "Coordinate packers, riders and drivers across locations and know who is on duty.",
     tone: "bg-[#e4efe2]",
   },
   {
     icon: BriefcaseIcon,
-    title: "Agencies and services",
-    text: "Assign client work and follow up on deadlines.",
+    title: "And many more",
+    text: "Fashion houses, bakeries, hotels, agencies, churches and more. If you have staff, WOHKAH works for you.",
     tone: "bg-[#e5ecf4]",
   },
 ];
@@ -554,11 +697,11 @@ export function WhoItsFor() {
             data-reveal
             className="font-heading text-walnut max-w-xl text-3xl leading-tight font-extrabold text-balance sm:text-5xl"
           >
-            If you have people to manage, it&apos;s for you.
+            Made for businesses with 1–50 staff.
           </h2>
           <p data-reveal style={delay(100)} className="text-foreground/75 max-w-md text-lg">
-            Built for businesses with about 5 to 50 staff and no HR department. It keeps working as
-            you grow past 100.
+            Simple to start, powerful enough to grow with you. From your first staff member to your
+            third branch, WOHKAH fits the way you already work.
           </p>
         </div>
       </div>
@@ -589,10 +732,19 @@ export function WhoItsFor() {
 // How it works
 // ---------------------------------------------------------------------------
 const STEPS = [
-  { title: "Create your business account", text: "Takes a few minutes. Free to start, no card." },
-  { title: "Add your branches and people", text: "Invite your managers and staff with one link." },
-  { title: "Name your roles", text: "Decide who can see and do what. Change it any time." },
-  { title: "Run it from your phone", text: "Check on your business wherever you are." },
+  { title: "Create your business account", text: "Start free in a few minutes. No card needed." },
+  {
+    title: "Add your staff and branches",
+    text: "Invite your team with a link and set up each branch.",
+  },
+  {
+    title: "Set up roles and permissions",
+    text: "Decide who can see and do what. Change it any time.",
+  },
+  {
+    title: "Manage your team from your phone or computer",
+    text: "Stay in control wherever you are.",
+  },
 ];
 
 export function HowItWorks() {
@@ -603,7 +755,7 @@ export function HowItWorks() {
           data-reveal
           className="font-heading max-w-2xl text-3xl leading-tight font-extrabold text-balance text-white sm:text-5xl"
         >
-          Set up in an afternoon. Use it every day.
+          Up and running in four steps. Free to start.
         </h2>
         <ol className="mt-12 grid gap-8 md:grid-cols-4 md:gap-6">
           {STEPS.map((s, i) => (
@@ -645,9 +797,16 @@ export function FinalCta() {
           data-reveal
           className="font-heading text-walnut relative max-w-2xl text-4xl leading-[1.05] font-extrabold text-balance sm:text-6xl"
         >
-          Your staff, well managed.
+          Running a business comes with enough headaches.
         </h2>
-        <p data-reveal style={delay(100)} className="text-walnut/80 relative mt-4 max-w-xl text-lg">
+        <p
+          data-reveal
+          style={delay(100)}
+          className="text-walnut relative mt-4 max-w-xl text-xl font-semibold"
+        >
+          Managing your staff shouldn&apos;t be another one.
+        </p>
+        <p data-reveal style={delay(160)} className="text-walnut/80 relative mt-2 max-w-xl text-lg">
           Start free with up to 3 staff, or try any paid plan free for 7 days. No card needed.
         </p>
         <div
@@ -657,7 +816,7 @@ export function FinalCta() {
         >
           <Button asChild size="lg" variant="secondary" className="h-13 px-7 text-base">
             <Link href="/register">
-              Create Your Free Business Account <ArrowRightIcon />
+              Create your free account <ArrowRightIcon />
             </Link>
           </Button>
           <p className="text-walnut text-sm">

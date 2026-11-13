@@ -16,9 +16,11 @@ test("the homepage explains WOHKAH and every call to action works", async ({ pag
   await page.goto("/");
   await expect(page).toHaveTitle(/Staff management software for small businesses/);
   await expect(
-    page.getByRole("heading", { level: 1, name: /Running a business is hard enough/ }),
+    page.getByRole("heading", { level: 1, name: /Running a business is already hard/ }),
   ).toBeVisible();
-  await expect(page.getByText("No HR department required.")).toBeVisible();
+  await expect(page.getByText("Made for businesses with 1–50 staff").first()).toBeVisible();
+  // The old positioning is gone.
+  await expect(page.getByText(/5 to 50 staff|no HR department/i)).toHaveCount(0);
   await expect(page.getByText("Preview with sample data.")).toBeVisible();
 
   // Header navigation scrolls to real sections.
@@ -37,13 +39,19 @@ test("the homepage explains WOHKAH and every call to action works", async ({ pag
 
   // Primary calls to action lead to the real sign-up and login pages.
   await page.goto("/");
-  await page.getByRole("link", { name: /Start Managing Your Staff/ }).click();
+  await page
+    .getByRole("link", { name: /Create your free account/ })
+    .first()
+    .click();
   await expect(page).toHaveURL(/\/register$/);
   await page.goto("/");
   await page.getByRole("banner").getByRole("link", { name: "Log In" }).click();
   await expect(page).toHaveURL(/\/login$/);
   await page.goto("/");
-  await page.getByRole("link", { name: /Create Your Free Business Account/ }).click();
+  await page
+    .getByRole("link", { name: /Create your free account/ })
+    .last()
+    .click();
   await expect(page).toHaveURL(/\/register$/);
 });
 

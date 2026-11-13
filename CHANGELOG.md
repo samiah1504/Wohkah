@@ -5,6 +5,22 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Homepage messaging rewrite (2026-11-14)
+
+#### Changed
+- New positioning: small and growing businesses with 1–50 staff (product owner). Removed "5 to 50
+  staff", "no HR department" and "If you have people to manage" from the homepage, FAQs and
+  metadata; language guide, AGENTS.md and README updated.
+- Hero: "Running a business is already hard. Managing your staff shouldn't make it harder.", with
+  "Create your free account" and "See how it works".
+- Problem section: "Before you deal with suppliers, customers and business expenses, you still have
+  staff to manage", plus six cards with the owner's everyday questions and their answers.
+- Seven feature bands with animated sample scenes: attendance, the monthly salary bill, paid vs
+  awaiting payment (records only; WOHKAH doesn't send money), leave, branches, team communication
+  and staff records. Coming-soon labels still follow `src/lib/copy/features.ts`.
+- Industry cards and the four getting-started steps rewritten; closing message "Running a
+  business comes with enough headaches. Managing your staff shouldn't be another one."
+
 ### Homepage redesign with motion (2026-11-14)
 
 #### Changed
