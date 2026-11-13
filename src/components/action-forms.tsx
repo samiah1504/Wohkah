@@ -125,13 +125,16 @@ export function ActionButton({
   variant?: React.ComponentProps<typeof Button>["variant"];
   size?: React.ComponentProps<typeof Button>["size"];
 }) {
-  const [state, formAction, pending] = useActionState(action, initialFormState);
+  // Toast as soon as the action returns, not after re-render: the button is
+  // often removed by its own action (deleting a role, archiving a row), and
+  // an effect in an unmounted component never runs.
+  const [, formAction, pending] = useActionState(async (prev: FormState, data: FormData) => {
+    const result = await action(prev, data);
+    if (result.status === "success" && result.message) toast.success(result.message);
+    if (result.status === "error" && result.message) toast.error(result.message);
+    return result;
+  }, initialFormState);
   const [asking, setAsking] = useState(false);
-
-  useEffect(() => {
-    if (state.status === "success" && state.message) toast.success(state.message);
-    if (state.status === "error" && state.message) toast.error(state.message);
-  }, [state]);
 
   if (confirm && !asking) {
     return (
