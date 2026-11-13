@@ -27,7 +27,6 @@ const overviewSchema = z.object({
     paused_staff: count,
     admins: count,
     branches: count,
-    departments: count,
     work_locations: count,
     storage_mb: count,
   }),
@@ -38,7 +37,6 @@ const overviewSchema = z.object({
     extra_work_locations: count,
     admins: nullableLimit,
     branches: nullableLimit,
-    departments: nullableLimit,
     storage_mb: nullableLimit,
   }),
 });

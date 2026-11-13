@@ -32,7 +32,6 @@ with zod and write with the user's Supabase client, so RLS applies.
 | identity | `updateProfile` | signed in | Own profile only |
 | workspace | `createCompany` | signed in, confirmed email | Calls `create_company`; 5 per user per day |
 | workspace | `updateCompanyProfile` | `company.settings.manage` | |
-| workspace | `saveDepartment`, `setDepartmentArchived` | `departments.manage` | No hard delete |
 | workspace | `saveBranch`, `setBranchArchived` | `branches.manage` | Plan limit `branches` |
 | workspace | `addHoliday`, `deleteHoliday` | `holidays.manage` | |
 | access | `inviteMember` | `members.invite` | Only grantable roles; emails via Resend or returns a copyable link |

@@ -70,7 +70,7 @@ export const PLANS: readonly Plan[] = [
   {
     code: "growth",
     name: "Growth",
-    forWho: "For businesses managing more staff, departments and routines.",
+    forWho: "For businesses managing more staff, branches and routines.",
     monthlyMinor: 1_000_000,
     annualMinor: 10_000_000,
     includedStaff: 25,
@@ -121,8 +121,7 @@ const businessOnly: Row = [no, no, no, yes];
 const MATRIX = {
   // Limits
   admins: [lim(1), lim(2), lim(5), lim(10)],
-  branches: [lim(1), lim(1), lim(1), lim(null)],
-  departments: [lim(1), lim(1), lim(10), lim(null)],
+  branches: [lim(1), lim(2), lim(5), lim(10)], // product owner, 2026-11-14
   work_locations: [lim(1), lim(2), lim(5), lim(10)],
   storage_mb: [lim(500), lim(5120), lim(20480), lim(51200)],
   custom_domains: [off, off, off, off], // not offered (product owner, 2026-11-13)
@@ -180,7 +179,6 @@ export const FEATURE_INFO: Record<
 > = {
   admins: { label: "Administrators", singular: "administrator", available: true },
   branches: { label: "Branches", singular: "branch", available: true },
-  departments: { label: "Departments", singular: "department", available: true },
   work_locations: { label: "Work locations included", singular: "work location", available: true },
   storage_mb: { label: "File storage", available: true },
   custom_domains: { label: "Custom domains", available: false, hidden: true },
@@ -283,10 +281,9 @@ export const COMPARISON: { title: string; rows: ComparisonRow[] }[] = [
   { title: "Documents and policies", rows: [f("company_documents")] },
   { title: "Staff performance", rows: [f("staff_performance")] },
   {
-    title: "Departments and permissions",
+    title: "Branches and permissions",
     rows: [
       f("branches"),
-      f("departments"),
       f("custom_roles"),
       f("advanced_approvals"),
       f("advanced_approval_workflows"),

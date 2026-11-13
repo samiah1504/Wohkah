@@ -67,6 +67,7 @@ attendance, manage salaries and communicate with their staff, from one simple pl
 | Personnel records, employee records | Staff records |
 | Personnel | Staff |
 | HR administrator | Staff manager |
+| Departments (as a feature or plan limit) | Not offered: don't mention them |
 | Workforce analytics | Business and staff reports |
 | Team collaboration | Staff communication |
 | Geofencing | Approved work locations |
@@ -75,12 +76,19 @@ attendance, manage salaries and communicate with their staff, from one simple pl
 | Employee directory / profile / documents | Staff directory / profile / documents |
 | HR dashboard, workspace dashboard | Business dashboard (or just "Home") |
 | Workspace settings | Business settings (or just "Settings") |
-| Workspace members | Team access / people with access (or "staff" when it means staff) |
+| Workspace members | Business staff (the menu item stays "Team Access" so it isn't confused with "Staff") |
 | Workspace invitation | Business invitation |
 
 These are guides, not a reason to write awkward sentences. "A staff member" or "your staff" is
 fine; "staffs" is not. Don't replace words blindly: pick what an ordinary business owner would say
 in that sentence ("Your business account is ready", "Switch business", "Ask the business owner").
+
+**Branches, work locations and departments.** A *branch* is one of the business's branches (a shop,
+office or site the business runs). An *approved work location* is a physical place where staff may
+clock in; a branch can have several. They are separate allowances (branches 1/2/5/10, work locations
+1/2/5/10 by plan) and must never be merged in wording or limits. WOHKAH does **not** offer
+departments: don't mention departments in screens, pricing, prompts or marketing, and don't replace
+them with another invented grouping.
 
 **Never imply a corporate email is needed.** Owners and staff often use Gmail or Yahoo. Label email
 fields "Email address".
@@ -171,7 +179,7 @@ headings and Inter for body text. Text on Deep Yellow is Dark Walnut, never whit
 | Tasks | Tasks | Manage Staff Tasks | Assign responsibilities, set deadlines and see what has been completed. |
 | Messages | Messages | Staff Messages | Communicate with your staff and keep important conversations organised. |
 | Performance | Staff Performance | Staff Performance | Set expectations, review progress and recognise good work. |
-| Access | Team Access | Team Access | People who can sign in to your business account, and what they can do. |
+| Access | Team Access | Team Access | Your business staff who can sign in to WOHKAH, and what they can do. |
 
 ## 9. Dashboard language rules
 

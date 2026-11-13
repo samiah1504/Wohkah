@@ -23,7 +23,7 @@ export const PRIMARY_FEATURES: MarketingFeature[] = [
     summary: "Every staff member's details, job role, documents and work history in one place.",
     points: [
       "Contact details, emergency contacts and bank details kept private",
-      "Departments, branches and who reports to whom",
+      "Branches and who reports to whom",
       "Invite staff to their own portal with one link",
     ],
     available: false,
@@ -84,7 +84,7 @@ export const PRIMARY_FEATURES: MarketingFeature[] = [
       "Messages, group chats and announcements in one place, instead of scattered WhatsApp groups.",
     points: [
       "Direct and group messages",
-      "Department channels and announcements",
+      "Group channels and announcements",
       "Share files and voice notes",
     ],
     available: false,
@@ -147,7 +147,7 @@ export const MORE_FEATURES: MarketingFeature[] = [
 /** What a business can do in WOHKAH today (Phase 1). Used by the FAQ and "available now" notes. */
 export const AVAILABLE_NOW = [
   "Create your business account",
-  "Set up departments, branches and public holidays",
+  "Set up branches and public holidays",
   "Invite managers and staff, with roles that control what each person can see",
   "A record of every change made in your business account",
   "Two-step sign-in for extra security",

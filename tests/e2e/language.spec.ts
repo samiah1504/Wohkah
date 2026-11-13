@@ -49,7 +49,6 @@ test("signed-in screens use small-business language", async ({ browser }) => {
     `/w/${slug}/members`,
     `/w/${slug}/roles`,
     `/w/${slug}/settings/company`,
-    `/w/${slug}/settings/departments`,
     `/w/${slug}/settings/branches`,
     `/w/${slug}/settings/holidays`,
     `/w/${slug}/settings/subscription`,

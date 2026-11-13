@@ -366,7 +366,7 @@ const STEPS = [
   },
   {
     title: "Add your staff",
-    text: "Invite your staff and organise them by department and branch.",
+    text: "Invite your staff and organise them by branch.",
   },
   {
     title: "Set up attendance, salaries and responsibilities",

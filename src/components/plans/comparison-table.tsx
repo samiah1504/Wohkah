@@ -167,5 +167,5 @@ function describe(row: ComparisonRow): {
 }
 
 function isLimit(key: string) {
-  return ["admins", "branches", "departments", "work_locations", "storage_mb"].includes(key);
+  return ["admins", "branches", "work_locations", "storage_mb"].includes(key);
 }

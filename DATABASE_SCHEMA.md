@@ -19,6 +19,7 @@ updated whenever a migration lands.
 
 | `20261113000100_pricing_trials_allowances.sql` | Approved prices, allowances and add-ons; generated feature matrix; Scale withdrawn; `employees` (minimal staff records with `plan_suspended`), `work_locations`; `trial_grants`, `subscription_events`, `notifications`, `billing_invoices`, `payment_transactions`, `webhook_events`; trial, selection, downgrade, quote, checkout and verified-payment functions; optional hourly `pg_cron` sync |
 | `20261114000100_business_language.sql` | Data only: plain-language permission descriptions, Owner role description, trial-ended notification text |
+| `20261114000200_branches_and_departments.sql` | Branch allowances 1/2/5/10; departments removed from plans, limits and the subscription overview (records kept) |
 
 Each file documents its rollback steps in its header. Production is forward-only.
 
@@ -95,7 +96,7 @@ create policy bank_details_select on employee_bank_details for select to authent
 | `companies` | `id`, `slug` (unique, citext), `name`, `legal_name`, `business_email`, `phone`, `industry`, `country_code`, `address jsonb`, `website`, `size_band`, `timezone`, `currency`, `working_days int[]`, `work_start time`, `work_end time`, `logo_path`, `status` (`active`, `suspended`, `closed`), `created_by` | Created only through an RPC `app.create_company()` that also seeds the owner member, roles and the Free subscription in one transaction. |
 | `company_members` | `id`, `company_id`, `user_id`, `status` (`invited`, `active`, `suspended`, `removed`), `invited_by`, `joined_at` | `unique (company_id, user_id)`. A user ↔ company link, separate from the HR record. |
 | `company_invitations` | `id`, `company_id`, `email`, `token_hash`, `role_ids uuid[]`, `expires_at`, `accepted_at` | Only a SHA-256 hash of the token is stored. |
-| `departments` | `id`, `company_id`, `name`, `parent_id`, `head_employee_id` (FK added in Phase 2), `archived_at` | `unique (company_id, lower(name))` where not archived |
+| `departments` | `id`, `company_id`, `name`, `parent_id`, `head_employee_id` (FK added in Phase 2), `archived_at`. **No longer a product feature (2026-11-14); kept for existing data.** See docs/PRICING_AUDIT.md §7 | `unique (company_id, lower(name))` where not archived |
 | `branches` | `id`, `company_id`, `name`, `address jsonb`, `timezone`, `archived_at` | |
 | `public_holidays` | `id`, `company_id`, `date`, `name`, `branch_id?` | Company calendar |
 

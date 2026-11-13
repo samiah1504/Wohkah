@@ -25,7 +25,6 @@ export function navItemsFor(ctx: TenantContext): NavItem[] {
   if (
     canAny(ctx, [
       "company.settings.manage",
-      "departments.manage",
       "branches.manage",
       "holidays.manage",
       "work_locations.manage",

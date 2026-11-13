@@ -1,6 +1,6 @@
 /**
  * Approved pricing rules (docs/PRICING_AUDIT.md), proven in the database:
- * staff allowances, add-ons, work locations, branches, departments, trials,
+ * staff allowances, add-ons, work locations, branches, departments (removed), trials,
  * expiry, downgrades, staff selection, reactivation and price quotes.
  */
 import { randomUUID } from "node:crypto";
@@ -135,7 +135,7 @@ describe("active staff allowances", () => {
   });
 });
 
-describe("work locations, branches and departments", () => {
+describe("work locations, branches and departments (removed)", () => {
   const addLocations = (company: Company, userId: string, n: number, start = 1) =>
     asUser({ userId }, async (db) => {
       for (let i = 0; i < n; i++) {
@@ -171,32 +171,97 @@ describe("work locations, branches and departments", () => {
     }
   });
 
-  it("branches: 1 on Free, Starter and Growth; unlimited on Business", async () => {
+  it("branches: Free 1, Starter 2, Growth 5, Business 10 (no plan is unlimited)", async () => {
     const add = (c: Company, u: string, name: string) =>
       asUser({ userId: u }, (db) =>
         db.query("insert into public.branches (company_id, name) values ($1, $2)", [c.id, name]),
       );
-    const { owner, company } = await owned();
-    await setSubscription(company.id, { plan: "growth" });
-    await add(company, owner.id, "Head office");
-    await expectDbError(add(company, owner.id, "Second"), /plan_limit_exceeded:branches:1/);
-    await setSubscription(company.id, { plan: "business" });
-    for (const name of ["Second", "Third", "Fourth"]) await add(company, owner.id, name);
+    for (const [plan, n] of [
+      ["free", 1],
+      ["starter", 2],
+      ["growth", 5],
+      ["business", 10],
+    ] as const) {
+      const { owner, company } = await owned();
+      await setSubscription(company.id, { plan });
+      for (let i = 1; i <= n; i++) await add(company, owner.id, `Branch ${i}`);
+      // Direct API inserts can't get past the allowance.
+      await expectDbError(
+        add(company, owner.id, `Branch ${n + 1}`),
+        new RegExp(`plan_limit_exceeded:branches:${n}`),
+      );
+    }
   });
 
-  it("departments: 1 on Free and Starter, 10 on Growth, unlimited on Business", async () => {
-    const add = (c: Company, u: string, name: string) =>
-      asUser({ userId: u }, (db) =>
-        db.query("insert into public.departments (company_id, name) values ($1, $2)", [c.id, name]),
-      );
+  it("restoring an archived branch also counts against the allowance", async () => {
     const { owner, company } = await owned();
-    await add(company, owner.id, "Dept 1");
-    await expectDbError(add(company, owner.id, "Dept 2"), /plan_limit_exceeded:departments:1/);
-    await setSubscription(company.id, { plan: "growth" });
-    for (let i = 2; i <= 10; i++) await add(company, owner.id, `Dept ${i}`);
-    await expectDbError(add(company, owner.id, "Dept 11"), /plan_limit_exceeded:departments:10/);
-    await setSubscription(company.id, { plan: "business" });
-    await add(company, owner.id, "Dept 11");
+    const ids = await asUser({ userId: owner.id }, async (db) => {
+      const a = await db.query(
+        "insert into public.branches (company_id, name) values ($1, 'One') returning id",
+        [company.id],
+      );
+      await db.query("update public.branches set archived_at = now() where id = $1", [
+        a.rows[0].id,
+      ]);
+      await db.query("insert into public.branches (company_id, name) values ($1, 'Two')", [
+        company.id,
+      ]);
+      return a.rows[0].id as string;
+    });
+    await expectDbError(
+      asUser({ userId: owner.id }, (db) =>
+        db.query("update public.branches set archived_at = null where id = $1", [ids]),
+      ),
+      /plan_limit_exceeded:branches:1/,
+    );
+  });
+
+  it("branch and work-location allowances are separate", async () => {
+    const { owner, company } = await owned(); // Free: 1 branch, 1 work location
+    await asUser({ userId: owner.id }, (db) =>
+      db.query("insert into public.branches (company_id, name) values ($1, 'Shop')", [company.id]),
+    );
+    await addLocations(company, owner.id, 1); // still allowed after the branch
+    await expectDbError(addLocations(company, owner.id, 1, 2), /work_location_limit_exceeded:1/);
+  });
+
+  it("departments are no longer limited or sold, and existing ones are kept", async () => {
+    const { owner, company } = await owned(); // Free
+    await asUser({ userId: owner.id }, async (db) => {
+      for (let i = 1; i <= 3; i++)
+        await db.query("insert into public.departments (company_id, name) values ($1, $2)", [
+          company.id,
+          `Dept ${i}`,
+        ]);
+    });
+    const counts = await asAdmin(async (db) => ({
+      kept: Number(
+        (
+          await db.query("select count(*) from public.departments where company_id = $1", [
+            company.id,
+          ])
+        ).rows[0].count,
+      ),
+      features: Number(
+        (await db.query("select count(*) from public.features where key = 'departments'")).rows[0]
+          .count,
+      ),
+      planRows: Number(
+        (
+          await db.query(
+            "select count(*) from public.plan_features where feature_key = 'departments'",
+          )
+        ).rows[0].count,
+      ),
+    }));
+    expect(counts).toEqual({ kept: 3, features: 0, planRows: 0 });
+    const o = await asUser(
+      { userId: owner.id },
+      async (db) =>
+        (await db.query("select public.subscription_overview($1) as o", [company.id])).rows[0].o,
+    );
+    expect(o.usage).not.toHaveProperty("departments");
+    expect(o.allowances).not.toHaveProperty("departments");
   });
 });
 

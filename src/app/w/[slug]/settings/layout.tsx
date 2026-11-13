@@ -6,7 +6,6 @@ import { requireTenant } from "@/lib/tenancy";
 
 const SETTINGS_SECTIONS: { key: string; label: string; anyOf: Permission[] | null }[] = [
   { key: "company", label: "Company", anyOf: null },
-  { key: "departments", label: "Departments", anyOf: ["departments.manage"] },
   { key: "branches", label: "Branches", anyOf: ["branches.manage"] },
   { key: "work-locations", label: "Work locations", anyOf: ["work_locations.manage"] },
   { key: "holidays", label: "Holidays", anyOf: ["holidays.manage"] },

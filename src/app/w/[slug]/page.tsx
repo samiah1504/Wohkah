@@ -6,7 +6,6 @@ import {
   CalendarDaysIcon,
   CheckCircle2Icon,
   CircleIcon,
-  NetworkIcon,
   UserPlusIcon,
 } from "lucide-react";
 import { PageHeader } from "@/components/shell/page-header";
@@ -75,7 +74,7 @@ async function Home({ params, searchParams }: PageProps<"/w/[slug]">) {
             : sp.trial === "unavailable"
               ? "A free trial isn't available for this account (one trial per owner every 12 months), so you're on the Free plan. "
               : ""}
-          Start by adding your departments and branches, then invite your team.
+          Start by adding your branches, then invite your team.
         </Alert>
       ) : null}
 
@@ -128,14 +127,6 @@ function SetupChecklist({
       label: "Create your business account",
       detail: `${ctx.company.name} is set up.`,
       icon: CheckCircle2Icon,
-    },
-    {
-      done: summary.departments > 0,
-      label: "Add departments",
-      detail: `${summary.departments} active`,
-      href: `${base}/settings/departments`,
-      icon: NetworkIcon,
-      allowed: can(ctx, "departments.manage"),
     },
     {
       done: summary.branches > 0,

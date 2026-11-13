@@ -38,18 +38,6 @@ export function asAddress(value: unknown): Address {
   return value && typeof value === "object" && !Array.isArray(value) ? (value as Address) : {};
 }
 
-export async function listDepartments(ctx: TenantContext) {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("departments")
-    .select("id, name, description, parent_id, archived_at, created_at")
-    .eq("company_id", ctx.company.id)
-    .order("archived_at", { ascending: true, nullsFirst: true })
-    .order("name");
-  if (error) fail("departments", error);
-  return data;
-}
-
 export async function listBranches(ctx: TenantContext) {
   const supabase = await createClient();
   const { data, error } = await supabase
@@ -80,12 +68,7 @@ export async function listHolidays(ctx: TenantContext, year: number) {
 export async function getSetupSummary(ctx: TenantContext) {
   const supabase = await createClient();
   const cid = ctx.company.id;
-  const [departments, branches, members, invitations] = await Promise.all([
-    supabase
-      .from("departments")
-      .select("id", { count: "exact", head: true })
-      .eq("company_id", cid)
-      .is("archived_at", null),
+  const [branches, members, invitations] = await Promise.all([
     supabase
       .from("branches")
       .select("id", { count: "exact", head: true })
@@ -102,11 +85,10 @@ export async function getSetupSummary(ctx: TenantContext) {
       .eq("company_id", cid)
       .eq("status", "pending"),
   ]);
-  for (const [name, r] of Object.entries({ departments, branches, members, invitations })) {
+  for (const [name, r] of Object.entries({ branches, members, invitations })) {
     if (r.error) fail(name, r.error);
   }
   return {
-    departments: departments.count ?? 0,
     branches: branches.count ?? 0,
     members: members.count ?? 0,
     // Invitations are only visible to people who may view members.

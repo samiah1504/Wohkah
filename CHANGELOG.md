@@ -5,6 +5,21 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Branch allowances corrected; departments removed (2026-11-14)
+
+#### Changed
+- Included branches: Free 1, Starter up to 2, Growth up to 5, Business up to 10 (previously
+  1/1/1/unlimited), enforced in the database and shown on pricing cards, the comparison table, the
+  subscription page, the branch form and upgrade prompts. Work-location allowances are unchanged
+  and stay separate.
+- At the Business maximum the prompt says it's the most available, without inventing an upgrade.
+- Team Access is described as "Your business staff who can sign in to WOHKAH".
+
+#### Removed
+- Departments as a plan feature, limit, comparison row, usage meter, upgrade prompt, settings page,
+  setup step and marketing claim. Existing department records, columns, the permission and the
+  Department Manager role are kept; see docs/PRICING_AUDIT.md §7 for the proposed safe migration.
+
 ### Business language cleanup (2026-11-14)
 
 #### Changed

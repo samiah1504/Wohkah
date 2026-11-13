@@ -48,7 +48,7 @@ test("an invited person joins a second workspace and switches between them", asy
   const sidebar = personPage.getByRole("navigation", { name: "Business" }).first();
   await expect(sidebar.getByRole("link", { name: "Settings" })).toHaveCount(0);
   await expect(sidebar.getByRole("link", { name: "Team Access" })).toHaveCount(0);
-  await personPage.goto(`/w/${ownerSlug}/settings/departments`);
+  await personPage.goto(`/w/${ownerSlug}/settings/branches`);
   await expect(personPage.getByText("You don't have access to this page")).toBeVisible();
 
   // Switch to their own workspace, where they are the Owner.

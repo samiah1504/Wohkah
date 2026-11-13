@@ -64,8 +64,8 @@ export function limitPrompt(
       ? `The ${current?.name ?? "current"} plan includes ${limit} ${unit}. ${next.name} includes ${
           nextAllowance === null ? "unlimited" : nextAllowance
         } for ${naira(next.monthlyMinor)} a month.`
-      : `The ${current?.name ?? "current"} plan includes ${limit} ${unit}.`,
-    actionLabel: next ? `Upgrade to ${next.name}` : "See plans",
+      : `The ${current?.name ?? "current"} plan includes ${limit} ${unit}, the most available on any plan.`,
+    actionLabel: next ? `Upgrade to ${next.name}` : "View subscription",
     href: subscriptionHref(slug, next ? `plan=${next.code}` : ""),
   };
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { PLANS, entitlement, naira } from "@/lib/plans/catalog";
+import { PLANS, entitlement, FEATURE_KEYS, naira } from "@/lib/plans/catalog";
 import { extraLocationsNeeded, extraStaffNeeded, quote, QuoteError } from "@/lib/plans/quote";
 import { limitMessage, featureUpgradeMessage } from "@/lib/entitlements";
 
@@ -28,13 +28,14 @@ describe("approved plans", () => {
     }
   });
 
-  it("limits: locations 1/2/5/10, admins 1/2/5/10, branches 1/1/1/∞, departments 1/1/10/∞", () => {
+  it("limits: locations 1/2/5/10, admins 1/2/5/10, branches 1/2/5/10; no department limit", () => {
     const row = (k: Parameters<typeof entitlement>[1]) =>
       PLANS.map((p) => entitlement(p.code, k).limit);
     expect(row("work_locations")).toEqual([1, 2, 5, 10]);
     expect(row("admins")).toEqual([1, 2, 5, 10]);
-    expect(row("branches")).toEqual([1, 1, 1, null]);
-    expect(row("departments")).toEqual([1, 1, 10, null]);
+    expect(row("branches")).toEqual([1, 2, 5, 10]);
+    // Branches and work locations are separate entitlements.
+    expect(FEATURE_KEYS).not.toContain("departments");
     expect(row("storage_mb")).toEqual([500, 5120, 20480, 51200]);
   });
 
@@ -73,8 +74,15 @@ describe("quotes", () => {
 
 describe("upgrade prompts explain what, why, which plan, price and how", () => {
   it("limits", () => {
-    expect(limitMessage("branches", 1, "Growth")).toBe(
-      "The Growth plan allows up to 1 branch. Business includes unlimited branches for ₦15,000 a month. Upgrade from Settings → Subscription.",
+    expect(limitMessage("branches", 1, "Free")).toBe(
+      "The Free plan allows up to 1 branch. Starter includes 2 branches for ₦5,000 a month. Upgrade from Settings → Subscription.",
+    );
+    expect(limitMessage("branches", 5, "Growth")).toBe(
+      "The Growth plan allows up to 5 branches. Business includes 10 branches for ₦15,000 a month. Upgrade from Settings → Subscription.",
+    );
+    // Business is the highest plan: no upgrade is invented.
+    expect(limitMessage("branches", 10, "Business")).toBe(
+      "The Business plan allows up to 10 branches.",
     );
   });
   it("features", () => {

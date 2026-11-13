@@ -13,7 +13,7 @@ export const NAV = {
   access: {
     label: "Team Access",
     title: "Team Access",
-    description: "People who can sign in to your business account, and what they can do.",
+    description: "Your business staff who can sign in to WOHKAH, and what they can do.",
   },
   roles: {
     label: "Roles",

@@ -96,8 +96,8 @@ marked **"Coming soon"**, never as working features.
 | Over the allowance | Activation blocked. After a downgrade or trial expiry the owner chooses who stays active; the rest become `plan_suspended` (records kept, reactivatable). Nothing is silently deactivated or deleted | `select_active_staff()`, `reactivate_staff()`, `app.is_member()` |
 | Lower plan | Applied now if nothing is paid for; otherwise scheduled for the end of the paid period. Excess staff must be chosen first | `change_to_lower_plan()`, `sync_subscription()` |
 | Work locations included | 1 / 2 / 5 / 10. Extra: ₦1,000 a month or ₦12,000 a year each | `work_locations` trigger, `company_work_location_allowance()` |
-| Branches | 1 / 1 / 1 / unlimited (distinct from work locations) | `plan_features.branches` |
-| Departments | 1 / 1 / 10 / unlimited | `plan_features.departments` trigger |
+| Branches | **Corrected 2026-11-14:** Free 1, Starter up to 2, Growth up to 5, Business up to 10. No plan is unlimited. Separate from work locations | `plan_features.branches`, `branches_limit` trigger |
+| Departments | **Removed 2026-11-14.** Not a plan feature, limit or upgrade reason (the earlier 1 / 1 / 10 / unlimited allocation is withdrawn) | — |
 | Trial | 7 days, no card, Starter/Growth/Business only. One per workspace and one per owner every 12 months. Expiry moves the workspace to Free (not a lock), keeps all data, and requires staff selection above 3. Idempotent | `start_trial()`, `trial_grants`, `sync_subscription()` |
 | Reminders | In-app notifications and dashboard banner at 3 days, 1 day, expiry day and expired; deduplicated by `(user_id, dedupe_key)`. Email can be added later from the same rows | `app.notify_billing_admins()` |
 | Custom domains | Not offered. Removed from pricing, comparison and FAQs; `custom_domains` disabled on every plan | — |
@@ -106,3 +106,33 @@ marked **"Coming soon"**, never as working features.
 
 **Interpretation to confirm:** the Free plan may buy extra work locations (only extra staff were
 excluded for Free). This is how it is built; it is one flag (`allows_extra_work_locations`) to change.
+
+## 7. Departments removal: dependencies and proposed safe migration (2026-11-14)
+
+**Done now (non-destructive, migration `20261114000200_branches_and_departments.sql`):**
+removed from pricing cards, the comparison table, the subscription dashboard, upgrade prompts, plan
+entitlements (`plan_features`, `features`), the department limit trigger, the setup checklist,
+Settings (the old link now opens Settings → Company), the Roles page permission list and marketing
+copy. No department records were deleted.
+
+**Dependencies that still exist** (kept so nothing breaks):
+
+| Dependency | What uses it | Risk if removed |
+|---|---|---|
+| `public.departments` table (RLS, audit, no-cycle trigger) | Records businesses already created | Losing customer data |
+| `member_roles.department_id` and `scope_type = 'department'` | Database permission helper (`app.has_permission` with a department scope). The app only assigns company-wide roles today | Breaking any department-scoped role assignment that exists |
+| `employees.department_id` | Staff records (column only; no screen sets it) | Losing staff-to-department links if any exist |
+| `departments.manage` permission | Granted to Owner and some system roles; hidden from the Roles page | Removing it changes existing roles' permission sets |
+| **Department Manager** system role (`dept_manager`) | Still offered when inviting people and shown on the Roles page | People who hold it would lose their role |
+| `workspace_context()` role scope fields | Returned to the app (unused) | None, but cleanup touches the API |
+
+**Proposed safe migration (needs your approval before it runs):**
+1. Check the production and development databases for department data (department rows,
+   department-scoped roles, staff with a department, members holding Department Manager).
+2. Retire the **Department Manager** role: stop offering it for new invitations and new businesses;
+   move existing holders to **Operations Manager** (closest permissions) or to a role you choose,
+   recorded in the audit log.
+3. Convert any department-scoped role assignments to company-wide or branch-scoped ones.
+4. Revoke `departments.manage` from all roles (it already grants nothing visible).
+5. Keep the `departments` table and `employees.department_id` read-only as historical data for at
+   least one release, then archive or drop them in a later, separately approved migration.

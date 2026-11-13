@@ -13,7 +13,6 @@ import {
   branchSchema,
   companyProfileSchema,
   createCompanySchema,
-  departmentSchema,
   holidaySchema,
   idSchema,
   toAddress,
@@ -115,51 +114,6 @@ export async function updateCompanyProfile(_prev: FormState, formData: FormData)
         })
         .eq("id", ctx.company.id);
       check(error, "update company");
-    },
-  });
-}
-
-// ---------------------------------------------------------------------------
-// Departments
-// ---------------------------------------------------------------------------
-export async function saveDepartment(_prev: FormState, formData: FormData) {
-  return workspaceAction({
-    formData,
-    permission: "departments.manage",
-    schema: departmentSchema,
-    successMessage: "Department saved.",
-    run: async ({ ctx, data, supabase }) => {
-      const fields = {
-        name: data.name,
-        description: data.description,
-        parent_id: data.parentId ?? null,
-      };
-      const { error } = data.id
-        ? await supabase
-            .from("departments")
-            .update(fields)
-            .eq("id", data.id)
-            .eq("company_id", ctx.company.id)
-        : await supabase.from("departments").insert({ ...fields, company_id: ctx.company.id });
-      check(error, "save department");
-    },
-  });
-}
-
-export async function setDepartmentArchived(_prev: FormState, formData: FormData) {
-  const archive = formData.get("archive") === "true";
-  return workspaceAction({
-    formData,
-    permission: "departments.manage",
-    schema: idSchema,
-    successMessage: archive ? "Department archived." : "Department restored.",
-    run: async ({ ctx, data, supabase }) => {
-      const { error } = await supabase
-        .from("departments")
-        .update({ archived_at: archive ? new Date().toISOString() : null })
-        .eq("id", data.id)
-        .eq("company_id", ctx.company.id);
-      check(error, "archive department");
     },
   });
 }

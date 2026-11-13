@@ -1,5 +1,6 @@
 import "server-only";
 import { z } from "zod";
+import { RETIRED_PERMISSIONS } from "@/lib/permissions";
 import { createClient } from "@/lib/supabase/server";
 import type { TenantContext } from "@/lib/tenancy";
 
@@ -91,6 +92,7 @@ export async function listPermissionCatalog() {
   const { data, error } = await supabase
     .from("permissions")
     .select("key, module, description, is_sensitive")
+    .not("key", "in", `(${RETIRED_PERMISSIONS.join(",")})`)
     .order("sort_order");
   if (error) fail("permissions", error);
   return data;

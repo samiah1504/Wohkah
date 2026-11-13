@@ -118,19 +118,6 @@ export function workingDaysFrom(formData: FormData): number[] {
   return [...new Set(days)].sort();
 }
 
-export const departmentSchema = z.object({
-  id: z
-    .uuid()
-    .optional()
-    .or(z.literal("").transform(() => undefined)),
-  name: z.string().trim().min(1, "Enter a name.").max(100, "That name is too long."),
-  description: optionalText(500, "Description"),
-  parentId: z
-    .uuid("Choose a parent department.")
-    .optional()
-    .or(z.literal("").transform(() => undefined)),
-});
-
 export const branchSchema = z.object({
   id: z
     .uuid()

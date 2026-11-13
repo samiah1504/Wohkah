@@ -84,7 +84,7 @@ function gains(from: Plan, to: Plan): string[] {
   }).map((k) => {
     const e = entitlement(to.code, k);
     const info = FEATURE_INFO[k];
-    if (e.limit === null && ["admins", "branches", "departments", "work_locations"].includes(k)) {
+    if (e.limit === null && ["admins", "branches", "work_locations"].includes(k)) {
       return `Unlimited ${info.label.toLowerCase()}`;
     }
     if (e.limit !== null) {
@@ -491,7 +491,6 @@ function Usage({ o }: { o: SubscriptionOverview }) {
         />
         <Meter label="Administrators" used={o.usage.admins} limit={a.admins} />
         <Meter label="Branches" used={o.usage.branches} limit={a.branches} />
-        <Meter label="Departments" used={o.usage.departments} limit={a.departments} />
         <div className="bg-surface rounded-xl border p-4">
           <p className="text-muted-foreground text-xs font-medium">File storage</p>
           <p className="font-heading text-walnut mt-1 text-xl font-extrabold">

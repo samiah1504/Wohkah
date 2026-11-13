@@ -30,7 +30,7 @@ export const FAQS: { q: string; text: string }[] = [
   },
   {
     q: "Can I manage multiple branches?",
-    text: "Yes, available now. You can add your branches, departments and approved work locations today. Free, Starter and Growth include one branch; Business includes unlimited branches. A branch can have several work locations, and every plan can add extra work locations.",
+    text: "Yes, available now. You can add your branches and approved work locations today. Free includes 1 branch, Starter up to 2, Growth up to 5 and Business up to 10. Branches and work locations are separate: a branch can have several approved work locations, and every plan can add extra work locations.",
   },
   {
     q: "Can staff access their own portal?",

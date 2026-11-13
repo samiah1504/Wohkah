@@ -3,18 +3,12 @@
 import { useActionState } from "react";
 import { PencilIcon, PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Field, Input, NativeSelect, Textarea } from "@/components/ui/form-controls";
+import { Field, Input, NativeSelect } from "@/components/ui/form-controls";
 import { ActionDialog } from "@/components/action-forms";
 import { FormMessage, SubmitButton, errorProps, useSuccessToast } from "@/components/forms";
 import { initialFormState, type FormState } from "@/lib/forms";
 import { COUNTRIES, CURRENCIES, INDUSTRIES, SIZE_BANDS, TIMEZONES, WEEKDAYS } from "../constants";
-import {
-  addHoliday,
-  saveBranch,
-  saveDepartment,
-  saveWorkLocation,
-  updateCompanyProfile,
-} from "../server/actions";
+import { addHoliday, saveBranch, saveWorkLocation, updateCompanyProfile } from "../server/actions";
 
 type Address = {
   line1?: string;
@@ -310,88 +304,6 @@ export function CompanyProfileForm({
         </p>
       )}
     </form>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Departments
-// ---------------------------------------------------------------------------
-type Dept = { id: string; name: string; description: string | null; parent_id: string | null };
-
-export function DepartmentDialog({
-  slug,
-  department,
-  departments,
-  disabledReason,
-}: {
-  slug: string;
-  department?: Dept;
-  departments: Dept[];
-  disabledReason?: string;
-}) {
-  const parents = departments.filter((d) => d.id !== department?.id);
-  return (
-    <ActionDialog
-      title={department ? "Edit department" : "Add a department"}
-      action={saveDepartment}
-      hidden={{ slug, id: department?.id ?? "" }}
-      trigger={
-        department ? (
-          <Button variant="ghost" size="sm" aria-label={`Edit ${department.name}`}>
-            <PencilIcon /> Edit
-          </Button>
-        ) : (
-          <Button disabled={Boolean(disabledReason)} title={disabledReason}>
-            <PlusIcon /> Add department
-          </Button>
-        )
-      }
-    >
-      {(state) => (
-        <>
-          <Field label="Name" htmlFor="dept-name" error={state.fieldErrors?.name}>
-            <Input
-              id="dept-name"
-              name="name"
-              defaultValue={state.values?.name ?? department?.name ?? ""}
-              autoFocus
-              {...errorProps(state, "name")}
-            />
-          </Field>
-          <Field
-            label="Part of"
-            htmlFor="dept-parent"
-            hint="Optional: place it under another department."
-            error={state.fieldErrors?.parentId}
-          >
-            <NativeSelect
-              id="dept-parent"
-              name="parentId"
-              defaultValue={state.values?.parentId ?? department?.parent_id ?? ""}
-            >
-              <option value="">— Top level —</option>
-              {parents.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name}
-                </option>
-              ))}
-            </NativeSelect>
-          </Field>
-          <Field
-            label="Description"
-            htmlFor="dept-description"
-            error={state.fieldErrors?.description}
-          >
-            <Textarea
-              id="dept-description"
-              name="description"
-              rows={3}
-              defaultValue={state.values?.description ?? department?.description ?? ""}
-            />
-          </Field>
-        </>
-      )}
-    </ActionDialog>
   );
 }
 
