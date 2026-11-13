@@ -8,13 +8,15 @@ import {
   testEmail,
 } from "./helpers";
 
-test("a new user registers, confirms their email and creates a workspace", async ({ browser }) => {
+test("a new user registers, confirms their email and creates a business account", async ({
+  browser,
+}) => {
   const page = await newSession(browser);
   const email = testEmail("founder");
 
   await page.goto("/register");
   await page.getByLabel("Full name").fill("Ada Founder");
-  await page.getByLabel("Work email").fill(email);
+  await page.getByLabel("Email address").fill(email);
   await page.getByLabel("Password").fill(PASSWORD);
   await page.getByRole("button", { name: "Create account" }).click();
   await expect(page.getByRole("heading", { name: "Check your email" })).toBeVisible();
@@ -27,9 +29,9 @@ test("a new user registers, confirms their email and creates a workspace", async
 
   const company = `Founder Foods ${Date.now()}`;
   await page.getByLabel("Company name").fill(company);
-  await page.getByRole("button", { name: "Create workspace" }).click();
+  await page.getByRole("button", { name: "Create your business account" }).click();
   await page.waitForURL(/\/w\/[a-z0-9-]+\?welcome=1/);
-  await expect(page.getByText("Your workspace is ready")).toBeVisible();
+  await expect(page.getByText("Your business account is ready")).toBeVisible();
   await expect(page.getByRole("heading", { name: `Welcome to ${company}` })).toBeVisible();
   await expect(page.getByText("Owner").first()).toBeVisible();
 });
@@ -39,18 +41,20 @@ test("sign-in errors don't reveal whether an account exists", async ({ browser }
   const user = await createConfirmedUser("Bola Login");
 
   await page.goto("/login");
-  await page.getByLabel("Work email").fill(user.email);
+  await expect(page.getByText("Sign in to your WOHKAH account.")).toBeVisible();
+  await expect(page.getByText("Welcome back")).toBeVisible();
+  await page.getByLabel("Email address").fill(user.email);
   await page.getByLabel("Password").fill("Wrong-password-123");
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page.getByText("The email or password is incorrect.")).toBeVisible();
 
-  await page.getByLabel("Work email").fill(testEmail("nobody"));
+  await page.getByLabel("Email address").fill(testEmail("nobody"));
   await page.getByLabel("Password").fill("Wrong-password-123");
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page.getByText("The email or password is incorrect.")).toBeVisible();
 
   await page.goto("/forgot-password");
-  await page.getByLabel("Work email").fill(testEmail("nobody"));
+  await page.getByLabel("Email address").fill(testEmail("nobody"));
   await page.getByRole("button", { name: "Send reset link" }).click();
   await expect(page.getByText(/If an account exists for that email/)).toBeVisible();
 });
@@ -76,7 +80,7 @@ test("password reset link lets the user choose a new password", async ({ browser
   const user = await createConfirmedUser("Dayo Reset");
 
   await page.goto("/forgot-password");
-  await page.getByLabel("Work email").fill(user.email);
+  await page.getByLabel("Email address").fill(user.email);
   await page.getByRole("button", { name: "Send reset link" }).click();
   await expect(page.getByText(/If an account exists for that email/)).toBeVisible();
 

@@ -17,7 +17,11 @@ const SETTINGS_SECTIONS: { key: string; label: string; anyOf: Permission[] | nul
 export default function SettingsLayout({ children, params }: LayoutProps<"/w/[slug]/settings">) {
   return (
     <>
-      <PageHeader title="Settings" description="Workspace configuration." className="mb-4" />
+      <PageHeader
+        title="Settings"
+        description="Your business details and how WOHKAH is set up for you."
+        className="mb-4"
+      />
       <Suspense fallback={<div className="mb-6 h-10" />}>
         <Tabs params={params} />
       </Suspense>

@@ -7,8 +7,15 @@ WOHKAH is a staff management platform for small business owners (about 5–50 st
 department). It brings staff records, attendance, salaries, leave, tasks, messages and documents
 together in one simple place.
 
-Customer-facing wording follows [PRODUCT_LANGUAGE_AND_POSITIONING.md](PRODUCT_LANGUAGE_AND_POSITIONING.md).
-Internal code keeps technical names (`employees`, `payroll_runs` and so on).
+> **Before you build or change anything customers can read** (pages, forms, buttons, errors,
+> emails, notifications, database-generated text), read
+> [PRODUCT_LANGUAGE_AND_POSITIONING.md](PRODUCT_LANGUAGE_AND_POSITIONING.md). This applies to every
+> developer and every AI coding agent. Customers see "business account", "staff", "salaries",
+> "email address", never "workspace", "employees", "payroll" or "work email".
+> `tests/unit/language.test.ts` fails the build if disallowed wording appears in customer-facing
+> source text.
+
+Internal code keeps technical names (`employees`, `payroll_runs`, `/w/[slug]` workspaces and so on).
 
 A product of **Crift Concepts**.
 
@@ -17,7 +24,7 @@ A product of **Crift Concepts**.
 ## Status
 
 **Phase 1: foundation and multi-tenancy.** Accounts, sign-in with optional two-step verification,
-company workspaces, departments, branches, holidays, members, invitations, roles and permissions,
+business accounts, departments, branches, holidays, members, invitations, roles and permissions,
 plan entitlements and the audit log. See [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md).
 
 | Document | Purpose |

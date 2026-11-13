@@ -145,8 +145,9 @@ export function CompanyProfileForm({
               />
             </Field>
             <Field
-              label="Business email"
+              label="Business email address"
               htmlFor="businessEmail"
+              hint="Any email address your business uses, including Gmail or Yahoo."
               error={state.fieldErrors?.businessEmail}
             >
               <Input

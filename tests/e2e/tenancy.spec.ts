@@ -45,7 +45,7 @@ test("an invited person joins a second workspace and switches between them", asy
 
   // As a Staff Member there: the staff portal, no administration.
   await expect(personPage.getByText("Your staff portal")).toBeVisible();
-  const sidebar = personPage.getByRole("navigation", { name: "Workspace" }).first();
+  const sidebar = personPage.getByRole("navigation", { name: "Business" }).first();
   await expect(sidebar.getByRole("link", { name: "Settings" })).toHaveCount(0);
   await expect(sidebar.getByRole("link", { name: "Team Access" })).toHaveCount(0);
   await personPage.goto(`/w/${ownerSlug}/settings/departments`);
@@ -64,7 +64,7 @@ test("an invited person joins a second workspace and switches between them", asy
   ).toBeVisible();
   await expect(
     personPage
-      .getByRole("navigation", { name: "Workspace" })
+      .getByRole("navigation", { name: "Business" })
       .first()
       .getByRole("link", { name: "Settings" }),
   ).toBeVisible();
@@ -80,7 +80,7 @@ test("the staff portal is usable on a phone", async ({ browser }) => {
   const page = await newSession(browser, { ...devices["Pixel 7"] });
   await login(page, owner.email);
   await page.goto(`/w/${slug}`);
-  const bottomNav = page.getByRole("navigation", { name: "Workspace" }).last();
+  const bottomNav = page.getByRole("navigation", { name: "Business" }).last();
   await expect(bottomNav).toBeVisible();
   await expect(bottomNav.getByRole("link", { name: "Home" })).toBeVisible();
   await expect(bottomNav.getByRole("link", { name: "Profile" })).toBeVisible();

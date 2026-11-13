@@ -19,7 +19,7 @@ export function LoginForm({ next, defaultEmail }: { next?: string; defaultEmail?
     <form action={action} className="grid gap-4" noValidate>
       <FormMessage state={state} />
       <input type="hidden" name="next" value={next ?? ""} />
-      <Field label="Work email" htmlFor="email" error={state.fieldErrors?.email}>
+      <Field label="Email address" htmlFor="email" error={state.fieldErrors?.email}>
         <Input
           id="email"
           name="email"
@@ -66,7 +66,7 @@ export function RegisterForm({ next, defaultEmail }: { next?: string; defaultEma
           {...errorProps(state, "fullName")}
         />
       </Field>
-      <Field label="Work email" htmlFor="email" error={state.fieldErrors?.email}>
+      <Field label="Email address" htmlFor="email" error={state.fieldErrors?.email}>
         <Input
           id="email"
           name="email"
@@ -106,7 +106,7 @@ export function ForgotPasswordForm() {
   return (
     <form action={action} className="grid gap-4" noValidate>
       <FormMessage state={state} />
-      <Field label="Work email" htmlFor="email" error={state.fieldErrors?.email}>
+      <Field label="Email address" htmlFor="email" error={state.fieldErrors?.email}>
         <Input
           id="email"
           name="email"

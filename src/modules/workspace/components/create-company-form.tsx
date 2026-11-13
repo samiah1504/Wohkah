@@ -49,9 +49,9 @@ export function CreateCompanyForm({
         />
       </Field>
       <Field
-        label="Workspace address"
+        label="Business web address"
         htmlFor="slug"
-        hint={`Your workspace link: ${rootDomain}/w/${slug || "your-company"}`}
+        hint={`Your business link: ${rootDomain}/w/${slug || "your-company"}`}
         error={state.fieldErrors?.slug}
       >
         <Input
@@ -166,7 +166,9 @@ export function CreateCompanyForm({
           ))}
         </div>
       </fieldset>
-      <SubmitButton pendingLabel="Creating workspace…">Create workspace</SubmitButton>
+      <SubmitButton pendingLabel="Creating your business account…">
+        Create your business account
+      </SubmitButton>
     </form>
   );
 }

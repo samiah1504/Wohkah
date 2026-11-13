@@ -46,7 +46,7 @@ export function NoAccess() {
     <EmptyState
       icon={<LockIcon />}
       title="You don't have access to this page"
-      description="Ask a workspace owner or administrator if you need it."
+      description="Ask the business owner if you need it."
     />
   );
 }

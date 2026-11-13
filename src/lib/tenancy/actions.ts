@@ -44,7 +44,7 @@ export async function workspaceAction<S extends z.ZodType>({
   const values = echoValues(formData);
   const slug = String(formData.get("slug") ?? "");
   const ctx = await getTenant(slug);
-  if (!ctx) return errorState("This workspace isn't available.", { values });
+  if (!ctx) return errorState("This business account isn't available.", { values });
   if (permission && !can(ctx, permission)) {
     return errorState("You don't have permission to do that.", { values });
   }

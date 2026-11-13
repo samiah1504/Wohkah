@@ -44,7 +44,7 @@ function isActive(pathname: string, item: NavItem): boolean {
 export function SidebarNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
   return (
-    <nav aria-label="Workspace" className="grid gap-1">
+    <nav aria-label="Business" className="grid gap-1">
       {items.map((item) => {
         const Icon = ICONS[item.key];
         const active = isActive(pathname, item);
@@ -74,7 +74,7 @@ export function BottomNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
   return (
     <nav
-      aria-label="Workspace"
+      aria-label="Business"
       className="bg-surface fixed inset-x-0 bottom-0 z-40 border-t pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <ul
@@ -131,7 +131,7 @@ export function WorkspaceSwitcher({
         <ChevronsUpDownIcon className="size-4 shrink-0 opacity-70" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64">
-        <DropdownMenuLabel>Switch workspace</DropdownMenuLabel>
+        <DropdownMenuLabel>Switch business</DropdownMenuLabel>
         {workspaces.map((w) => (
           <DropdownMenuItem key={w.slug} asChild>
             <Link href={`/w/${w.slug}`}>
@@ -148,7 +148,7 @@ export function WorkspaceSwitcher({
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/onboarding">
-            <PlusIcon /> Create a workspace
+            <PlusIcon /> Add another business
           </Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

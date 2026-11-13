@@ -85,7 +85,7 @@ export const getTenant = cache(async (slug: string): Promise<TenantContext | nul
   const { data, error } = await supabase.rpc("workspace_context", { p_slug: slug });
   if (error) {
     console.error("[tenancy] workspace_context failed", { code: error.code });
-    throw new Error("Could not load the workspace.");
+    throw new Error("Could not load the business account.");
   }
   if (!data) return null;
 
@@ -145,7 +145,7 @@ export const listMyWorkspaces = cache(async (): Promise<WorkspaceSummary[]> => {
     .order("joined_at", { ascending: true });
   if (error) {
     console.error("[tenancy] listMyWorkspaces failed", { code: error.code });
-    throw new Error("Could not load your workspaces.");
+    throw new Error("Could not load your businesses.");
   }
   return (data ?? []).map((row) => ({
     slug: row.company.slug,

@@ -18,6 +18,7 @@ updated whenever a migration lands.
 | `20261110000800_member_directory.sql` | `workspace_member_directory` (emails only for `members.view`) |
 
 | `20261113000100_pricing_trials_allowances.sql` | Approved prices, allowances and add-ons; generated feature matrix; Scale withdrawn; `employees` (minimal staff records with `plan_suspended`), `work_locations`; `trial_grants`, `subscription_events`, `notifications`, `billing_invoices`, `payment_transactions`, `webhook_events`; trial, selection, downgrade, quote, checkout and verified-payment functions; optional hourly `pg_cron` sync |
+| `20261114000100_business_language.sql` | Data only: plain-language permission descriptions, Owner role description, trial-ended notification text |
 
 Each file documents its rollback steps in its header. Production is forward-only.
 

@@ -25,7 +25,7 @@ export default function LoginPage(props: PageProps<"/login">) {
     <Card>
       <CardHeader>
         <CardTitle className="text-2xl">Welcome back</CardTitle>
-        <CardDescription>Sign in to your WOHKAH workspace.</CardDescription>
+        <CardDescription>Sign in to your WOHKAH account.</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
         <Suspense fallback={<Skeleton className="h-64" />}>

@@ -34,7 +34,7 @@ export const FAQS: { q: string; text: string }[] = [
   },
   {
     q: "Can staff access their own portal?",
-    text: "Yes. When you invite a staff member, they get their own login. Today they can sign in to your workspace. Their portal will grow to include attendance, leave requests, salary slips and tasks as those features are released.",
+    text: "Yes. When you invite a staff member, they get their own login. Today they can sign in to your business account. Their portal will grow to include attendance, leave requests, salary slips and tasks as those features are released.",
   },
   {
     q: "Can I use WOHKAH on my phone?",
@@ -42,7 +42,7 @@ export const FAQS: { q: string; text: string }[] = [
   },
   {
     q: "Is there a free trial?",
-    text: "Yes. You can try Starter, Growth or Business free for 7 days, with no card required. There's one free trial per workspace. When the trial ends, your workspace moves to the Free plan unless you subscribe, and none of your records are deleted.",
+    text: "Yes. You can try Starter, Growth or Business free for 7 days, with no card required. There's one free trial per business. When the trial ends, your business moves to the Free plan unless you subscribe, and none of your records are deleted.",
   },
   {
     q: "Can I upgrade my subscription?",

@@ -57,7 +57,7 @@ export function UserMenu({
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/workspaces?all=1">
-            <LayoutGridIcon /> All workspaces
+            <LayoutGridIcon /> All your businesses
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

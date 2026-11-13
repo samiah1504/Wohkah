@@ -178,7 +178,7 @@ export default function SubscriptionPage(props: PageProps<"/w/[slug]/settings/su
               eligibility.reason === "owner_trial_used" &&
               plan.code === "free" ? (
                 <p className="text-muted-foreground mt-3 text-xs">
-                  The free trial is available once per workspace and once per owner every 12 months.
+                  The free trial is available once per business and once per owner every 12 months.
                 </p>
               ) : null}
             </section>
@@ -337,7 +337,7 @@ function CurrentPlan({
               <p className="text-foreground/80 mt-1 text-sm">
                 Started {formatDate(trial.started_at.slice(0, 10))}. Ends{" "}
                 {formatDateTime(trial.ends_at, timezone)}. When it ends without a subscription your
-                workspace moves to the Free plan. Nothing is deleted.
+                business moves to the Free plan. Nothing is deleted.
               </p>
             </div>
             {canManage ? (

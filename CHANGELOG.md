@@ -5,6 +5,27 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Business language cleanup (2026-11-14)
+
+#### Changed
+- Customers now see "business account" or "business" instead of "workspace", and "Email address"
+  instead of "Work email", across sign-in, registration, password recovery, invitations (page and
+  email), onboarding, the business switcher, home, settings, Team Access, roles, subscription,
+  errors, the 404 page, the public website, FAQs and terms.
+- Login: "Sign in to your WOHKAH account."
+- Roles page: permission groups use plain headings ("Business setup", "Team access") and plainer
+  permission descriptions. The Owner role, the trial-ended notification and the owner-rule error
+  no longer mention a workspace (migration `20261114000100_business_language.sql`, data only).
+- Company profile: "Business email address", with a note that any email (Gmail, Yahoo) is fine.
+
+#### Added
+- `tests/unit/language.test.ts`: fails the build when disallowed wording appears in customer-facing
+  source text. "workspace" and "work email" added to `DISALLOWED_TERMS`.
+- The rendered-text language test now also covers password recovery, the business list and mobile
+  layouts.
+- Developer instructions (AGENTS.md, CLAUDE.md, README) require reading
+  PRODUCT_LANGUAGE_AND_POSITIONING.md before changing any customer-facing interface.
+
 ### Pricing, trials and subscriptions (2026-11-13)
 
 #### Added

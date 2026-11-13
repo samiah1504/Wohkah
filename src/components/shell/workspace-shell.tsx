@@ -73,7 +73,7 @@ export async function WorkspaceShell({
         </header>
         {ctx.company.status !== "active" ? (
           <Alert variant="destructive" className="rounded-none border-x-0 border-t-0">
-            This workspace is {ctx.company.status}. Contact WOHKAH support for help.
+            This business account is {ctx.company.status}. Contact WOHKAH support for help.
           </Alert>
         ) : null}
         <SubscriptionBanner ctx={ctx} />

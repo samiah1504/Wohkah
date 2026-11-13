@@ -12,7 +12,7 @@ export function UserShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen flex-col">
       <header className="bg-surface border-b">
         <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
-          <Link href="/workspaces" aria-label="Your workspaces">
+          <Link href="/workspaces" aria-label="Your businesses">
             <Logo />
           </Link>
           <Suspense fallback={<Skeleton className="size-8 rounded-full" />}>

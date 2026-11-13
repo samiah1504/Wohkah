@@ -32,7 +32,7 @@ export default function AccountPage() {
     <>
       <PageHeader
         title="Account and security"
-        description="Your personal login, shared across every workspace you belong to."
+        description="Your personal login, used for every business you work with."
       />
       <div className="grid gap-6">
         <Suspense fallback={<Skeleton className="h-96" />}>
@@ -77,7 +77,7 @@ async function AccountSections() {
         <CardHeader>
           <CardTitle>Profile</CardTitle>
           <CardDescription>
-            Your name is visible to colleagues in workspaces you share.
+            Your name is visible to the people you work with on WOHKAH.
           </CardDescription>
         </CardHeader>
         <CardContent>

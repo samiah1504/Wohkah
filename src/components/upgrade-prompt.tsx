@@ -29,7 +29,7 @@ export function UpgradePrompt({
         <p className="text-foreground/80 mt-1 text-sm">{prompt.body}</p>
         {!canManage ? (
           <p className="text-muted-foreground mt-1 text-xs">
-            Ask the workspace owner to change the subscription.
+            Ask the business owner to change the subscription.
           </p>
         ) : null}
       </div>

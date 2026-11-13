@@ -19,7 +19,7 @@ import { formatDate } from "@/lib/dates";
 import { AcceptInvitationForm } from "@/modules/access/components/accept-invitation";
 import { signOut } from "@/modules/identity/server/actions";
 
-export const metadata: Metadata = { title: "Workspace invitation", robots: { index: false } };
+export const metadata: Metadata = { title: "Business invitation", robots: { index: false } };
 
 export default function InvitePage(props: PageProps<"/invite/[token]">) {
   return (
@@ -57,8 +57,8 @@ async function Invitation({ params }: { params: PageProps<"/invite/[token]">["pa
       <CardHeader>
         <CardTitle className="text-2xl">Join {invite.company_name}</CardTitle>
         <CardDescription>
-          You&apos;ve been invited to the {invite.company_name} workspace on WOHKAH. This invitation
-          is for <strong className="text-foreground">{invite.email}</strong> and expires on{" "}
+          You&apos;ve been invited to join {invite.company_name} on WOHKAH. This invitation is for{" "}
+          <strong className="text-foreground">{invite.email}</strong> and expires on{" "}
           {formatDate(invite.expires_at.slice(0, 10))}.
         </CardDescription>
       </CardHeader>

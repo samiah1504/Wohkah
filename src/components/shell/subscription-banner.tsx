@@ -33,7 +33,7 @@ export async function SubscriptionBanner({ ctx }: { ctx: TenantContext }) {
   } else if (o.trial?.outcome === "expired" && o.plan_code === "free") {
     const plan = getPlan(o.trial.plan_code)?.name ?? "paid";
     if (msUntil(o.trial.ends_at) > -14 * 86_400_000) {
-      message = `Your ${plan} free trial has ended and your workspace is on the Free plan. Your records are safe.`;
+      message = `Your ${plan} free trial has ended and your business is on the Free plan. Your records are safe.`;
     }
   }
   if (!message) return null;

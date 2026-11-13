@@ -12,14 +12,14 @@ import { CreateCompanyForm } from "@/modules/workspace/components/create-company
 import { env } from "@/lib/env";
 import { getPlan } from "@/lib/plans/catalog";
 
-export const metadata: Metadata = { title: "Create a workspace" };
+export const metadata: Metadata = { title: "Create your business account" };
 
 export default function OnboardingPage(props: PageProps<"/onboarding">) {
   return (
     <div className="mx-auto max-w-2xl">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Set up your company workspace</CardTitle>
+          <CardTitle className="text-2xl">Create your business account</CardTitle>
           <CardDescription>
             You&apos;ll be the owner. Start on the Free plan, or try a paid plan free for 7 days
             with no card. You can change these details later.

@@ -49,7 +49,7 @@ const FIELD_LABELS: Record<string, string> = {
   legal_name: "Legal name",
   description: "Description",
   email: "Email",
-  business_email: "Business email",
+  business_email: "Business email address",
   phone: "Phone",
   website: "Website",
   industry: "Industry",
@@ -127,8 +127,8 @@ export default function AuditPage(props: PageProps<"/w/[slug]/settings/audit">) 
         return (
           <div className="grid gap-4">
             <p className="text-muted-foreground text-sm">
-              Every change to workspace settings, members and roles is recorded here and can&apos;t
-              be edited or deleted.
+              Every change to your business settings, team access and roles is recorded here and
+              can&apos;t be edited or deleted.
             </p>
             <Table>
               <TableHeader>

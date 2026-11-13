@@ -146,9 +146,9 @@ export const MORE_FEATURES: MarketingFeature[] = [
 
 /** What a business can do in WOHKAH today (Phase 1). Used by the FAQ and "available now" notes. */
 export const AVAILABLE_NOW = [
-  "Create your business workspace",
+  "Create your business account",
   "Set up departments, branches and public holidays",
   "Invite managers and staff, with roles that control what each person can see",
-  "A record of every change made in your workspace",
+  "A record of every change made in your business account",
   "Two-step sign-in for extra security",
 ] as const;

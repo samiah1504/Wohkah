@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, Card, Skeleton } from "@/components/ui/display";
 import { listMyWorkspaces } from "@/lib/tenancy";
 
-export const metadata: Metadata = { title: "Your workspaces" };
+export const metadata: Metadata = { title: "Your businesses" };
 
 const NOTICES: Record<string, string> = {
   "password-updated": "Your password has been updated.",
@@ -19,12 +19,12 @@ export default function WorkspacesPage(props: PageProps<"/workspaces">) {
   return (
     <>
       <PageHeader
-        title="Your workspaces"
-        description="Each workspace belongs to one company. Your login works across all of them."
+        title="Your businesses"
+        description="Every business you work with on WOHKAH. One login works for all of them."
         actions={
           <Button asChild>
             <Link href="/onboarding">
-              <PlusIcon /> Create a workspace
+              <PlusIcon /> Add another business
             </Link>
           </Button>
         }
@@ -55,8 +55,8 @@ async function WorkspaceList({
       {notice ? <Alert variant="success">{notice}</Alert> : null}
       {workspaces.length === 0 ? (
         <Card className="text-muted-foreground p-6 text-sm">
-          You&apos;re not a member of any workspace yet. Create one, or ask your employer to invite
-          you.
+          You&apos;re not part of any business on WOHKAH yet. Create your business account, or ask
+          your employer to invite you.
         </Card>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2">

@@ -69,7 +69,7 @@ export async function inviteMember(_prev: InviteState, formData: FormData): Prom
       const email = brandedEmail({
         heading: `Join ${ctx.company.name} on WOHKAH`,
         paragraphs: [
-          `${who} has invited you to the ${ctx.company.name} workspace on WOHKAH.`,
+          `${who} has invited you to join ${ctx.company.name} on WOHKAH.`,
           "Accept the invitation to set up your account. You'll use it to see your work information, and more as your company enables it.",
         ],
         cta: { label: "Accept invitation", url: link },
@@ -139,8 +139,8 @@ export async function setMemberStatus(_prev: FormState, formData: FormData) {
   const status = String(formData.get("status"));
   const messages: Record<string, string> = {
     active: "Member reactivated.",
-    suspended: "Member suspended. They can no longer access this workspace.",
-    removed: "Member removed from the workspace.",
+    suspended: "Access suspended. They can no longer sign in to your business account.",
+    removed: "Access removed. They can no longer sign in to your business account.",
   };
   return workspaceAction({
     formData,

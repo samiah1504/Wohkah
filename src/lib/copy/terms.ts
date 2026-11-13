@@ -6,7 +6,10 @@
 
 /** Display names and descriptions for the six system roles, keyed by system_key. */
 export const SYSTEM_ROLE_COPY = {
-  owner: { name: "Owner", description: "Full control of the workspace, billing and roles." },
+  owner: {
+    name: "Owner",
+    description: "Full control of the business account, subscription and roles.",
+  },
   hr_admin: {
     name: "Staff Manager",
     description: "Manages staff records, invitations and day-to-day staff matters.",
@@ -27,6 +30,19 @@ export const SYSTEM_ROLE_COPY = {
 } as const;
 
 export type SystemRoleKey = keyof typeof SYSTEM_ROLE_COPY;
+
+/** Headings for permission groups (the database's internal module keys). */
+const PERMISSION_GROUP_LABELS: Record<string, string> = {
+  workspace: "Business setup",
+  access: "Team access",
+  staff: "Staff",
+  billing: "Subscription",
+  security: "Security",
+};
+
+export function permissionGroupLabel(module: string): string {
+  return PERMISSION_GROUP_LABELS[module] ?? module.replace(/_/g, " ");
+}
 
 /** "1 staff member" / "5 staff". */
 export function staffCount(n: number): string {
@@ -49,4 +65,6 @@ export const DISALLOWED_TERMS = [
   /\bonboarding\b/i,
   /\bself-service\b/i,
   /\bgeofenc/i,
+  /\bworkspaces?\b/i, // say "business account" or "business"
+  /\bwork e-?mail\b/i, // say "email address"
 ] as const;

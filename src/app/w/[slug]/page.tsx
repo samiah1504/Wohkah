@@ -69,7 +69,7 @@ async function Home({ params, searchParams }: PageProps<"/w/[slug]">) {
 
       {sp.welcome === "1" ? (
         <Alert variant="success" className="mb-6">
-          Your workspace is ready.{" "}
+          Your business account is ready.{" "}
           {sp.trial === "started"
             ? "Your 7-day free trial has started. No card needed. "
             : sp.trial === "unavailable"
@@ -125,7 +125,7 @@ function SetupChecklist({
   const steps = [
     {
       done: true,
-      label: "Create your workspace",
+      label: "Create your business account",
       detail: `${ctx.company.name} is set up.`,
       icon: CheckCircle2Icon,
     },
@@ -161,7 +161,7 @@ function SetupChecklist({
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
-        <CardTitle>Get your workspace ready</CardTitle>
+        <CardTitle>Get your business ready</CardTitle>
         <CardDescription>
           {doneCount} of {steps.length} steps complete
         </CardDescription>

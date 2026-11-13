@@ -1,6 +1,6 @@
 /**
  * PRODUCT_LANGUAGE_AND_POSITIONING.md is enforced on what customers actually
- * see: the rendered text of public pages and workspace screens.
+ * see: the rendered text of public pages and signed-in screens (desktop and mobile).
  */
 import { expect, test, type Page } from "@playwright/test";
 import { DISALLOWED_TERMS } from "../../src/lib/copy/terms";
@@ -19,7 +19,16 @@ async function visibleTextIssues(page: Page): Promise<string[]> {
 
 test("public pages use small-business language", async ({ page }) => {
   const issues: string[] = [];
-  for (const path of ["/", "/about", "/contact", "/privacy", "/terms", "/login", "/register"]) {
+  for (const path of [
+    "/",
+    "/about",
+    "/contact",
+    "/privacy",
+    "/terms",
+    "/login",
+    "/register",
+    "/forgot-password",
+  ]) {
     await page.goto(path);
     // Open every FAQ so its answer text is checked too.
     for (const d of await page.locator("details").all())
@@ -29,7 +38,7 @@ test("public pages use small-business language", async ({ page }) => {
   expect(issues).toEqual([]);
 });
 
-test("workspace screens use small-business language", async ({ browser }) => {
+test("signed-in screens use small-business language", async ({ browser }) => {
   const owner = await createConfirmedUser("Language Owner");
   const slug = await createWorkspaceAs(owner.email, "Language Lane Stores");
   const page = await newSession(browser);
@@ -50,7 +59,15 @@ test("workspace screens use small-business language", async ({ browser }) => {
     `/w/${slug}/settings/audit`,
     "/account",
     "/onboarding",
+    "/workspaces?all=1",
   ]) {
+    await page.goto(path);
+    await page.waitForLoadState("networkidle");
+    issues.push(...(await visibleTextIssues(page)));
+  }
+  // Mobile layout: header, switcher and bottom navigation.
+  await page.setViewportSize({ width: 390, height: 844 });
+  for (const path of [`/w/${slug}`, `/w/${slug}/staff`, `/w/${slug}/settings/subscription`]) {
     await page.goto(path);
     await page.waitForLoadState("networkidle");
     issues.push(...(await visibleTextIssues(page)));

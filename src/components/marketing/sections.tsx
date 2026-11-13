@@ -361,7 +361,7 @@ export function WhoItsFor() {
 // ---------------------------------------------------------------------------
 const STEPS = [
   {
-    title: "Create your business workspace",
+    title: "Create your business account",
     text: "Sign up and set up your business in a few minutes. It's free to start.",
   },
   {
@@ -408,7 +408,7 @@ export function HowItWorks() {
         <div className="mt-10 flex justify-center">
           <Button asChild size="lg">
             <Link href="/register">
-              Create your workspace <ArrowRightIcon />
+              Create your business account <ArrowRightIcon />
             </Link>
           </Button>
         </div>
@@ -475,7 +475,7 @@ export function FinalCta() {
         <div className="relative mt-8 flex flex-col items-center gap-4">
           <Button asChild size="lg" className="h-12 px-7 text-base">
             <Link href="/register">
-              Create Your Free Workspace <ArrowRightIcon />
+              Create Your Free Business Account <ArrowRightIcon />
             </Link>
           </Button>
           <p className="text-sand/80 text-sm">

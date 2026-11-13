@@ -21,7 +21,7 @@ export default function TermsPage() {
       }
     >
       <section>
-        <h2>Your workspace and your information</h2>
+        <h2>Your business account and your information</h2>
         <ul className="mt-2">
           <li>Your business owns the information it puts into WOHKAH.</li>
           <li>You&apos;re responsible for who you invite and what roles you give them.</li>
@@ -31,7 +31,7 @@ export default function TermsPage() {
       <section>
         <h2>Plans and payment</h2>
         <ul className="mt-2">
-          <li>Every workspace can use the Free plan for as long as it likes.</li>
+          <li>Every business account can use the Free plan for as long as it likes.</li>
           <li>
             Paid plans are billed monthly or yearly through Paystack. On paid plans, each extra
             active staff member above your plan&apos;s included number costs ₦1,000 a month (₦12,000
@@ -39,14 +39,14 @@ export default function TermsPage() {
           </li>
           <li>
             Starter, Growth and Business can be tried free for 7 days without a card: one trial per
-            workspace, and one per account owner every 12 months.
+            business account, and one per account owner every 12 months.
           </li>
           <li>
             You&apos;ll always see what you&apos;ll pay before you pay. A plan changes only after
             the payment is confirmed.
           </li>
           <li>
-            If a trial or paid plan ends, your workspace moves to the Free plan. If you then have
+            If a trial or paid plan ends, your business moves to the Free plan. If you then have
             more active staff than the plan covers, you choose who stays active and the others are
             paused. Records are never deleted because of a plan change.
           </li>

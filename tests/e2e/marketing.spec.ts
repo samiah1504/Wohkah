@@ -43,7 +43,7 @@ test("the homepage explains WOHKAH and every call to action works", async ({ pag
   await page.getByRole("banner").getByRole("link", { name: "Log In" }).click();
   await expect(page).toHaveURL(/\/login$/);
   await page.goto("/");
-  await page.getByRole("link", { name: /Create Your Free Workspace/ }).click();
+  await page.getByRole("link", { name: /Create Your Free Business Account/ }).click();
   await expect(page).toHaveURL(/\/register$/);
 });
 

@@ -40,7 +40,7 @@ export default function ContactPage() {
       <section>
         <h2>Already using WOHKAH?</h2>
         <p className="mt-2">
-          <Link href="/login">Log in to your workspace</Link>. If you&apos;ve forgotten your
+          <Link href="/login">Sign in to your account</Link>. If you&apos;ve forgotten your
           password, use <Link href="/forgot-password">reset password</Link>.
         </p>
       </section>

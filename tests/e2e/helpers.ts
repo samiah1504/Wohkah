@@ -76,7 +76,7 @@ export async function newSession(
 
 export async function login(page: Page, email: string, password = PASSWORD) {
   await page.goto("/login");
-  await page.getByLabel("Work email").fill(email);
+  await page.getByLabel("Email address").fill(email);
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
   await page.waitForURL((u) => !u.pathname.startsWith("/login"));

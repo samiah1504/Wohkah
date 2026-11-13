@@ -1,7 +1,9 @@
 # WOHKAH — Product Language and Positioning
 
 > **Mandatory reading.** Every person and every AI coding agent working on WOHKAH must read this
-> document before starting any phase, feature, screen, email or marketing page. Customer-facing text
+> document before starting any phase, and before implementing or changing any customer-facing
+> interface: screen, form, button, error, empty state, tooltip, email, notification, marketing page
+> or text stored in the database. Customer-facing text
 > that breaks these rules is a defect, the same as a bug. Changing these rules needs the product
 > owner's approval.
 
@@ -50,6 +52,8 @@ attendance, manage salaries and communicate with their staff, from one simple pl
 
 | Avoid | Use |
 |---|---|
+| Workspace | Business account, or simply "business" (choose what reads naturally) |
+| Work email | Email address / your email address ("business email address" only for the business's own contact details) |
 | Employees | Staff (a staff member) |
 | Workforce management, human resources, HR management, human capital management | Staff management |
 | Payroll | Salaries |
@@ -60,7 +64,8 @@ attendance, manage salaries and communicate with their staff, from one simple pl
 | Employee onboarding | Adding new staff / setting up new staff |
 | Employee lifecycle | Managing staff |
 | Employee self-service | Staff portal |
-| Personnel records | Staff records |
+| Personnel records, employee records | Staff records |
+| Personnel | Staff |
 | HR administrator | Staff manager |
 | Workforce analytics | Business and staff reports |
 | Team collaboration | Staff communication |
@@ -68,10 +73,17 @@ attendance, manage salaries and communicate with their staff, from one simple pl
 | Employee attendance / absence management | Staff attendance / staff absence |
 | Performance management | Staff performance |
 | Employee directory / profile / documents | Staff directory / profile / documents |
-| HR dashboard | Staff management dashboard (or just "Home") |
+| HR dashboard, workspace dashboard | Business dashboard (or just "Home") |
+| Workspace settings | Business settings (or just "Settings") |
+| Workspace members | Team access / people with access (or "staff" when it means staff) |
+| Workspace invitation | Business invitation |
 
 These are guides, not a reason to write awkward sentences. "A staff member" or "your staff" is
-fine; "staffs" is not.
+fine; "staffs" is not. Don't replace words blindly: pick what an ordinary business owner would say
+in that sentence ("Your business account is ready", "Switch business", "Ask the business owner").
+
+**Never imply a corporate email is needed.** Owners and staff often use Gmail or Yahoo. Label email
+fields "Email address".
 
 **System role names** (shown to customers):
 
@@ -86,13 +98,15 @@ fine; "staffs" is not.
 
 ## 4. Terms to avoid in the interface
 
-Employee(s), workforce, HR, human resources, human capital, personnel, payroll, payslip,
+Workspace, work email, employee(s), workforce, HR, human resources, human capital, personnel,
+payroll, payslip,
 remuneration, onboarding, offboarding, lifecycle, self-service, geofence/geofencing, KPI (say
 "targets"), appraisal (say "review"), FTE, headcount (say "number of staff"), tenant, entitlement,
 RLS, provisioning, SSO, webhook, and any other software or HR jargon.
 
-Technical terms are allowed **in code, database names, API names, logs and engineering docs**.
-`payroll_runs`, `employee_id`, `onboarding_tasks` and so on stay as they are. The rule is about what
+Technical terms are allowed **in code, database names, API names, URLs, logs and engineering
+docs**. `payroll_runs`, `employee_id`, `onboarding_tasks`, `src/modules/workspace`, the
+`/workspaces` and `/w/[slug]` routes and so on stay as they are. The rule is about what
 customers read, not what engineers name things.
 
 When a feature needs a technical concept, **translate it**: "GPS clock-in at approved work
@@ -133,8 +147,8 @@ headings and Inter for body text. Text on Deep Yellow is Dark Walnut, never whit
    badges or statistics. Product previews that use sample data must say so.
 5. **Never sell what isn't built as if it exists.** Features that aren't available yet are marked
    "Coming soon" (controlled in `src/lib/copy/features.ts`) until they ship.
-6. Prices and plan limits come from the configured plans (`src/lib/plans.ts`, checked against the
-   database by tests). Never invent discounts or benefits.
+6. Prices and plan limits come from the configured plans (`src/lib/plans/catalog.ts`, checked
+   against the database by tests). Never invent discounts or benefits.
 7. Use Nigerian business reality (naira, WhatsApp, branches, generators and markets) without
    stereotypes.
 8. SEO phrases ("staff management software", "staff attendance software", "small business staff
@@ -157,7 +171,7 @@ headings and Inter for body text. Text on Deep Yellow is Dark Walnut, never whit
 | Tasks | Tasks | Manage Staff Tasks | Assign responsibilities, set deadlines and see what has been completed. |
 | Messages | Messages | Staff Messages | Communicate with your staff and keep important conversations organised. |
 | Performance | Staff Performance | Staff Performance | Set expectations, review progress and recognise good work. |
-| Access | Team Access | Team Access | People who can sign in to your workspace, and what they can do. |
+| Access | Team Access | Team Access | People who can sign in to your business account, and what they can do. |
 
 ## 9. Dashboard language rules
 
@@ -179,11 +193,26 @@ The staff portal is for staff members, often on a phone and sometimes not confid
 
 ---
 
+## 11. Automated terminology check
+
+`tests/unit/language.test.ts` (part of `pnpm test` and CI) reads every string, template and piece
+of JSX text in `src/` and fails if it contains a term from `DISALLOWED_TERMS` in
+`src/lib/copy/terms.ts`. Comments, imports, log messages, routes and identifier-like strings are
+ignored. `tests/e2e/language.spec.ts` checks the rendered text of public and signed-in pages
+(desktop and mobile), which also catches text that comes from the database.
+
+When you add a rule to this document, add the term to `DISALLOWED_TERMS`. If the check flags a
+deliberate use of the customer's own words (for example "no HR department"), add that exact phrase
+to the allowed list in both tests with a reason; don't weaken the rule.
+
+---
+
 ## Before starting any phase (checklist)
 
 1. Read this document.
 2. Review the approved requirements for the phase.
 3. Use the terminology in §3 and the labels in `src/lib/copy/`.
-4. Check new screens, emails and notifications against §4 and §5.
+4. Check new screens, emails, notifications and database-generated text against §4 and §5, and run
+   `pnpm test` (§11).
 5. Review existing screens touched by the phase for inconsistent wording.
 6. Don't reintroduce enterprise HR terminology without the product owner's approval.

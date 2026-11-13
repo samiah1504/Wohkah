@@ -16,6 +16,7 @@ import {
 import { ActionDialog } from "@/components/action-forms";
 import { FormMessage, SubmitButton, errorProps } from "@/components/forms";
 import { initialFormState } from "@/lib/forms";
+import { permissionGroupLabel } from "@/lib/copy/terms";
 import {
   inviteMember,
   saveRole,
@@ -80,7 +81,7 @@ export function InviteDialog({ slug, roles }: { slug: string; roles: RoleOption[
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Invite someone to this workspace</DialogTitle>
+          <DialogTitle>Invite someone to your business</DialogTitle>
           <DialogDescription>
             They&apos;ll get a link to join. If they already have a WOHKAH account, they can use the
             same login.
@@ -191,7 +192,7 @@ export function MemberRolesDialog({
   return (
     <ActionDialog
       title={`Roles for ${memberName}`}
-      description="Roles decide what this person can see and do in the workspace."
+      description="Roles decide what this person can see and do in your business account."
       action={setMemberRoles}
       hidden={{ slug, memberId }}
       trigger={
@@ -301,7 +302,7 @@ export function RolePermissionsDialog({
           {modules.map((m) => (
             <fieldset key={m} className="grid gap-2">
               <legend className="text-muted-foreground mb-1 text-xs font-semibold tracking-wide uppercase">
-                {m}
+                {permissionGroupLabel(m)}
               </legend>
               {catalog
                 .filter((p) => p.module === m)

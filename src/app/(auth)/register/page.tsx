@@ -21,7 +21,7 @@ export default function RegisterPage(props: PageProps<"/register">) {
       <CardHeader>
         <CardTitle className="text-2xl">Create your account</CardTitle>
         <CardDescription>
-          One account for every workspace you belong to. Free for teams of up to 3.
+          One login for every business you work with. Free for up to 3 staff.
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">

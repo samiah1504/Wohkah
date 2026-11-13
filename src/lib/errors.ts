@@ -41,17 +41,19 @@ export function userMessageFor(
     "trial_not_eligible:owner_trial_used":
       "You've already used a free trial in the last 12 months. You can subscribe, or keep using the Free plan.",
     "trial_not_eligible:workspace_already_trialled":
-      "This workspace has already had its free trial. You can subscribe at any time.",
-    "trial_not_eligible:already_on_paid_plan": "This workspace is already on a paid plan or trial.",
+      "This business has already had its free trial. You can subscribe at any time.",
+    "trial_not_eligible:already_on_paid_plan": "This business is already on a paid plan or trial.",
     trial_plan_invalid: "Free trials are available for Starter, Growth and Business.",
     not_a_downgrade: "That plan isn't lower than your current one. Use Upgrade instead.",
     nothing_to_pay: "There's nothing to pay for with that selection.",
     extra_staff_not_available:
       "Extra staff places are available on paid plans. Upgrade to add more staff.",
     interval_not_available: "That plan isn't available for yearly billing.",
-    slug_taken: "That workspace address is already taken. Try another.",
-    slug_reserved: "That workspace address is reserved. Try another.",
-    too_many_companies: "You've created several workspaces today. Please try again tomorrow.",
+    "at least one active owner": "Your business must always have at least one active owner.",
+    slug_taken: "That web address is already taken. Try another.",
+    slug_reserved: "That web address is reserved. Try another.",
+    too_many_companies:
+      "You've created several business accounts today. Please try again tomorrow.",
     email_not_confirmed: "Please confirm your email address first.",
     invitation_invalid: "This invitation is no longer valid. Ask for a new one.",
     invitation_email_mismatch:

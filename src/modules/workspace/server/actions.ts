@@ -49,9 +49,12 @@ export async function createCompany(_prev: FormState, formData: FormData): Promi
     p_size_band: d.sizeBand ?? undefined,
   });
   if (error) {
-    const message = userMessageFor(error, "We couldn't create the workspace. Please try again.");
+    const message = userMessageFor(
+      error,
+      "We couldn't create your business account. Please try again.",
+    );
     if (error.message.includes("slug_")) {
-      return errorState("Choose a different workspace address.", {
+      return errorState("Choose a different web address.", {
         fieldErrors: { slug: message },
         values,
       });

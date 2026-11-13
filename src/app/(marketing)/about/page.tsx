@@ -41,7 +41,7 @@ export default function AboutPage() {
         </p>
         <p className="mt-2">
           <Link href="/contact">Get in touch</Link> or{" "}
-          <Link href="/register">create your free workspace</Link>.
+          <Link href="/register">create your free business account</Link>.
         </p>
       </section>
     </ProsePage>

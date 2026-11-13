@@ -13,11 +13,11 @@ export default function NotFound() {
       <Logo />
       <h1 className="font-heading text-walnut text-2xl font-extrabold">Page not found</h1>
       <p className="text-muted-foreground max-w-md text-sm">
-        This page or workspace doesn&apos;t exist, or you don&apos;t have access to it. If you were
-        invited to a workspace, open the invitation link from your email.
+        This page doesn&apos;t exist, or you don&apos;t have access to it. If you were invited to
+        join a business, open the invitation link from your email.
       </p>
       <Button asChild>
-        <Link href="/workspaces?all=1">Go to your workspaces</Link>
+        <Link href="/workspaces?all=1">Go to your account</Link>
       </Button>
     </div>
   );

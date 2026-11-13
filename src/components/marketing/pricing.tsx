@@ -163,9 +163,9 @@ export function Pricing() {
         </div>
       </div>
       <p className="text-muted-foreground mx-auto mt-4 max-w-2xl text-center text-xs">
-        Try Starter, Growth or Business free for 7 days. When the trial ends, your workspace moves
-        to the Free plan unless you subscribe, and nothing is deleted. You&apos;ll always see the
-        price before you pay.
+        Try Starter, Growth or Business free for 7 days. When the trial ends, your business moves to
+        the Free plan unless you subscribe, and nothing is deleted. You&apos;ll always see the price
+        before you pay.
       </p>
     </div>
   );
