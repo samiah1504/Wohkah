@@ -5,6 +5,17 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Businesses define their own roles (2026-11-14)
+
+#### Changed
+- Owner is the only built-in role. Every other role is the business's own: create, name, choose its
+  access, rename or delete it, on every plan (no longer a Growth feature).
+- New businesses start with the Owner role only. Existing businesses keep all their roles and
+  everyone's access; those roles simply become editable and deletable.
+- People can be invited without a role ("Staff portal only").
+- The plan's administrator allowance now counts people whose roles give them any access.
+- Roles page wording: "Edit access", "Who can do what".
+
 ### Departments removed entirely (2026-11-14)
 
 #### Removed

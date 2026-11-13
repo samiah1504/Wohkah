@@ -105,13 +105,14 @@ describe("invitations", () => {
       ),
       /invitation_invalid/,
     );
-    // Default role is Employee.
+    // Invited without a role: basic access only (no roles, no permissions).
     const ctx = await asUser(
       { userId: invitee.id },
       async (db) =>
         (await db.query("select public.workspace_context($1) as c", [company.slug])).rows[0]!.c,
     );
-    expect(ctx.roles.map((r: { system_key: string }) => r.system_key)).toEqual(["employee"]);
+    expect(ctx.roles).toEqual([]);
+    expect(ctx.permissions).toEqual([]);
   });
 
   it("cannot be accepted after it expires or is revoked", async () => {

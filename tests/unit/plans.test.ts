@@ -47,7 +47,12 @@ describe("approved plans", () => {
   });
 
   it("each plan includes everything in the plan below it", () => {
-    const keys = ["gps_clock_in", "full_salaries", "custom_roles", "advanced_analytics"] as const;
+    const keys = [
+      "gps_clock_in",
+      "full_salaries",
+      "staff_performance",
+      "advanced_analytics",
+    ] as const;
     for (const k of keys) {
       const on = PLANS.map((p) => entitlement(p.code, k).enabled);
       expect(on.indexOf(true)).toBeGreaterThanOrEqual(0);

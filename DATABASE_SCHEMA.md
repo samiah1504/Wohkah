@@ -21,6 +21,7 @@ updated whenever a migration lands.
 | `20261114000100_business_language.sql` | Data only: plain-language permission descriptions, Owner role description, trial-ended notification text |
 | `20261114000200_branches_and_departments.sql` | Branch allowances 1/2/5/10; departments removed from plans, limits and the subscription overview |
 | `20261114000300_remove_departments.sql` | Departments removed entirely: Department Manager holders and invitations moved to Operations Manager; department-scoped roles removed; `departments` table, `departments.manage`, `member_roles.department_id`, `employees.department_id` and the `department` role scope dropped. Copies kept in the private `archive` schema |
+| `20261114000400_business_defined_roles.sql` | Owner is the only built-in role; existing roles become the business's own; new businesses start with Owner only; roles on every plan (`custom_roles` feature removed); administrators counted by access; invitations without a role give basic access |
 
 Each file documents its rollback steps in its header. Production is forward-only.
 
@@ -105,7 +106,7 @@ create policy bank_details_select on employee_bank_details for select to authent
 | Table | Key columns | Notes |
 |---|---|---|
 | `permissions` | `key text pk`, `module`, `description`, `is_sensitive` | Global catalogue, seeded by migration. Read-only to clients. |
-| `roles` | `id`, `company_id`, `name`, `system_key` (`owner`, `hr_admin`, `ops_manager`, `accountant`, `employee`, or null for custom roles), `is_locked` | The Owner role can't be deleted or emptied. |
+| `roles` | `id`, `company_id`, `name`, `system_key` (`owner`, or null for the business's own roles), `is_locked` | The Owner role can't be deleted or emptied. |
 | `role_permissions` | `role_id`, `permission_key`, `company_id` | Composite FK to `roles (company_id, id)` |
 | `member_roles` | `id`, `company_id`, `member_id`, `role_id`, `scope_type` (`company`, `branch`), `branch_id`, `created_by` | Check constraint: exactly the column matching `scope_type` is set. The Owner role is company-scope only. A deferred trigger ensures each company always has ≥1 active Owner. Client inserts and deletes must pass the escalation check (`app.can_grant_role`). |
 

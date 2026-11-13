@@ -61,7 +61,6 @@ export async function listRoles(ctx: TenantContext) {
   if (perms.error) fail("role permissions", perms.error);
   if (assignments.error) fail("role assignments", assignments.error);
 
-  const SYSTEM_ORDER = ["owner", "hr_admin", "ops_manager", "accountant", "employee"];
   return roles.data
     .map((r) => ({
       ...r,
@@ -71,8 +70,9 @@ export async function listRoles(ctx: TenantContext) {
       ).size,
     }))
     .sort((a, b) => {
-      const ai = a.system_key ? SYSTEM_ORDER.indexOf(a.system_key) : 99;
-      const bi = b.system_key ? SYSTEM_ORDER.indexOf(b.system_key) : 99;
+      // Owner first, then the business's own roles alphabetically.
+      const ai = a.system_key === "owner" ? 0 : 1;
+      const bi = b.system_key === "owner" ? 0 : 1;
       return ai - bi || a.name.localeCompare(b.name);
     });
 }

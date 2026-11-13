@@ -29,20 +29,21 @@ describe("permissions", () => {
     employee = await addMember(company, owner.id, ["employee"]);
   });
 
-  it("seeds the six system roles and a Free subscription on company creation", async () => {
+  it("seeds only the Owner role and a Free subscription on company creation", async () => {
+    const fresh = await createCompany(owner.id, "Fresh Co");
     const out = await asUser({ userId: owner.id }, async (db) => {
       const roles = await db.query<{ system_key: string }>(
         "select system_key from public.roles where company_id = $1 order by system_key",
-        [company.id],
+        [fresh.id],
       );
       const plan = await db.query<{ code: string }>(
         `select p.code from public.company_subscriptions s
          join public.subscription_plans p on p.id = s.plan_id where s.company_id = $1`,
-        [company.id],
+        [fresh.id],
       );
       return { roles: roles.rows.map((r) => r.system_key), plan: plan.rows[0]?.code };
     });
-    expect(out.roles).toEqual(["accountant", "employee", "hr_admin", "ops_manager", "owner"]);
+    expect(out.roles).toEqual(["owner"]);
     expect(out.plan).toBe("free");
   });
 
@@ -248,14 +249,32 @@ describe("privilege escalation is impossible", () => {
     );
   });
 
-  it("never allows system roles to be deleted", async () => {
-    const accountant = await roleId(company.id, "accountant");
+  it("never allows the Owner role to be deleted", async () => {
+    const ownerRole = await roleId(company.id, "owner");
     await expectDbError(
       asUser({ userId: owner.id }, (db) =>
-        db.query("delete from public.roles where id = $1", [accountant]),
+        db.query("delete from public.roles where id = $1", [ownerRole]),
       ),
       /System roles cannot be deleted/,
     );
+  });
+
+  it("lets the business rename, change and delete any role it created", async () => {
+    await asUser({ userId: owner.id }, async (db) => {
+      const r = await db.query<{ id: string }>(
+        "insert into public.roles (company_id, name) values ($1, 'Cashier') returning id",
+        [company.id],
+      );
+      const id = r.rows[0]!.id;
+      await db.query("update public.roles set name = 'Head Cashier' where id = $1", [id]);
+      await db.query(
+        "insert into public.role_permissions (company_id, role_id, permission_key) values ($1, $2, 'members.view')",
+        [company.id, id],
+      );
+      await db.query("delete from public.role_permissions where role_id = $1", [id]);
+      const del = await db.query("delete from public.roles where id = $1", [id]);
+      expect(del.rowCount).toBe(1);
+    });
   });
 });
 
@@ -326,16 +345,51 @@ describe("plan entitlements are enforced by the database", () => {
     await insertBranch("Abuja");
   });
 
-  it("Free plan cannot create custom roles", async () => {
+  it("every plan, including Free, can create roles and choose their access", async () => {
     const owner = await createUser();
-    const company = await createCompany(owner.id);
+    const company = await createCompany(owner.id); // Free
+    await asUser({ userId: owner.id }, async (db) => {
+      const r = await db.query<{ id: string }>(
+        "insert into public.roles (company_id, name) values ($1, 'Supervisor') returning id",
+        [company.id],
+      );
+      await db.query(
+        "insert into public.role_permissions (company_id, role_id, permission_key) values ($1, $2, 'branches.manage')",
+        [company.id, r.rows[0]!.id],
+      );
+    });
+  });
+
+  it("counts administrators by access: giving a role access is checked against the plan", async () => {
+    const owner = await createUser();
+    const company = await createCompany(owner.id); // Free: 1 administrator (the owner)
+    const role = await asUser(
+      { userId: owner.id },
+      async (db) =>
+        (
+          await db.query<{ id: string }>(
+            "insert into public.roles (company_id, name) values ($1, 'Cashier') returning id",
+            [company.id],
+          )
+        ).rows[0]!.id,
+    );
+    // A role with no access can be given to anyone (staff portal only).
+    const cashier = await addMember(company, owner.id, []);
+    await asUser({ userId: owner.id }, (db) =>
+      db.query(
+        "insert into public.member_roles (company_id, member_id, role_id) values ($1, $2, $3)",
+        [company.id, cashier.memberId, role],
+      ),
+    );
+    // Giving that role access would make a second administrator.
     await expectDbError(
       asUser({ userId: owner.id }, (db) =>
-        db.query("insert into public.roles (company_id, name) values ($1, 'Supervisor')", [
-          company.id,
-        ]),
+        db.query(
+          "insert into public.role_permissions (company_id, role_id, permission_key) values ($1, $2, 'members.view')",
+          [company.id, role],
+        ),
       ),
-      /row-level security/,
+      /plan_limit_exceeded:admins:1/,
     );
   });
 
@@ -346,7 +400,7 @@ describe("plan entitlements are enforced by the database", () => {
     const enabled = async () =>
       asUser({ userId: owner.id }, async (db) => {
         const r = await db.query("select public.workspace_context($1) as c", [company.slug]);
-        return r.rows[0]!.c.features.custom_roles.enabled as boolean;
+        return r.rows[0]!.c.features.digital_contracts.enabled as boolean;
       });
     expect(await enabled()).toBe(true);
     await asAdmin((db) =>

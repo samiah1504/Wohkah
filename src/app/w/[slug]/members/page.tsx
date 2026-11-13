@@ -92,7 +92,7 @@ export default function MembersPage(props: PageProps<"/w/[slug]/members">) {
                             {i.role_ids
                               .map((id) => roleName.get(id))
                               .filter(Boolean)
-                              .join(", ") || "Staff Member"}{" "}
+                              .join(", ") || "Staff portal only"}{" "}
                             · expires {formatDate(i.expires_at.slice(0, 10))}
                           </p>
                         </div>
@@ -155,6 +155,11 @@ export default function MembersPage(props: PageProps<"/w/[slug]/members">) {
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
                           <div className="flex flex-wrap gap-1">
+                            {m.roles.length === 0 ? (
+                              <span className="text-muted-foreground text-xs">
+                                Staff portal only
+                              </span>
+                            ) : null}
                             {m.roles.map((r) => (
                               <Badge
                                 key={r.member_role_id}

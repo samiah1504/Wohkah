@@ -97,6 +97,7 @@ marked **"Coming soon"**, never as working features.
 | Lower plan | Applied now if nothing is paid for; otherwise scheduled for the end of the paid period. Excess staff must be chosen first | `change_to_lower_plan()`, `sync_subscription()` |
 | Work locations included | 1 / 2 / 5 / 10. Extra: ₦1,000 a month or ₦12,000 a year each | `work_locations` trigger, `company_work_location_allowance()` |
 | Branches | **Corrected 2026-11-14:** Free 1, Starter up to 2, Growth up to 5, Business up to 10. No plan is unlimited. Separate from work locations | `plan_features.branches`, `branches_limit` trigger |
+| Roles | **2026-11-14:** every plan can create, rename, edit and delete its own roles and choose their access (the Growth+ "custom roles" feature is removed). Only Owner is built in | RLS on `roles` / `role_permissions` |
 | Departments | **Removed 2026-11-14.** Not a plan feature, limit or upgrade reason (the earlier 1 / 1 / 10 / unlimited allocation is withdrawn) | — |
 | Trial | 7 days, no card, Starter/Growth/Business only. One per workspace and one per owner every 12 months. Expiry moves the workspace to Free (not a lock), keeps all data, and requires staff selection above 3. Idempotent | `start_trial()`, `trial_grants`, `sync_subscription()` |
 | Reminders | In-app notifications and dashboard banner at 3 days, 1 day, expiry day and expired; deduplicated by `(user_id, dedupe_key)`. Email can be added later from the same rows | `app.notify_billing_admins()` |

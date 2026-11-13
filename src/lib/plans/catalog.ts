@@ -79,7 +79,7 @@ export const PLANS: readonly Plan[] = [
     trialDays: 7,
     supportLevel: "Priority support",
     reportHistoryMonths: null,
-    highlights: ["custom_roles", "advanced_approvals", "staff_performance", "advanced_salaries"],
+    highlights: ["advanced_approvals", "staff_performance", "advanced_salaries", "meeting_minutes"],
   },
   {
     code: "business",
@@ -147,7 +147,6 @@ const MATRIX = {
   meetings: starterUp,
   company_documents: starterUp,
   // Growth and up
-  custom_roles: growthUp,
   advanced_approvals: growthUp,
   advanced_salaries: growthUp,
   advanced_attendance_reports: growthUp,
@@ -201,7 +200,6 @@ export const FEATURE_INFO: Record<
   salary_slips: { label: "Salary slips and salary reports", available: false },
   meetings: { label: "Meeting scheduling", available: false },
   company_documents: { label: "Company documents and policies", available: false },
-  custom_roles: { label: "Custom roles and permissions", available: true },
   advanced_approvals: { label: "Multiple approval levels", available: false },
   advanced_salaries: { label: "Advanced salary management", available: false },
   advanced_attendance_reports: { label: "Advanced attendance reports", available: false },
@@ -284,7 +282,6 @@ export const COMPARISON: { title: string; rows: ComparisonRow[] }[] = [
     title: "Branches and permissions",
     rows: [
       f("branches"),
-      f("custom_roles"),
       f("advanced_approvals"),
       f("advanced_approval_workflows"),
       f("detailed_access_controls"),

@@ -72,8 +72,8 @@ test("signed-in screens use small-business language", async ({ browser }) => {
     issues.push(...(await visibleTextIssues(page)));
   }
   expect(issues).toEqual([]);
-  // The renamed roles are what customers see.
+  // The roles page.
   await page.goto(`/w/${slug}/roles`);
-  await expect(page.getByRole("columnheader", { name: "Staff Manager" })).toBeVisible();
-  await expect(page.getByRole("columnheader", { name: "Staff Member" })).toBeVisible();
+  // Only Owner is built in; businesses name every other role themselves.
+  await expect(page.getByRole("columnheader", { name: "Owner" })).toBeVisible();
 });

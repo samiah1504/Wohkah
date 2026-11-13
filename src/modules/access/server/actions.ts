@@ -7,7 +7,6 @@ import { requireUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { hitRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/rate-limit";
 import { brandedEmail, sendEmail } from "@/lib/email";
-import { assertFeature } from "@/lib/entitlements";
 import { isPermission } from "@/lib/permissions";
 import { userMessageFor } from "@/lib/errors";
 import { errorState, type FormState } from "@/lib/forms";
@@ -168,9 +167,7 @@ export async function setMemberRoles(_prev: FormState, formData: FormData) {
     successMessage: "Roles updated.",
     run: async ({ ctx, data, supabase }) => {
       const desired = uuidsFrom(formData, "roleIds");
-      if (desired.length === 0) {
-        throw new ActionError("Choose at least one role. Use Staff Member for basic access.");
-      }
+      // No roles = basic access only (their own staff portal).
       const { data: current, error } = await supabase
         .from("member_roles")
         .select("id, role_id")
@@ -212,7 +209,7 @@ export async function setMemberRoles(_prev: FormState, formData: FormData) {
 }
 
 // ---------------------------------------------------------------------------
-// Custom roles (plan feature: custom_roles)
+// Roles: every business defines its own (all plans). Owner is the only built-in role.
 // ---------------------------------------------------------------------------
 export async function saveRole(_prev: FormState, formData: FormData) {
   return workspaceAction({
@@ -221,7 +218,6 @@ export async function saveRole(_prev: FormState, formData: FormData) {
     schema: roleSchema,
     successMessage: "Role saved.",
     run: async ({ ctx, data, supabase }) => {
-      assertFeature(ctx, "custom_roles");
       const { error } = data.roleId
         ? await supabase
             .from("roles")
@@ -242,9 +238,8 @@ export async function setRolePermissions(_prev: FormState, formData: FormData) {
     formData,
     permission: "roles.manage",
     schema: roleIdSchema,
-    successMessage: "Permissions updated.",
+    successMessage: "Access updated.",
     run: async ({ ctx, data, supabase }) => {
-      assertFeature(ctx, "custom_roles");
       const desired = [...new Set(formData.getAll("permissions").map(String))].filter(isPermission);
       const { data: current, error } = await supabase
         .from("role_permissions")
@@ -287,14 +282,15 @@ export async function deleteRole(_prev: FormState, formData: FormData) {
     schema: roleIdSchema,
     successMessage: "Role deleted.",
     run: async ({ ctx, data, supabase }) => {
-      assertFeature(ctx, "custom_roles");
       const { error, count } = await supabase
         .from("roles")
         .delete({ count: "exact" })
         .eq("id", data.roleId)
         .eq("company_id", ctx.company.id);
       if (error?.code === "23503") {
-        throw new ActionError("This role is still assigned to members. Remove it from them first.");
+        throw new ActionError(
+          "This role is still given to someone. Take it off them first, then delete it.",
+        );
       }
       check(error, "delete role");
       if (!count) throw new ActionError("That role could not be deleted.");

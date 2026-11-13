@@ -149,9 +149,11 @@ sure a multi-company user sees only the *selected* workspace. Both layers are te
 
 - `permissions`: a global catalogue of keys such as `employees.view`, `employees.edit`,
   `payroll.approve`, `payroll.export` and `salary.view`.
-- `roles`: per company, seeded from five system templates (Owner, Staff Manager, Operations
-  Manager, Accountant, Staff Member). Custom roles depend on the plan. Departments and the
-  Department Manager role were removed on 2026-11-14 (migration `20261114000300`).
+- `roles`: per company. **Owner** is the only built-in role (locked, can't be deleted, at least one
+  active Owner). Every other role is created, named, given access, renamed and deleted by the
+  business itself, on every plan (migration `20261114000400`). People invited without a role get
+  basic access (their staff portal). The plan's administrator allowance counts people whose roles
+  give them any access.
 - `member_roles`: (member, role, **scope**), where scope is `company` or `branch:<id>`. A role
   scoped to the Lagos branch applies only to that branch.
 - The SQL helpers `app.has_permission(company_id, key)` and

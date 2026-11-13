@@ -4,24 +4,14 @@
  * language stays consistent. Internal code and database names are unaffected.
  */
 
-/** Display names and descriptions for the six system roles, keyed by system_key. */
+/**
+ * The only built-in role. Every other role is created and named by the
+ * business itself (product owner, 2026-11-14).
+ */
 export const SYSTEM_ROLE_COPY = {
   owner: {
     name: "Owner",
     description: "Full control of the business account, subscription and roles.",
-  },
-  hr_admin: {
-    name: "Staff Manager",
-    description: "Manages staff records, invitations and day-to-day staff matters.",
-  },
-  ops_manager: {
-    name: "Operations Manager",
-    description: "Branches, attendance, shifts and daily operations.",
-  },
-  accountant: { name: "Accountant", description: "Salaries and financial records." },
-  employee: {
-    name: "Staff Member",
-    description: "Access to their own information in the staff portal.",
   },
 } as const;
 

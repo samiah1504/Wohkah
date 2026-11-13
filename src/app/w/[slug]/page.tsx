@@ -41,7 +41,7 @@ async function Home({ params, searchParams }: PageProps<"/w/[slug]">) {
   const { slug } = await params;
   const sp = await searchParams;
   const ctx = await requireTenant(slug);
-  const isAdmin = ctx.roles.some((r) => r.systemKey !== "employee");
+  const isAdmin = ctx.permissions.size > 0;
   const today = todayIn(ctx.company.timezone);
   const year = Number(today.slice(0, 4));
   const [summary, holidays] = await Promise.all([

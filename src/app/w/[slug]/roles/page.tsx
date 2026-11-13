@@ -14,9 +14,6 @@ import {
 } from "@/components/ui/table";
 import { can, isPermission } from "@/lib/permissions";
 import { NAV } from "@/lib/copy/navigation";
-import { hasFeature } from "@/lib/entitlements";
-import { featurePrompt } from "@/lib/upgrade";
-import { UpgradePrompt } from "@/components/upgrade-prompt";
 import { listPermissionCatalog, listRoles } from "@/modules/access/server/queries";
 import { RoleDialog, RolePermissionsDialog } from "@/modules/access/components/access-forms";
 import { deleteRole } from "@/modules/access/server/actions";
@@ -29,8 +26,7 @@ export default function RolesPage(props: PageProps<"/w/[slug]/roles">) {
       {async (ctx) => {
         const slug = ctx.company.slug;
         const [roles, catalog] = await Promise.all([listRoles(ctx), listPermissionCatalog()]);
-        const customAllowed = hasFeature(ctx, "custom_roles");
-        const canManage = can(ctx, "roles.manage") && customAllowed;
+        const canManage = can(ctx, "roles.manage");
         const options = catalog.map((p) => ({
           key: p.key,
           module: p.module,
@@ -46,12 +42,12 @@ export default function RolesPage(props: PageProps<"/w/[slug]/roles">) {
               description={NAV.roles.description}
               actions={canManage ? <RoleDialog slug={slug} /> : null}
             />
-            {!customAllowed && can(ctx, "roles.manage") ? (
-              <UpgradePrompt
-                className="mb-6"
-                prompt={featurePrompt(slug, ctx.plan.code, "custom_roles")}
-                canManage={can(ctx, "subscription.manage")}
-              />
+            {roles.length <= 1 ? (
+              <p className="text-muted-foreground mb-6 max-w-2xl text-sm">
+                Create the roles your business uses, such as Manager, Cashier or Supervisor, and
+                choose what each one can see and do. People without a role can still sign in to
+                their own staff portal.
+              </p>
             ) : null}
 
             <div className="mb-8 grid gap-3 md:grid-cols-2">
@@ -67,18 +63,19 @@ export default function RolesPage(props: PageProps<"/w/[slug]/roles">) {
                             aria-label="Locked"
                           />
                         ) : null}
-                        {!r.system_key ? <Badge variant="neutral">Custom</Badge> : null}
                       </p>
                       {r.description ? (
                         <p className="text-muted-foreground mt-1 text-sm">{r.description}</p>
                       ) : null}
                     </div>
                     <Badge variant="outline">
-                      {r.memberCount} member{r.memberCount === 1 ? "" : "s"}
+                      {r.memberCount} {r.memberCount === 1 ? "person" : "people"}
                     </Badge>
                   </div>
                   <p className="text-muted-foreground mt-3 text-xs">
-                    {r.permissions.length} permission{r.permissions.length === 1 ? "" : "s"}
+                    {r.permissions.length === 0
+                      ? "No access beyond their own staff portal"
+                      : `${r.permissions.length} type${r.permissions.length === 1 ? "" : "s"} of access`}
                   </p>
                   {canManage && !r.is_locked ? (
                     <div className="mt-3 flex flex-wrap gap-1">
@@ -89,30 +86,26 @@ export default function RolesPage(props: PageProps<"/w/[slug]/roles">) {
                         catalog={options}
                         granted={r.permissions}
                       />
-                      {!r.system_key ? (
-                        <>
-                          <RoleDialog slug={slug} role={r} />
-                          <ActionButton
-                            action={deleteRole}
-                            hidden={{ slug, roleId: r.id }}
-                            variant="ghost"
-                            confirm="Delete role?"
-                          >
-                            Delete
-                          </ActionButton>
-                        </>
-                      ) : null}
+                      <RoleDialog slug={slug} role={r} />
+                      <ActionButton
+                        action={deleteRole}
+                        hidden={{ slug, roleId: r.id }}
+                        variant="ghost"
+                        confirm="Delete role?"
+                      >
+                        Delete
+                      </ActionButton>
                     </div>
                   ) : null}
                 </div>
               ))}
             </div>
 
-            <h2 className="font-heading mb-3 text-lg font-bold">Permission matrix</h2>
+            <h2 className="font-heading mb-3 text-lg font-bold">Who can do what</h2>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="min-w-56">Permission</TableHead>
+                  <TableHead className="min-w-56">Access</TableHead>
                   {roles.map((r) => (
                     <TableHead key={r.id} className="text-center">
                       {r.name}

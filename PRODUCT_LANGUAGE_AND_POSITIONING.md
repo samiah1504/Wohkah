@@ -93,15 +93,11 @@ them with another invented grouping.
 **Never imply a corporate email is needed.** Owners and staff often use Gmail or Yahoo. Label email
 fields "Email address".
 
-**System role names** (shown to customers):
-
-| `system_key` (internal) | Display name |
-|---|---|
-| `owner` | Owner |
-| `hr_admin` | Staff Manager |
-| `ops_manager` | Operations Manager |
-| `accountant` | Accountant |
-| `employee` | Staff Member |
+**Roles belong to the business.** The only built-in role is **Owner**. Every business creates and
+names its own roles (Manager, Cashier, Supervisor…), chooses what each can access, and can rename or
+delete them, on every plan. Don't hard-code role names in screens, examples or rules, and don't
+assume a business has an Accountant or an Operations Manager. People with no role still have their
+own staff portal: call that "Staff portal only", and call permissions "access" in the interface.
 
 ## 4. Terms to avoid in the interface
 

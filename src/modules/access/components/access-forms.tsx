@@ -36,6 +36,9 @@ function RoleCheckboxes({ roles, selected }: { roles: RoleOption[]; selected: st
   return (
     <fieldset className="grid gap-2">
       <legend className="mb-1 text-sm font-medium">Roles</legend>
+      <p className="text-muted-foreground -mt-1 mb-1 text-xs">
+        Leave all unticked for basic access: they can sign in to their own staff portal only.
+      </p>
       {roles.map((r) => (
         <label
           key={r.id}
@@ -103,7 +106,6 @@ function InviteForm({
   onDone: () => void;
 }) {
   const [state, action] = useActionState<InviteState, FormData>(inviteMember, initialFormState);
-  const employee = roles.find((r) => r.systemKey === "employee");
 
   // Handle each result exactly once, even if onDone changes identity.
   const handled = useRef<InviteState | null>(null);
@@ -165,7 +167,7 @@ function InviteForm({
           {...errorProps(state, "email")}
         />
       </Field>
-      <RoleCheckboxes roles={roles} selected={employee ? [employee.id] : []} />
+      <RoleCheckboxes roles={roles} selected={[]} />
       <div className="flex justify-end">
         <SubmitButton pendingLabel="Inviting…">Send invitation</SubmitButton>
       </div>
@@ -207,7 +209,7 @@ export function MemberRolesDialog({
 }
 
 // ---------------------------------------------------------------------------
-// Custom roles
+// Roles (each business creates its own)
 // ---------------------------------------------------------------------------
 export function RoleDialog({
   slug,
@@ -218,8 +220,8 @@ export function RoleDialog({
 }) {
   return (
     <ActionDialog
-      title={role ? "Edit role" : "Create a custom role"}
-      description={role ? undefined : "After creating it, choose its permissions."}
+      title={role ? "Edit role" : "Create a role"}
+      description={role ? undefined : "After creating it, choose what it can access."}
       action={saveRole}
       hidden={{ slug, roleId: role?.id ?? "" }}
       trigger={
@@ -287,13 +289,13 @@ export function RolePermissionsDialog({
   const modules = [...new Set(catalog.map((p) => p.module))];
   return (
     <ActionDialog
-      title={`Permissions for ${roleName}`}
-      description="You can only grant permissions you hold yourself."
+      title={`Access for ${roleName}`}
+      description="Choose what people with this role can see and do. You can only give access you have yourself."
       action={setRolePermissions}
       hidden={{ slug, roleId }}
       trigger={
         <Button variant="outline" size="sm">
-          Edit permissions
+          Edit access
         </Button>
       }
     >

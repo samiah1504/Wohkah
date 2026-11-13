@@ -141,13 +141,71 @@ export function newToken(): { token: string; hash: string } {
   return { token, hash: createHash("sha256").update(token, "utf8").digest("hex") };
 }
 
-export async function roleId(companyId: string, systemKey: string): Promise<string> {
+/**
+ * Businesses define their own roles; only Owner is built in. Tests use these
+ * sample roles (created on first use, like a business owner would) with the
+ * access the former starter roles had.
+ */
+export const SAMPLE_ROLES: Record<string, { name: string; permissions: string[] }> = {
+  hr_admin: {
+    name: "Staff Manager",
+    permissions: [
+      "holidays.manage",
+      "members.view",
+      "members.invite",
+      "members.manage",
+      "roles.view",
+      "roles.assign",
+      "staff.view",
+      "staff.manage",
+    ],
+  },
+  ops_manager: {
+    name: "Operations Manager",
+    permissions: [
+      "branches.manage",
+      "holidays.manage",
+      "members.view",
+      "staff.view",
+      "work_locations.manage",
+    ],
+  },
+  accountant: {
+    name: "Accountant",
+    permissions: ["members.view", "subscription.view", "staff.view"],
+  },
+  employee: { name: "Staff Member", permissions: [] },
+};
+
+/** The Owner role, or a sample role created on first use. */
+export async function roleId(companyId: string, key: string): Promise<string> {
   return asAdmin(async (db) => {
-    const r = await db.query<{ id: string }>(
-      "select id from public.roles where company_id = $1 and system_key = $2",
-      [companyId, systemKey],
+    if (key === "owner") {
+      const r = await db.query<{ id: string }>(
+        "select id from public.roles where company_id = $1 and system_key = 'owner'",
+        [companyId],
+      );
+      return r.rows[0]!.id;
+    }
+    const sample = SAMPLE_ROLES[key];
+    if (!sample) throw new Error(`Unknown sample role ${key}`);
+    const existing = await db.query<{ id: string }>(
+      "select id from public.roles where company_id = $1 and name = $2",
+      [companyId, sample.name],
     );
-    return r.rows[0]!.id;
+    if (existing.rows[0]) return existing.rows[0].id;
+    const created = await db.query<{ id: string }>(
+      "insert into public.roles (company_id, name) values ($1, $2) returning id",
+      [companyId, sample.name],
+    );
+    const id = created.rows[0]!.id;
+    for (const permission of sample.permissions) {
+      await db.query(
+        "insert into public.role_permissions (company_id, role_id, permission_key) values ($1, $2, $3)",
+        [companyId, id, permission],
+      );
+    }
+    return id;
   });
 }
 

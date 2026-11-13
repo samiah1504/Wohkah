@@ -8,7 +8,7 @@ const freeCtx = {
   plan: { code: "free", name: "Free" },
   features: {
     admins: { enabled: true, limit: 1 },
-    custom_roles: { enabled: false, limit: null },
+    digital_contracts: { enabled: false, limit: null },
     branches: { enabled: true, limit: 1 },
     work_locations: { enabled: true, limit: null },
   },
@@ -18,7 +18,7 @@ describe("entitlements", () => {
   it("reports limits; null means unlimited, a disabled feature means 0", () => {
     expect(limitOf(freeCtx, "admins")).toBe(1);
     expect(limitOf(freeCtx, "work_locations")).toBeNull();
-    expect(limitOf(freeCtx, "custom_roles")).toBe(0);
+    expect(limitOf(freeCtx, "digital_contracts")).toBe(0);
     expect(limitOf(freeCtx, "advanced_reporting")).toBe(0);
   });
 
@@ -29,7 +29,9 @@ describe("entitlements", () => {
   });
 
   it("refuses features outside the plan with an upgrade message", () => {
-    expect(() => assertFeature(freeCtx, "custom_roles")).toThrow(/isn't included in the Free plan/);
+    expect(() => assertFeature(freeCtx, "digital_contracts")).toThrow(
+      /isn't included in the Free plan/,
+    );
   });
 });
 

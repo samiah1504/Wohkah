@@ -296,7 +296,7 @@ describe("seven-day trial", () => {
     );
     expect(ctx.plan.code).toBe("growth");
     expect(ctx.subscription_status).toBe("trialing");
-    expect(ctx.features.custom_roles.enabled).toBe(true);
+    expect(ctx.features.staff_performance.enabled).toBe(true);
     // Paid extras can't be bought into a trial.
     expect((await overview(owner.id, company.id)).allowances.staff).toBe(25);
   });
