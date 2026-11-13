@@ -11,6 +11,8 @@ const ADMIN_CLIENT_ALLOWED = [
   "src/lib/supabase/admin.ts",
   "src/lib/rate-limit/**",
   "src/lib/audit/**",
+  // Applies VERIFIED provider payments (service role only; see SECURITY.md).
+  "src/lib/payments/**",
 ];
 
 const ADMIN_IMPORT = {

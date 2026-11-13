@@ -21,7 +21,34 @@ export function userMessageFor(
     return "Your plan's limit has been reached. Upgrade your plan to add more.";
   }
 
+  const staffLimit = /staff_limit_exceeded:(\d+)/.exec(msg);
+  if (staffLimit) {
+    return `Your subscription covers ${staffLimit[1]} active staff, and they're all in use. Upgrade your plan or add extra staff places (paid plans) from Settings → Subscription, or mark someone who has left as Left.`;
+  }
+  const locationLimit = /work_location_limit_exceeded:(\d+)/.exec(msg);
+  if (locationLimit) {
+    return `Your subscription covers ${locationLimit[1]} work location${locationLimit[1] === "1" ? "" : "s"}. Add another for ₦1,000 a month from Settings → Subscription, or archive one you no longer use.`;
+  }
+  const tooMany = /too_many_selected:(\d+)/.exec(msg);
+  if (tooMany)
+    return `You can keep up to ${tooMany[1]} staff active on this plan. Unselect some and try again.`;
+  const selection = /staff_selection_required:(\d+)/.exec(msg);
+  if (selection) {
+    return `That plan includes ${selection[1]} active staff. Choose which staff stay active first (on the Staff page), then try again. No records are deleted.`;
+  }
+
   const known: Record<string, string> = {
+    "trial_not_eligible:owner_trial_used":
+      "You've already used a free trial in the last 12 months. You can subscribe, or keep using the Free plan.",
+    "trial_not_eligible:workspace_already_trialled":
+      "This workspace has already had its free trial. You can subscribe at any time.",
+    "trial_not_eligible:already_on_paid_plan": "This workspace is already on a paid plan or trial.",
+    trial_plan_invalid: "Free trials are available for Starter, Growth and Business.",
+    not_a_downgrade: "That plan isn't lower than your current one. Use Upgrade instead.",
+    nothing_to_pay: "There's nothing to pay for with that selection.",
+    extra_staff_not_available:
+      "Extra staff places are available on paid plans. Upgrade to add more staff.",
+    interval_not_available: "That plan isn't available for yearly billing.",
     slug_taken: "That workspace address is already taken. Try another.",
     slug_reserved: "That workspace address is reserved. Try another.",
     too_many_companies: "You've created several workspaces today. Please try again tomorrow.",
@@ -45,6 +72,8 @@ export function userMessageFor(
     "System roles cannot be deleted",
     "Owner role",
     "cannot be placed under itself",
+    "staff selection or reactivation",
+    "New staff can only be added",
   ];
   if (friendlyTriggerMessages.some((m) => msg.includes(m))) return msg;
 

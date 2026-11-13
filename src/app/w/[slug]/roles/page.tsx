@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { CheckIcon, LockIcon } from "lucide-react";
 import { PageHeader } from "@/components/shell/page-header";
 import { TenantPage } from "@/components/shell/tenant-page";
 import { ActionButton } from "@/components/action-forms";
-import { Alert, Badge } from "@/components/ui/display";
+import { Badge } from "@/components/ui/display";
 import {
   Table,
   TableBody,
@@ -16,6 +15,8 @@ import {
 import { can, isPermission } from "@/lib/permissions";
 import { NAV } from "@/lib/copy/navigation";
 import { hasFeature } from "@/lib/entitlements";
+import { featurePrompt } from "@/lib/upgrade";
+import { UpgradePrompt } from "@/components/upgrade-prompt";
 import { listPermissionCatalog, listRoles } from "@/modules/access/server/queries";
 import { RoleDialog, RolePermissionsDialog } from "@/modules/access/components/access-forms";
 import { deleteRole } from "@/modules/access/server/actions";
@@ -46,15 +47,11 @@ export default function RolesPage(props: PageProps<"/w/[slug]/roles">) {
               actions={canManage ? <RoleDialog slug={slug} /> : null}
             />
             {!customAllowed && can(ctx, "roles.manage") ? (
-              <Alert variant="info" className="mb-6">
-                Custom roles and editing role permissions are available on the Growth plan and
-                above.{" "}
-                {can(ctx, "subscription.view") ? (
-                  <Link href={`/w/${slug}/settings/plan`} className="font-semibold underline">
-                    See plans
-                  </Link>
-                ) : null}
-              </Alert>
+              <UpgradePrompt
+                className="mb-6"
+                prompt={featurePrompt(slug, ctx.plan.code, "custom_roles")}
+                canManage={can(ctx, "subscription.manage")}
+              />
             ) : null}
 
             <div className="mb-8 grid gap-3 md:grid-cols-2">

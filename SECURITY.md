@@ -28,6 +28,21 @@ Status: **Proposed (Phase 0)**. Each phase adds verified controls to this docume
 storage policies (Phase 2, with the first file uploads), support-access approval flow (Phase 11),
 data-subject request workflow (Phase 7), breach runbook (Phase 11).
 
+### Subscriptions and payments (2026-11-13)
+
+- Staff, work-location, branch and department allowances are enforced by database triggers; the UI
+  only explains them. Plan-suspended staff fail `app.is_member()` (when that is their only role), so
+  they lose workspace access without their records changing.
+- Trial eligibility (one per workspace, one per owner every 12 months) is checked in `start_trial()`.
+- Checkout prices come from `subscription_quote()` in the database, never from the browser.
+- Paid entitlements change only in `apply_verified_payment()`, executable by `service_role` only and
+  called after the transaction is verified with Paystack's API (webhook or callback). Amount and
+  currency must match the invoice; repeat calls are idempotent. There is no simulated payment path in
+  the app; tests use a clearly separated service-role fixture.
+- Webhooks: HMAC-SHA512 over the raw body with `timingSafeEqual`, stored once per event id.
+- `PAYSTACK_SECRET_KEY` is server-only (`src/lib/payments` is `server-only` and on the service-role
+  allow-list). Live keys are refused unless `PAYSTACK_LIVE_APPROVED=true`.
+
 ## 1. Threat model (top concerns)
 
 | Threat | Control |

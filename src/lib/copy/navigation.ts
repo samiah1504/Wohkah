@@ -4,6 +4,12 @@
  */
 export const NAV = {
   home: { label: "Home" },
+  staff: {
+    label: "Staff",
+    title: "Staff",
+    description:
+      "The people who work for your business. Active staff count toward your subscription.",
+  },
   access: {
     label: "Team Access",
     title: "Team Access",

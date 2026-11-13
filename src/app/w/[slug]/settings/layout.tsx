@@ -8,8 +8,9 @@ const SETTINGS_SECTIONS: { key: string; label: string; anyOf: Permission[] | nul
   { key: "company", label: "Company", anyOf: null },
   { key: "departments", label: "Departments", anyOf: ["departments.manage"] },
   { key: "branches", label: "Branches", anyOf: ["branches.manage"] },
+  { key: "work-locations", label: "Work locations", anyOf: ["work_locations.manage"] },
   { key: "holidays", label: "Holidays", anyOf: ["holidays.manage"] },
-  { key: "plan", label: "Plan", anyOf: ["subscription.view"] },
+  { key: "subscription", label: "Subscription", anyOf: ["subscription.view"] },
   { key: "audit", label: "Audit log", anyOf: ["audit.view"] },
 ];
 

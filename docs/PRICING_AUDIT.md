@@ -84,6 +84,25 @@ marked **"Coming soon"**, never as working features.
 | Reminders (3 days, 1 day, today, expired), no duplicates | no notification or job system yet (Phase 10 / ADR-0005) | ❓ Q8: in-app now, email later? |
 | Subscribe / upgrade / downgrade / buy locations with payment | **No payment provider yet** | ❓ Q9: Paystack now? |
 
-## 6. Decisions needed before implementation
+## 6. Decisions (approved by the product owner, 2026-11-13)
 
-See the chat message accompanying this audit; answers will be recorded here.
+| Topic | Decision | Where enforced |
+|---|---|---|
+| Plans | Free ₦0, Starter ₦5,000, Growth ₦10,000, Business ₦15,000 a month | `subscription_plans`; `src/lib/plans/catalog.ts` mirrors it (tested) |
+| Yearly | 10 × monthly: ₦50,000 / ₦100,000 / ₦150,000. Free has no yearly option | same |
+| Scale | Withdrawn: `is_public = false`, `is_active = false`. History kept | migration `20261113000100` |
+| Active staff included | 3 / 10 / 25 / 50 | `employees_staff_allowance` trigger |
+| Extra staff | ₦1,000 a month or ₦12,000 a year each, **paid plans only**. Free must upgrade | `allows_extra_staff`, `subscription_quote()` |
+| Over the allowance | Activation blocked. After a downgrade or trial expiry the owner chooses who stays active; the rest become `plan_suspended` (records kept, reactivatable). Nothing is silently deactivated or deleted | `select_active_staff()`, `reactivate_staff()`, `app.is_member()` |
+| Lower plan | Applied now if nothing is paid for; otherwise scheduled for the end of the paid period. Excess staff must be chosen first | `change_to_lower_plan()`, `sync_subscription()` |
+| Work locations included | 1 / 2 / 5 / 10. Extra: ₦1,000 a month or ₦12,000 a year each | `work_locations` trigger, `company_work_location_allowance()` |
+| Branches | 1 / 1 / 1 / unlimited (distinct from work locations) | `plan_features.branches` |
+| Departments | 1 / 1 / 10 / unlimited | `plan_features.departments` trigger |
+| Trial | 7 days, no card, Starter/Growth/Business only. One per workspace and one per owner every 12 months. Expiry moves the workspace to Free (not a lock), keeps all data, and requires staff selection above 3. Idempotent | `start_trial()`, `trial_grants`, `sync_subscription()` |
+| Reminders | In-app notifications and dashboard banner at 3 days, 1 day, expiry day and expired; deduplicated by `(user_id, dedupe_key)`. Email can be added later from the same rows | `app.notify_billing_admins()` |
+| Custom domains | Not offered. Removed from pricing, comparison and FAQs; `custom_domains` disabled on every plan | — |
+| Support / report history | Starter: "Email support", 12 months of report history. Growth and Business: "Priority support". Nothing else is stated | `support_level`, `report_history_months` |
+| Payments | Paystack. Stage 1 (subscription infrastructure) complete; Stage 2 (Paystack test-mode verification) is required before commercial launch. No "contact us to subscribe" buttons, no simulated payments | ADR-0006 |
+
+**Interpretation to confirm:** the Free plan may buy extra work locations (only extra staff were
+excluded for Free). This is how it is built; it is one flag (`allows_extra_work_locations`) to change.

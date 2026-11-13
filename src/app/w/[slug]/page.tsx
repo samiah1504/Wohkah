@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import {
+  BellIcon,
   Building2Icon,
   CalendarDaysIcon,
   CheckCircle2Icon,
@@ -21,7 +22,10 @@ import {
 } from "@/components/ui/display";
 import { Button } from "@/components/ui/button";
 import { can } from "@/lib/permissions";
-import { limitOf } from "@/lib/entitlements";
+import { ActionButton } from "@/components/action-forms";
+import { getPlan } from "@/lib/plans/catalog";
+import { getSubscriptionOverview, listMyNotifications } from "@/modules/billing/server/queries";
+import { markNotificationRead } from "@/modules/billing/server/actions";
 import { requireTenant, type TenantContext } from "@/lib/tenancy";
 import { formatDate, todayIn } from "@/lib/dates";
 import { getSetupSummary, listHolidays } from "@/modules/workspace/server/queries";
@@ -65,8 +69,13 @@ async function Home({ params, searchParams }: PageProps<"/w/[slug]">) {
 
       {sp.welcome === "1" ? (
         <Alert variant="success" className="mb-6">
-          Your workspace is ready. Start by adding your departments and branches, then invite your
-          team.
+          Your workspace is ready.{" "}
+          {sp.trial === "started"
+            ? "Your 7-day free trial has started. No card needed. "
+            : sp.trial === "unavailable"
+              ? "A free trial isn't available for this account (one trial per owner every 12 months), so you're on the Free plan. "
+              : ""}
+          Start by adding your departments and branches, then invite your team.
         </Alert>
       ) : null}
 
@@ -74,7 +83,8 @@ async function Home({ params, searchParams }: PageProps<"/w/[slug]">) {
         {summary ? <SetupChecklist ctx={ctx} summary={summary} /> : <StaffWelcome />}
 
         <div className="grid content-start gap-6">
-          {can(ctx, "subscription.view") ? <PlanCard ctx={ctx} members={summary?.members} /> : null}
+          <NotificationsCard ctx={ctx} />
+          {can(ctx, "subscription.view") ? <PlanCard ctx={ctx} /> : null}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
@@ -209,26 +219,68 @@ function StaffWelcome() {
   );
 }
 
-function PlanCard({ ctx, members }: { ctx: TenantContext; members?: number }) {
-  const admins = limitOf(ctx, "admins");
+async function PlanCard({ ctx }: { ctx: TenantContext }) {
+  const o = await getSubscriptionOverview(ctx);
+  const plan = getPlan(o.plan_code);
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center justify-between text-base">
-          Plan
-          <Badge>{ctx.plan.name}</Badge>
+          Subscription
+          <Badge>
+            {plan?.name ?? o.plan_code}
+            {o.status === "trialing" ? " trial" : ""}
+          </Badge>
         </CardTitle>
         <CardDescription>
-          {members !== undefined ? `${members} workspace member${members === 1 ? "" : "s"}. ` : ""}
-          {admins === null
-            ? "Unlimited administrators."
-            : `Up to ${admins} administrator${admins === 1 ? "" : "s"}.`}
+          {o.usage.active_staff} of {o.allowances.staff} active staff places in use.{" "}
+          {o.allowances.work_locations === null
+            ? "Unlimited work locations."
+            : `${o.usage.work_locations} of ${o.allowances.work_locations} work locations.`}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Button asChild variant="outline" size="sm">
-          <Link href={`/w/${ctx.company.slug}/settings/plan`}>View plan and limits</Link>
+          <Link href={`/w/${ctx.company.slug}/settings/subscription`}>View subscription</Link>
         </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+async function NotificationsCard({ ctx }: { ctx: TenantContext }) {
+  const items = (await listMyNotifications(ctx)).filter((n) => !n.read_at);
+  if (!items.length) return null;
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          <BellIcon className="text-primary size-4" /> Notifications
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <ul className="grid gap-3 text-sm">
+          {items.map((n) => (
+            <li key={n.id} className="grid gap-1 border-b pb-3 last:border-0 last:pb-0">
+              <p className="font-medium">{n.title}</p>
+              {n.body ? <p className="text-muted-foreground text-xs">{n.body}</p> : null}
+              <div className="flex flex-wrap items-center gap-2">
+                {n.link?.startsWith("/") ? (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={n.link}>Open</Link>
+                  </Button>
+                ) : null}
+                <ActionButton
+                  action={markNotificationRead}
+                  hidden={{ slug: ctx.company.slug, id: String(n.id) }}
+                  variant="ghost"
+                >
+                  Dismiss
+                </ActionButton>
+              </div>
+            </li>
+          ))}
+        </ul>
       </CardContent>
     </Card>
   );

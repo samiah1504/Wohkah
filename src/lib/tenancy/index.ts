@@ -74,6 +74,14 @@ export const getTenant = cache(async (slug: string): Promise<TenantContext | nul
   if (!SLUG.test(slug)) return null;
 
   const supabase = await createClient();
+  // Record trial expiry / due plan changes and create reminders before
+  // reading the context (idempotent; a no-op for non-members).
+  const refreshed = await supabase.rpc("refresh_workspace_subscription", { p_slug: slug });
+  if (refreshed.error) {
+    console.error("[tenancy] refresh_workspace_subscription failed", {
+      code: refreshed.error.code,
+    });
+  }
   const { data, error } = await supabase.rpc("workspace_context", { p_slug: slug });
   if (error) {
     console.error("[tenancy] workspace_context failed", { code: error.code });

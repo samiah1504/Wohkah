@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import { requireUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import { hitRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/rate-limit";
@@ -17,6 +18,7 @@ import {
   idSchema,
   toAddress,
   workingDaysFrom,
+  addressFields,
 } from "../schemas";
 
 // ---------------------------------------------------------------------------
@@ -37,7 +39,7 @@ export async function createCompany(_prev: FormState, formData: FormData): Promi
 
   const d = parsed.data;
   const supabase = await createClient();
-  const { error } = await supabase.rpc("create_company", {
+  const { data: companyId, error } = await supabase.rpc("create_company", {
     p_name: d.name,
     p_slug: d.slug,
     p_country_code: d.countryCode,
@@ -59,7 +61,18 @@ export async function createCompany(_prev: FormState, formData: FormData): Promi
     }
     return errorState(message, { values });
   }
-  redirect(`/w/${d.slug}?welcome=1`);
+  if (d.startPlan === "free") redirect(`/w/${d.slug}?welcome=1`);
+
+  // The trial is checked again in the database (one per workspace, one per
+  // owner every 12 months). If it isn't available the workspace stays on Free.
+  const { error: trialError } = await supabase.rpc("start_trial", {
+    p_company: companyId,
+    p_plan_code: d.startPlan,
+  });
+  if (trialError && !trialError.message.startsWith("trial_not_eligible")) {
+    console.error("[workspace] start_trial after create failed", { code: trialError.code });
+  }
+  redirect(`/w/${d.slug}?welcome=1&trial=${trialError ? "unavailable" : "started"}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -245,6 +258,64 @@ export async function deleteHoliday(_prev: FormState, formData: FormData) {
         .eq("id", data.id)
         .eq("company_id", ctx.company.id);
       check(error, "delete holiday");
+    },
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Work locations (approved places for attendance)
+// ---------------------------------------------------------------------------
+const workLocationSchema = z.object({
+  id: z
+    .uuid()
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  name: z.string().trim().min(1, "Enter a name.").max(100, "That name is too long."),
+  branchId: z
+    .uuid()
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  ...addressFields,
+});
+
+export async function saveWorkLocation(_prev: FormState, formData: FormData) {
+  return workspaceAction({
+    formData,
+    permission: "work_locations.manage",
+    schema: workLocationSchema,
+    successMessage: "Work location saved.",
+    run: async ({ ctx, data, supabase }) => {
+      const fields = {
+        name: data.name,
+        branch_id: data.branchId ?? null,
+        address: toAddress(data),
+      };
+      const { error } = data.id
+        ? await supabase
+            .from("work_locations")
+            .update(fields)
+            .eq("id", data.id)
+            .eq("company_id", ctx.company.id)
+        : await supabase.from("work_locations").insert({ ...fields, company_id: ctx.company.id });
+      check(error, "save work location");
+    },
+  });
+}
+
+export async function setWorkLocationArchived(_prev: FormState, formData: FormData) {
+  const archive = formData.get("archive") === "true";
+  return workspaceAction({
+    formData,
+    permission: "work_locations.manage",
+    schema: idSchema,
+    successMessage: archive ? "Work location archived." : "Work location restored.",
+    run: async ({ ctx, data, supabase }) => {
+      const { error } = await supabase
+        .from("work_locations")
+        .update({ archived_at: archive ? new Date().toISOString() : null })
+        .eq("id", data.id)
+        .eq("company_id", ctx.company.id);
+      check(error, "archive work location");
     },
   });
 }

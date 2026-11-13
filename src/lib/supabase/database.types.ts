@@ -80,6 +80,76 @@ export type Database = {
         };
         Relationships: [];
       };
+      billing_invoices: {
+        Row: {
+          billing_interval: Database["public"]["Enums"]["billing_interval"];
+          company_id: string;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          extra_staff: number;
+          extra_work_locations: number;
+          id: string;
+          lines: NonNullable<Json>;
+          paid_at: string | null;
+          plan_id: string;
+          provider: string | null;
+          reference: string;
+          status: string;
+          total_minor: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          billing_interval: Database["public"]["Enums"]["billing_interval"];
+          company_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          extra_staff?: number;
+          extra_work_locations?: number;
+          id?: string;
+          lines: NonNullable<Json>;
+          paid_at?: string | null;
+          plan_id: string;
+          provider?: string | null;
+          reference: string;
+          status?: string;
+          total_minor: number;
+        };
+        Update: {
+          billing_interval?: Database["public"]["Enums"]["billing_interval"];
+          company_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          extra_staff?: number;
+          extra_work_locations?: number;
+          id?: string;
+          lines?: NonNullable<Json>;
+          paid_at?: string | null;
+          plan_id?: string;
+          provider?: string | null;
+          reference?: string;
+          status?: string;
+          total_minor?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "billing_invoices_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: false;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "billing_invoices_plan_id_fkey";
+            columns: ["plan_id"];
+            isOneToOne: false;
+            referencedRelation: "subscription_plans";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       branches: {
         Row: {
           address: NonNullable<Json>;
@@ -366,8 +436,13 @@ export type Database = {
           created_at: string;
           current_period_end: string | null;
           current_period_start: string | null;
+          extra_staff: number;
+          extra_work_locations: number;
           id: string;
+          pending_change_at: string | null;
+          pending_plan_id: string | null;
           plan_id: string;
+          staff_selection_required: boolean;
           status: Database["public"]["Enums"]["subscription_status"];
           trial_ends_at: string | null;
           updated_at: string;
@@ -380,8 +455,13 @@ export type Database = {
           created_at?: string;
           current_period_end?: string | null;
           current_period_start?: string | null;
+          extra_staff?: number;
+          extra_work_locations?: number;
           id?: string;
+          pending_change_at?: string | null;
+          pending_plan_id?: string | null;
           plan_id: string;
+          staff_selection_required?: boolean;
           status?: Database["public"]["Enums"]["subscription_status"];
           trial_ends_at?: string | null;
           updated_at?: string;
@@ -393,8 +473,13 @@ export type Database = {
           created_at?: string;
           current_period_end?: string | null;
           current_period_start?: string | null;
+          extra_staff?: number;
+          extra_work_locations?: number;
           id?: string;
+          pending_change_at?: string | null;
+          pending_plan_id?: string | null;
           plan_id?: string;
+          staff_selection_required?: boolean;
           status?: Database["public"]["Enums"]["subscription_status"];
           trial_ends_at?: string | null;
           updated_at?: string;
@@ -405,6 +490,13 @@ export type Database = {
             columns: ["company_id"];
             isOneToOne: true;
             referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "company_subscriptions_pending_plan_id_fkey";
+            columns: ["pending_plan_id"];
+            isOneToOne: false;
+            referencedRelation: "subscription_plans";
             referencedColumns: ["id"];
           },
           {
@@ -461,6 +553,90 @@ export type Database = {
             columns: ["company_id", "parent_id"];
             isOneToOne: false;
             referencedRelation: "departments";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
+      employees: {
+        Row: {
+          branch_id: string | null;
+          company_id: string;
+          created_at: string;
+          created_by: string | null;
+          department_id: string | null;
+          email: string | null;
+          full_name: string;
+          id: string;
+          job_title: string | null;
+          member_id: string | null;
+          phone: string | null;
+          plan_suspended_at: string | null;
+          status: Database["public"]["Enums"]["staff_status"];
+          status_before_plan_suspension: Database["public"]["Enums"]["staff_status"] | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          branch_id?: string | null;
+          company_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          department_id?: string | null;
+          email?: string | null;
+          full_name: string;
+          id?: string;
+          job_title?: string | null;
+          member_id?: string | null;
+          phone?: string | null;
+          plan_suspended_at?: string | null;
+          status?: Database["public"]["Enums"]["staff_status"];
+          status_before_plan_suspension?: Database["public"]["Enums"]["staff_status"] | null;
+          updated_at?: string;
+        };
+        Update: {
+          branch_id?: string | null;
+          company_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          department_id?: string | null;
+          email?: string | null;
+          full_name?: string;
+          id?: string;
+          job_title?: string | null;
+          member_id?: string | null;
+          phone?: string | null;
+          plan_suspended_at?: string | null;
+          status?: Database["public"]["Enums"]["staff_status"];
+          status_before_plan_suspension?: Database["public"]["Enums"]["staff_status"] | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "employees_company_id_branch_id_fkey";
+            columns: ["company_id", "branch_id"];
+            isOneToOne: false;
+            referencedRelation: "branches";
+            referencedColumns: ["company_id", "id"];
+          },
+          {
+            foreignKeyName: "employees_company_id_department_id_fkey";
+            columns: ["company_id", "department_id"];
+            isOneToOne: false;
+            referencedRelation: "departments";
+            referencedColumns: ["company_id", "id"];
+          },
+          {
+            foreignKeyName: "employees_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: false;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "employees_company_id_member_id_fkey";
+            columns: ["company_id", "member_id"];
+            isOneToOne: false;
+            referencedRelation: "company_members";
             referencedColumns: ["company_id", "id"];
           },
         ];
@@ -577,6 +753,115 @@ export type Database = {
             columns: ["company_id", "role_id"];
             isOneToOne: false;
             referencedRelation: "roles";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
+      notifications: {
+        Row: {
+          body: string;
+          company_id: string;
+          created_at: string;
+          dedupe_key: string;
+          emailed_at: string | null;
+          id: number;
+          kind: string;
+          link: string | null;
+          read_at: string | null;
+          title: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body: string;
+          company_id: string;
+          created_at?: string;
+          dedupe_key: string;
+          emailed_at?: string | null;
+          id?: never;
+          kind: string;
+          link?: string | null;
+          read_at?: string | null;
+          title: string;
+          user_id: string;
+        };
+        Update: {
+          body?: string;
+          company_id?: string;
+          created_at?: string;
+          dedupe_key?: string;
+          emailed_at?: string | null;
+          id?: never;
+          kind?: string;
+          link?: string | null;
+          read_at?: string | null;
+          title?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notifications_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: false;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      payment_transactions: {
+        Row: {
+          amount_minor: number;
+          company_id: string;
+          created_at: string;
+          currency: string;
+          id: string;
+          invoice_id: string;
+          provider: string;
+          provider_reference: string;
+          raw: Json | null;
+          status: string;
+          verified_at: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_minor: number;
+          company_id: string;
+          created_at?: string;
+          currency: string;
+          id?: string;
+          invoice_id: string;
+          provider: string;
+          provider_reference: string;
+          raw?: Json | null;
+          status: string;
+          verified_at?: string | null;
+        };
+        Update: {
+          amount_minor?: number;
+          company_id?: string;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          invoice_id?: string;
+          provider?: string;
+          provider_reference?: string;
+          raw?: Json | null;
+          status?: string;
+          verified_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "payment_transactions_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: false;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payment_transactions_company_id_invoice_id_fkey";
+            columns: ["company_id", "invoice_id"];
+            isOneToOne: false;
+            referencedRelation: "billing_invoices";
             referencedColumns: ["company_id", "id"];
           },
         ];
@@ -867,54 +1152,134 @@ export type Database = {
           },
         ];
       };
+      subscription_events: {
+        Row: {
+          actor_user_id: string | null;
+          company_id: string;
+          created_at: string;
+          details: NonNullable<Json>;
+          event: string;
+          from_plan_id: string | null;
+          id: number;
+          to_plan_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          actor_user_id?: string | null;
+          company_id: string;
+          created_at?: string;
+          details?: NonNullable<Json>;
+          event: string;
+          from_plan_id?: string | null;
+          id?: never;
+          to_plan_id?: string | null;
+        };
+        Update: {
+          actor_user_id?: string | null;
+          company_id?: string;
+          created_at?: string;
+          details?: NonNullable<Json>;
+          event?: string;
+          from_plan_id?: string | null;
+          id?: never;
+          to_plan_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "subscription_events_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: false;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "subscription_events_from_plan_id_fkey";
+            columns: ["from_plan_id"];
+            isOneToOne: false;
+            referencedRelation: "subscription_plans";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "subscription_events_to_plan_id_fkey";
+            columns: ["to_plan_id"];
+            isOneToOne: false;
+            referencedRelation: "subscription_plans";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       subscription_plans: {
         Row: {
+          allows_extra_staff: boolean;
+          allows_extra_work_locations: boolean;
           annual_price_minor: number | null;
           code: string;
           created_at: string;
           currency: string;
           description: string | null;
           extra_employee_price_minor: number;
+          extra_staff_annual_price_minor: number;
+          extra_work_location_annual_price_minor: number;
+          extra_work_location_price_minor: number;
           id: string;
           included_employees: number;
           is_active: boolean;
           is_public: boolean;
           monthly_price_minor: number;
           name: string;
+          report_history_months: number | null;
           sort_order: number;
+          support_level: string | null;
+          trial_days: number;
           updated_at: string;
         };
         ComputedFields: never;
         Insert: {
+          allows_extra_staff?: boolean;
+          allows_extra_work_locations?: boolean;
           annual_price_minor?: number | null;
           code: string;
           created_at?: string;
           currency?: string;
           description?: string | null;
           extra_employee_price_minor: number;
+          extra_staff_annual_price_minor?: number;
+          extra_work_location_annual_price_minor?: number;
+          extra_work_location_price_minor?: number;
           id?: string;
           included_employees: number;
           is_active?: boolean;
           is_public?: boolean;
           monthly_price_minor: number;
           name: string;
+          report_history_months?: number | null;
           sort_order?: number;
+          support_level?: string | null;
+          trial_days?: number;
           updated_at?: string;
         };
         Update: {
+          allows_extra_staff?: boolean;
+          allows_extra_work_locations?: boolean;
           annual_price_minor?: number | null;
           code?: string;
           created_at?: string;
           currency?: string;
           description?: string | null;
           extra_employee_price_minor?: number;
+          extra_staff_annual_price_minor?: number;
+          extra_work_location_annual_price_minor?: number;
+          extra_work_location_price_minor?: number;
           id?: string;
           included_employees?: number;
           is_active?: boolean;
           is_public?: boolean;
           monthly_price_minor?: number;
           name?: string;
+          report_history_months?: number | null;
           sort_order?: number;
+          support_level?: string | null;
+          trial_days?: number;
           updated_at?: string;
         };
         Relationships: [];
@@ -970,12 +1335,176 @@ export type Database = {
           },
         ];
       };
+      trial_grants: {
+        Row: {
+          company_id: string;
+          ended_at: string | null;
+          ends_at: string;
+          id: string;
+          outcome: string;
+          owner_user_id: string;
+          plan_id: string;
+          started_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          company_id: string;
+          ended_at?: string | null;
+          ends_at: string;
+          id?: string;
+          outcome?: string;
+          owner_user_id: string;
+          plan_id: string;
+          started_at?: string;
+        };
+        Update: {
+          company_id?: string;
+          ended_at?: string | null;
+          ends_at?: string;
+          id?: string;
+          outcome?: string;
+          owner_user_id?: string;
+          plan_id?: string;
+          started_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "trial_grants_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: true;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "trial_grants_plan_id_fkey";
+            columns: ["plan_id"];
+            isOneToOne: false;
+            referencedRelation: "subscription_plans";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      webhook_events: {
+        Row: {
+          event_id: string;
+          event_type: string | null;
+          id: number;
+          payload: NonNullable<Json>;
+          processed_at: string | null;
+          processing_error: string | null;
+          provider: string;
+          received_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          event_id: string;
+          event_type?: string | null;
+          id?: never;
+          payload: NonNullable<Json>;
+          processed_at?: string | null;
+          processing_error?: string | null;
+          provider: string;
+          received_at?: string;
+        };
+        Update: {
+          event_id?: string;
+          event_type?: string | null;
+          id?: never;
+          payload?: NonNullable<Json>;
+          processed_at?: string | null;
+          processing_error?: string | null;
+          provider?: string;
+          received_at?: string;
+        };
+        Relationships: [];
+      };
+      work_locations: {
+        Row: {
+          address: NonNullable<Json>;
+          archived_at: string | null;
+          branch_id: string | null;
+          company_id: string;
+          created_at: string;
+          id: string;
+          latitude: number | null;
+          longitude: number | null;
+          name: string;
+          radius_m: number | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          address?: NonNullable<Json>;
+          archived_at?: string | null;
+          branch_id?: string | null;
+          company_id: string;
+          created_at?: string;
+          id?: string;
+          latitude?: number | null;
+          longitude?: number | null;
+          name: string;
+          radius_m?: number | null;
+          updated_at?: string;
+        };
+        Update: {
+          address?: NonNullable<Json>;
+          archived_at?: string | null;
+          branch_id?: string | null;
+          company_id?: string;
+          created_at?: string;
+          id?: string;
+          latitude?: number | null;
+          longitude?: number | null;
+          name?: string;
+          radius_m?: number | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "work_locations_company_id_branch_id_fkey";
+            columns: ["company_id", "branch_id"];
+            isOneToOne: false;
+            referencedRelation: "branches";
+            referencedColumns: ["company_id", "id"];
+          },
+          {
+            foreignKeyName: "work_locations_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: false;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
       accept_invitation: { Args: { p_token: string }; Returns: string };
+      apply_verified_payment: {
+        Args: {
+          p_amount_minor: number;
+          p_currency: string;
+          p_invoice_id: string;
+          p_provider: string;
+          p_provider_reference: string;
+          p_raw: Json;
+        };
+        Returns: string;
+      };
+      cancel_scheduled_change: { Args: { p_company: string }; Returns: undefined };
+      change_to_lower_plan: { Args: { p_company: string; p_plan_code: string }; Returns: string };
+      create_checkout_invoice: {
+        Args: {
+          p_company: string;
+          p_extra_locations: number;
+          p_extra_staff: number;
+          p_interval: Database["public"]["Enums"]["billing_interval"];
+          p_plan_code: string;
+        };
+        Returns: string;
+      };
       create_company: {
         Args: {
           p_country_code?: string;
@@ -1006,6 +1535,32 @@ export type Database = {
           reset_at: string;
         }[];
       };
+      reactivate_staff: { Args: { p_company: string; p_ids: string[] }; Returns: number };
+      refresh_subscription: { Args: { p_company: string }; Returns: undefined };
+      refresh_workspace_subscription: { Args: { p_slug: string }; Returns: undefined };
+      select_active_staff: {
+        Args: { p_company: string; p_for_plan_code?: string; p_keep: string[] };
+        Returns: number;
+      };
+      start_trial: { Args: { p_company: string; p_plan_code: string }; Returns: string };
+      subscription_overview: { Args: { p_company: string }; Returns: Json };
+      workspace_allowances: { Args: { p_company: string }; Returns: Json };
+      subscription_quote: {
+        Args: {
+          p_extra_locations: number;
+          p_extra_staff: number;
+          p_interval: Database["public"]["Enums"]["billing_interval"];
+          p_plan_code: string;
+        };
+        Returns: Json;
+      };
+      trial_eligibility: {
+        Args: { p_company: string };
+        Returns: {
+          eligible: boolean;
+          reason: string;
+        }[];
+      };
       workspace_context: { Args: { p_slug: string }; Returns: Json };
       workspace_member_directory: {
         Args: { p_company: string };
@@ -1026,6 +1581,16 @@ export type Database = {
       invitation_status: "pending" | "accepted" | "revoked";
       member_status: "active" | "suspended" | "removed";
       role_scope: "company" | "department" | "branch";
+      staff_status:
+        | "invited"
+        | "onboarding"
+        | "active"
+        | "on_leave"
+        | "suspended"
+        | "plan_suspended"
+        | "resigned"
+        | "terminated"
+        | "archived";
       subscription_status: "trialing" | "active" | "past_due" | "grace" | "canceled" | "expired";
     };
     CompositeTypes: {
@@ -1143,6 +1708,17 @@ export const Constants = {
       invitation_status: ["pending", "accepted", "revoked"],
       member_status: ["active", "suspended", "removed"],
       role_scope: ["company", "department", "branch"],
+      staff_status: [
+        "invited",
+        "onboarding",
+        "active",
+        "on_leave",
+        "suspended",
+        "plan_suspended",
+        "resigned",
+        "terminated",
+        "archived",
+      ],
       subscription_status: ["trialing", "active", "past_due", "grace", "canceled", "expired"],
     },
   },

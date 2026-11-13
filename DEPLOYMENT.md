@@ -28,6 +28,24 @@ Copy `.env.example` to `.env.local`. Only `NEXT_PUBLIC_*` values reach the brows
 | `NEXT_PUBLIC_CONTACT_EMAIL` | server (build) | Optional. Public contact address shown on `/contact`; without it the page says the inbox is being set up |
 | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | — | Reserved; Sentry is wired up before launch |
 | `JOBS_WORKER_SECRET` | server | Reserved for the job worker (Phase 3) |
+| `PAYSTACK_SECRET_KEY` | **server only** | Paystack secret key. Test key (`sk_test_…`) until test mode is verified. Without it, checkout says payment isn't connected and charges nothing |
+| `PAYSTACK_LIVE_APPROVED` | server | Must be `true` before a live key (`sk_live_…`) is used. Leave `false` until the live launch is approved |
+
+### Paystack (Stage 2, required before commercial launch)
+
+1. In the Paystack dashboard (test mode), copy the **test secret key** into Vercel as
+   `PAYSTACK_SECRET_KEY` (Preview environment first). Never paste it into the repository or chat.
+2. Settings → API Keys & Webhooks → **Test Webhook URL**:
+   `https://<your-domain>/api/webhooks/paystack`. **Test Callback URL** can be left empty: WOHKAH sends
+   `https://<your-domain>/api/billing/paystack/callback` with each transaction.
+3. Verify in test mode: subscribe monthly and yearly, add extra staff and locations, a failed card, a
+   duplicate webhook delivery, and a browser closed before the redirect (the webhook must still
+   apply the payment).
+4. Only after approval: switch to the live key and set `PAYSTACK_LIVE_APPROVED=true` in Production.
+
+The subscription scheduler (`wohkah-sync-subscriptions`, hourly) is created by the migration when
+`pg_cron` is enabled (Database → Extensions). Without it, trial expiry and scheduled plan changes are
+applied when the workspace is next opened, which is enough for correctness.
 
 In Vercel, set **Preview** variables to the development project and **Production** variables to the
 production project. Never put real keys in the repository, in chat, or in issue trackers.
@@ -100,4 +118,6 @@ protection on `main` (paid plan for private repositories) also blocks merging fa
 - [ ] Sentry DSN configured; PII scrubbing on.
 - [ ] Vercel Production env vars; automatic production deployments off; `deploy` job enabled.
 - [ ] First platform administrator created by migration or SQL (never through the app).
+- [ ] Paystack test mode verified (see section 2), live key approved, webhook URL set for live mode.
+- [ ] `pg_cron` enabled so trial reminders and expiries run hourly.
 - [ ] Backup restore drill completed; runbooks written.

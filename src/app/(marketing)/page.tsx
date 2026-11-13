@@ -12,7 +12,8 @@ import {
   SectionHeading,
   WhoItsFor,
 } from "@/components/marketing/sections";
-import { PLANS } from "@/lib/plans";
+import { PLANS } from "@/lib/plans/catalog";
+import { ComparisonTable } from "@/components/plans/comparison-table";
 
 export const metadata: Metadata = {
   title: { absolute: "WOHKAH | Staff management software for small businesses" },
@@ -79,10 +80,16 @@ export default function HomePage() {
           <SectionHeading
             eyebrow="Pricing"
             title="Simple pricing that grows with your team"
-            description="Start free. Upgrade when your business grows. Every plan uses the same salary calculations; bigger plans include more staff and more control."
+            description="Start free, or try a paid plan free for 7 days. Bigger plans include more staff, more locations and more control."
           />
           <div className="mt-10">
             <Pricing />
+          </div>
+          <div className="mt-14">
+            <h3 className="font-heading text-walnut mb-4 text-center text-xl font-extrabold">
+              Compare plans in detail
+            </h3>
+            <ComparisonTable />
           </div>
         </div>
       </section>

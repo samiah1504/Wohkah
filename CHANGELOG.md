@@ -5,6 +5,29 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Pricing, trials and subscriptions (2026-11-13)
+
+#### Added
+- Approved plans: Free ₦0, Starter ₦5,000, Growth ₦10,000, Business ₦15,000 a month (yearly = 10 ×).
+  Active staff allowances 3/10/25/50, enforced in the database; extra staff ₦1,000 a month or ₦12,000
+  a year on paid plans; work locations 1/2/5/10 with extra locations at the same price.
+- 7-day free trial (no card) of Starter, Growth or Business, from onboarding or the subscription page.
+  One per workspace and one per owner every 12 months. Expiry moves the workspace to Free.
+- Staff page: add staff, mark as left, archive; choose who stays active when over the allowance;
+  paused staff keep their records and can be reactivated.
+- Settings → Work locations, Settings → Subscription (plan, usage, trial, plan cards with gains and
+  price differences, comparison table, history, payment records) and a checkout page.
+- Contextual upgrade prompts for staff, work locations, branches, departments and custom roles.
+- Trial reminders as in-app notifications and a dashboard banner, without duplicates.
+- Paystack groundwork: invoice creation, server-side verification, signed webhooks, verified-payment
+  function. Requires test-mode verification before launch.
+
+#### Changed
+- Public pricing shows four plans with "Start with a 7-day free trial. No card required." and a full
+  comparison table generated from the same catalogue the database enforces.
+- FAQs and terms updated; custom domains are no longer mentioned; no "contact us to upgrade".
+- Scale plan withdrawn (history preserved). Settings → Plan redirects to Settings → Subscription.
+
 ### Public website and product language (2026-11-12)
 
 #### Added

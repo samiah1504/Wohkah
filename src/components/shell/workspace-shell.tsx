@@ -4,6 +4,7 @@ import { canAny, can } from "@/lib/permissions";
 import { NAV } from "@/lib/copy/navigation";
 import { listMyWorkspaces, requireTenant, type TenantContext } from "@/lib/tenancy";
 import { getProfileName } from "./user-shell";
+import { SubscriptionBanner } from "./subscription-banner";
 import { UserMenu } from "./user-menu";
 import { BottomNav, SidebarNav, WorkspaceSwitcher, type NavItem } from "./workspace-nav";
 
@@ -15,6 +16,8 @@ import { BottomNav, SidebarNav, WorkspaceSwitcher, type NavItem } from "./worksp
 export function navItemsFor(ctx: TenantContext): NavItem[] {
   const base = `/w/${ctx.company.slug}`;
   const items: NavItem[] = [{ key: "home", label: NAV.home.label, href: base }];
+  if (can(ctx, "staff.view"))
+    items.push({ key: "staff", label: NAV.staff.label, href: `${base}/staff` });
   if (can(ctx, "members.view"))
     items.push({ key: "members", label: NAV.access.label, href: `${base}/members` });
   if (can(ctx, "roles.view"))
@@ -25,6 +28,7 @@ export function navItemsFor(ctx: TenantContext): NavItem[] {
       "departments.manage",
       "branches.manage",
       "holidays.manage",
+      "work_locations.manage",
       "subscription.view",
       "audit.view",
     ])
@@ -72,6 +76,7 @@ export async function WorkspaceShell({
             This workspace is {ctx.company.status}. Contact WOHKAH support for help.
           </Alert>
         ) : null}
+        <SubscriptionBanner ctx={ctx} />
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-24 sm:px-6 lg:pb-10">
           {children}
         </main>

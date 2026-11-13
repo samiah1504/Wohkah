@@ -45,10 +45,14 @@ describe("permissions", () => {
 describe("userMessageFor", () => {
   it("turns plan-limit errors into upgrade messages", () => {
     expect(userMessageFor({ message: "plan_limit_exceeded:admins:1" })).toBe(
-      "Your plan allows up to 1 administrator. Upgrade your plan to add more.",
+      "Your plan allows up to 1 administrator. Starter includes 2 administrators for ₦5,000 a month. Upgrade from Settings → Subscription.",
     );
-    expect(userMessageFor({ message: "plan_limit_exceeded:branches:5" })).toBe(
-      "Your plan allows up to 5 branches. Upgrade your plan to add more.",
+    expect(userMessageFor({ message: "plan_limit_exceeded:branches:1" })).toMatch(
+      /^Your plan allows up to 1 branch\. Business includes unlimited branches for ₦15,000 a month\./,
+    );
+    expect(userMessageFor({ message: "staff_limit_exceeded:3" })).toMatch(/3 active staff/);
+    expect(userMessageFor({ message: "work_location_limit_exceeded:2" })).toMatch(
+      /covers 2 work locations\. Add another for ₦1,000 a month/,
     );
   });
 

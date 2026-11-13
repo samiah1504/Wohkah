@@ -27,3 +27,13 @@ export function formatDateTime(iso: string, timeZone: string) {
     timeZone,
   });
 }
+
+/** Milliseconds from now until an ISO timestamp (negative once it has passed). */
+export function msUntil(iso: string, now: Date = new Date()): number {
+  return new Date(iso).getTime() - now.getTime();
+}
+
+/** Whole days left until an ISO timestamp, rounded up, never below zero. */
+export function daysUntil(iso: string, now: Date = new Date()): number {
+  return Math.max(0, Math.ceil(msUntil(iso, now) / 86_400_000));
+}

@@ -28,22 +28,6 @@ export const SYSTEM_ROLE_COPY = {
 
 export type SystemRoleKey = keyof typeof SYSTEM_ROLE_COPY;
 
-/** Plan feature labels shown on plan and pricing pages. */
-export const FEATURE_COPY = {
-  admins: { label: "Administrators", singular: "administrator" },
-  branches: { label: "Branches", singular: "branch" },
-  work_locations: { label: "Approved work locations", singular: "approved work location" },
-  storage_mb: { label: "File storage", singular: null },
-  custom_domains: { label: "Custom domains", singular: "custom domain" },
-  custom_roles: { label: "Custom roles", singular: null },
-  advanced_onboarding: { label: "New staff setup checklists", singular: null },
-  job_descriptions: { label: "Job descriptions", singular: null },
-  digital_contracts: { label: "Digital staff contracts", singular: null },
-  advanced_approvals: { label: "Advanced approvals", singular: null },
-  advanced_reporting: { label: "Advanced reports", singular: null },
-  advanced_analytics: { label: "Business and staff reports", singular: null },
-} as const;
-
 /** "1 staff member" / "5 staff". */
 export function staffCount(n: number): string {
   return n === 1 ? "1 staff member" : `${n} staff`;

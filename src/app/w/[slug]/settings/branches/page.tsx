@@ -11,7 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { limitMessage, limitOf } from "@/lib/entitlements";
+import { limitOf } from "@/lib/entitlements";
+import { can } from "@/lib/permissions";
+import { limitPrompt } from "@/lib/upgrade";
+import { UpgradePrompt } from "@/components/upgrade-prompt";
 import { asAddress, listBranches } from "@/modules/workspace/server/queries";
 import { BranchDialog } from "@/modules/workspace/components/settings-forms";
 import { setBranchArchived } from "@/modules/workspace/server/actions";
@@ -36,13 +39,15 @@ export default function BranchesPage(props: PageProps<"/w/[slug]/settings/branch
               </p>
               <BranchDialog
                 slug={slug}
-                disabledReason={
-                  atLimit && limit !== null
-                    ? limitMessage("branches", limit, ctx.plan.name)
-                    : undefined
-                }
+                disabledReason={atLimit ? "You've reached your plan's branch limit." : undefined}
               />
             </div>
+            {atLimit && limit !== null ? (
+              <UpgradePrompt
+                prompt={limitPrompt(slug, ctx.plan.code, "branches", limit)}
+                canManage={can(ctx, "subscription.manage")}
+              />
+            ) : null}
             {all.length === 0 ? (
               <EmptyState
                 icon={<Building2Icon />}

@@ -33,13 +33,22 @@ export default function TermsPage() {
         <ul className="mt-2">
           <li>Every workspace can use the Free plan for as long as it likes.</li>
           <li>
-            Paid plans are billed monthly or yearly. Each extra active staff member above your
-            plan&apos;s included number costs ₦1,000 a month.
+            Paid plans are billed monthly or yearly through Paystack. On paid plans, each extra
+            active staff member above your plan&apos;s included number costs ₦1,000 a month (₦12,000
+            a year). Extra approved work locations cost the same.
           </li>
-          <li>You&apos;ll always see what you&apos;ll pay before you&apos;re charged.</li>
           <li>
-            If a paid plan ends, your workspace moves to the Free plan&apos;s limits. Your records
-            are not deleted.
+            Starter, Growth and Business can be tried free for 7 days without a card: one trial per
+            workspace, and one per account owner every 12 months.
+          </li>
+          <li>
+            You&apos;ll always see what you&apos;ll pay before you pay. A plan changes only after
+            the payment is confirmed.
+          </li>
+          <li>
+            If a trial or paid plan ends, your workspace moves to the Free plan. If you then have
+            more active staff than the plan covers, you choose who stays active and the others are
+            paused. Records are never deleted because of a plan change.
           </li>
         </ul>
       </section>

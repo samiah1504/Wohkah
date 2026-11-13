@@ -6,6 +6,7 @@ import { FormMessage, SubmitButton, errorProps } from "@/components/forms";
 import { initialFormState } from "@/lib/forms";
 import { COUNTRIES, CURRENCIES, INDUSTRIES, SIZE_BANDS, TIMEZONES } from "../constants";
 import { createCompany } from "../server/actions";
+import { PLANS, naira } from "@/lib/plans/catalog";
 
 function slugify(name: string): string {
   return name
@@ -17,7 +18,13 @@ function slugify(name: string): string {
     .replace(/-+$/g, "");
 }
 
-export function CreateCompanyForm({ rootDomain }: { rootDomain: string }) {
+export function CreateCompanyForm({
+  rootDomain,
+  defaultPlan = "free",
+}: {
+  rootDomain: string;
+  defaultPlan?: string;
+}) {
   const [state, action] = useActionState(createCompany, initialFormState);
   const [name, setName] = useState(state.values?.name ?? "");
   const [slug, setSlug] = useState(state.values?.slug ?? "");
@@ -130,6 +137,35 @@ export function CreateCompanyForm({ rootDomain }: { rootDomain: string }) {
           </NativeSelect>
         </Field>
       </div>
+      <fieldset className="grid gap-2">
+        <legend className="mb-1 text-sm font-medium">How would you like to start?</legend>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {PLANS.map((p) => (
+            <label
+              key={p.code}
+              className="has-[:checked]:border-primary has-[:checked]:bg-primary/5 flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm"
+            >
+              <input
+                type="radio"
+                name="startPlan"
+                value={p.code}
+                defaultChecked={(state.values?.startPlan ?? defaultPlan) === p.code}
+                className="mt-1 accent-[var(--brand-yellow)]"
+              />
+              <span>
+                <span className="block font-semibold">
+                  {p.code === "free" ? "Free plan" : `${p.trialDays}-day free trial of ${p.name}`}
+                </span>
+                <span className="text-muted-foreground text-xs">
+                  {p.code === "free"
+                    ? `Up to ${p.includedStaff} active staff, free for as long as you like.`
+                    : `${p.includedStaff} active staff. No card needed. Then ${naira(p.monthlyMinor)} a month, or move to Free.`}
+                </span>
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
       <SubmitButton pendingLabel="Creating workspace…">Create workspace</SubmitButton>
     </form>
   );

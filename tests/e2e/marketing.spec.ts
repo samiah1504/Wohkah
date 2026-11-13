@@ -47,26 +47,41 @@ test("the homepage explains WOHKAH and every call to action works", async ({ pag
   await expect(page).toHaveURL(/\/register$/);
 });
 
-test("pricing shows the configured plans and the extra staff charge", async ({ page }) => {
+test("pricing shows the approved plans, trial and add-on prices", async ({ page }) => {
   await page.goto("/#pricing");
   const pricing = page.locator("#pricing");
-  for (const [name, price] of [
-    ["Free", "₦0"],
-    ["Starter", "₦12,500"],
-    ["Growth", "₦29,500"],
-    ["Business", "₦59,500"],
-    ["Scale", "₦109,500"],
+  await expect(pricing.getByText("Start with a 7-day free trial. No card required.")).toBeVisible();
+  for (const [name, monthly, yearly, staff] of [
+    ["Free", "₦0", "₦0", "3 active staff"],
+    ["Starter", "₦5,000", "₦50,000", "10 active staff"],
+    ["Growth", "₦10,000", "₦100,000", "25 active staff"],
+    ["Business", "₦15,000", "₦150,000", "50 active staff"],
   ] as const) {
-    await expect(pricing.getByRole("heading", { name, exact: true })).toBeVisible();
-    await expect(pricing.getByText(price, { exact: true })).toBeVisible();
+    const card = pricing.getByRole("region", { name: `${name} plan` });
+    await expect(card.getByRole("heading", { name, exact: true })).toBeVisible();
+    await expect(card.getByText(monthly, { exact: true })).toBeVisible();
+    await expect(card.getByText(staff)).toBeVisible();
+    await pricing.getByRole("radio", { name: "Yearly" }).click();
+    await expect(card.getByText(yearly, { exact: true })).toBeVisible();
+    await pricing.getByRole("radio", { name: "Monthly" }).click();
   }
-  await expect(pricing.getByText("₦17,500")).toBeVisible(); // 10 included + 5 extra on Starter
+  await expect(pricing.getByText("Scale", { exact: true })).toHaveCount(0);
+  await expect(pricing.getByText(/custom domain/i)).toHaveCount(0);
+  // 10 included + 5 extra on Starter: ₦5,000 + 5 × ₦1,000.
+  await expect(pricing.getByText(/With 15 active staff you pay/)).toContainText("₦10,000");
+  await expect(
+    pricing.getByText(/Each extra location costs ₦1,000 a month or ₦12,000 a year/),
+  ).toBeVisible();
 
-  await pricing.getByRole("radio", { name: "Yearly" }).click();
-  await expect(pricing.getByText("₦125,000", { exact: true })).toBeVisible();
-  await expect(pricing.getByText("₦1,095,000", { exact: true })).toBeVisible();
+  // Comparison table: every plan column, current plan not highlighted publicly.
+  const table = pricing.getByRole("table", { name: /Compare what each WOHKAH plan includes/ });
+  await expect(table.getByRole("columnheader")).toHaveCount(5);
+  await expect(table.getByRole("rowheader", { name: /Active staff included/ })).toBeVisible();
 
-  await pricing.getByRole("link", { name: "Choose Growth" }).click();
+  await pricing
+    .getByRole("region", { name: "Growth plan" })
+    .getByRole("link", { name: "Start free trial" })
+    .click();
   await expect(page).toHaveURL(/\/register\?plan=growth$/);
 });
 
@@ -75,7 +90,11 @@ test("unbuilt features are clearly marked and FAQs open", async ({ page }) => {
   await expect(page.locator("#features").getByText("Coming soon").first()).toBeVisible();
   const faq = page.locator("#faqs");
   await faq.getByText("How much does additional staff cost?").click();
-  await expect(faq.getByText(/₦1,000 per additional active staff member per month/)).toBeVisible();
+  await expect(
+    faq.getByText(/each additional active staff member costs ₦1,000 a month/),
+  ).toBeVisible();
+  await faq.getByText("Is there a free trial?").click();
+  await expect(faq.getByText(/free for 7 days, with no card required/)).toBeVisible();
 });
 
 test("footer pages exist", async ({ page }) => {

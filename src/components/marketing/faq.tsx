@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { PLANS, naira } from "@/lib/plans";
+import { PLANS, naira } from "@/lib/plans/catalog";
 
-const free = PLANS[0]!;
+const starter = PLANS[1]!;
 
 /**
  * Answers must match what WOHKAH does today and approved product decisions.
@@ -30,7 +30,7 @@ export const FAQS: { q: string; text: string }[] = [
   },
   {
     q: "Can I manage multiple branches?",
-    text: "Yes, available now. You can add your branches and departments today. The Free plan includes one branch, and paid plans include more.",
+    text: "Yes, available now. You can add your branches, departments and approved work locations today. Free, Starter and Growth include one branch; Business includes unlimited branches. A branch can have several work locations, and every plan can add extra work locations.",
   },
   {
     q: "Can staff access their own portal?",
@@ -41,20 +41,20 @@ export const FAQS: { q: string; text: string }[] = [
     text: "Yes. WOHKAH works in the browser on any modern phone, tablet or computer. There's nothing to download.",
   },
   {
+    q: "Is there a free trial?",
+    text: "Yes. You can try Starter, Growth or Business free for 7 days, with no card required. There's one free trial per workspace. When the trial ends, your workspace moves to the Free plan unless you subscribe, and none of your records are deleted.",
+  },
+  {
     q: "Can I upgrade my subscription?",
-    text: "Yes. Every workspace starts on the Free plan. Online payment for paid plans is being set up; until it's ready, contact us and we'll upgrade you. You'll always see the price before you're charged.",
+    text: "Yes. You can upgrade from Settings → Subscription at any time, and pay monthly or yearly. You'll always see the price before you pay, and your plan changes only after the payment is confirmed.",
   },
   {
     q: "How much does additional staff cost?",
-    text: `${naira(free.extraStaffMinor)} per additional active staff member per month, on every plan. Only active staff count. People who haven't accepted their invitation, have left, or have been archived are not charged for.`,
-  },
-  {
-    q: "Can I use my own company domain?",
-    text: "Not yet. Using your own address (for example staff.yourcompany.com) is planned for paid plans. Your domain stays yours: WOHKAH will only help you connect it.",
+    text: `On Starter, Growth and Business, each additional active staff member costs ${naira(starter.extraStaff.monthlyMinor)} a month or ${naira(starter.extraStaff.annualMinor)} a year. Only active staff count; people who have left or been archived are not charged for. The Free plan covers up to 3 active staff and doesn't offer extra staff, so upgrade to manage more.`,
   },
   {
     q: "Can I cancel my subscription?",
-    text: "Yes. If you cancel a paid plan, your workspace returns to the Free plan's limits at the end of the period you've paid for. Your records are kept and not deleted.",
+    text: "Yes. If you move to a smaller plan, the change takes effect at the end of the period you've paid for. If you then have more active staff than the plan covers, you choose who stays active; the others are paused, not deleted, and can be reactivated later.",
   },
 ];
 

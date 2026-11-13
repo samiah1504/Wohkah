@@ -8,7 +8,13 @@ import { ActionDialog } from "@/components/action-forms";
 import { FormMessage, SubmitButton, errorProps, useSuccessToast } from "@/components/forms";
 import { initialFormState, type FormState } from "@/lib/forms";
 import { COUNTRIES, CURRENCIES, INDUSTRIES, SIZE_BANDS, TIMEZONES, WEEKDAYS } from "../constants";
-import { addHoliday, saveBranch, saveDepartment, updateCompanyProfile } from "../server/actions";
+import {
+  addHoliday,
+  saveBranch,
+  saveDepartment,
+  saveWorkLocation,
+  updateCompanyProfile,
+} from "../server/actions";
 
 type Address = {
   line1?: string;
@@ -315,10 +321,12 @@ export function DepartmentDialog({
   slug,
   department,
   departments,
+  disabledReason,
 }: {
   slug: string;
   department?: Dept;
   departments: Dept[];
+  disabledReason?: string;
 }) {
   const parents = departments.filter((d) => d.id !== department?.id);
   return (
@@ -332,7 +340,7 @@ export function DepartmentDialog({
             <PencilIcon /> Edit
           </Button>
         ) : (
-          <Button>
+          <Button disabled={Boolean(disabledReason)} title={disabledReason}>
             <PlusIcon /> Add department
           </Button>
         )
@@ -471,6 +479,75 @@ export function BranchDialog({
             </label>
           </div>
           <AddressFields state={state} address={branch?.address ?? {}} />
+        </>
+      )}
+    </ActionDialog>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Work locations
+// ---------------------------------------------------------------------------
+type WorkLocation = { id: string; name: string; branch_id: string | null; address: Address };
+
+export function WorkLocationDialog({
+  slug,
+  location,
+  branches,
+  disabledReason,
+}: {
+  slug: string;
+  location?: WorkLocation;
+  branches: { id: string; name: string }[];
+  disabledReason?: string;
+}) {
+  return (
+    <ActionDialog
+      title={location ? "Edit work location" : "Add a work location"}
+      description="An approved place where staff can clock in."
+      action={saveWorkLocation}
+      hidden={{ slug, id: location?.id ?? "" }}
+      trigger={
+        location ? (
+          <Button variant="ghost" size="sm" aria-label={`Edit ${location.name}`}>
+            <PencilIcon /> Edit
+          </Button>
+        ) : (
+          <Button disabled={Boolean(disabledReason)} title={disabledReason}>
+            <PlusIcon /> Add work location
+          </Button>
+        )
+      }
+    >
+      {(state) => (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Name" htmlFor="location-name" error={state.fieldErrors?.name}>
+              <Input
+                id="location-name"
+                name="name"
+                defaultValue={state.values?.name ?? location?.name ?? ""}
+                placeholder="e.g. Ikeja shop"
+                autoFocus
+                {...errorProps(state, "name")}
+              />
+            </Field>
+            <Field label="Branch" htmlFor="location-branch" hint="Optional">
+              <NativeSelect
+                id="location-branch"
+                name="branchId"
+                defaultValue={state.values?.branchId ?? location?.branch_id ?? ""}
+              >
+                <option value="">No branch</option>
+                {branches.map((b) => (
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
+                ))}
+              </NativeSelect>
+            </Field>
+          </div>
+          <AddressFields state={state} address={location?.address ?? {}} />
         </>
       )}
     </ActionDialog>

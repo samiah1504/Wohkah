@@ -40,6 +40,8 @@ export const createCompanySchema = z.object({
   timezone,
   industry,
   sizeBand,
+  // "free", or a paid plan to start a 7-day free trial of (no card).
+  startPlan: z.enum(["free", "starter", "growth", "business"]).catch("free"),
 });
 
 const time = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Use the format HH:MM.");

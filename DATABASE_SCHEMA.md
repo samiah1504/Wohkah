@@ -17,6 +17,8 @@ updated whenever a migration lands.
 | `20261110000700_rpc.sql` | `create_company`, invitations, `workspace_context`, `is_slug_available`, `rate_limit_hit` |
 | `20261110000800_member_directory.sql` | `workspace_member_directory` (emails only for `members.view`) |
 
+| `20261113000100_pricing_trials_allowances.sql` | Approved prices, allowances and add-ons; generated feature matrix; Scale withdrawn; `employees` (minimal staff records with `plan_suspended`), `work_locations`; `trial_grants`, `subscription_events`, `notifications`, `billing_invoices`, `payment_transactions`, `webhook_events`; trial, selection, downgrade, quote, checkout and verified-payment functions; optional hourly `pg_cron` sync |
+
 Each file documents its rollback steps in its header. Production is forward-only.
 
 **Differences from the Phase 0 design:**
@@ -140,10 +142,30 @@ Seed prices (minor units, NGN):
 | Plan | Monthly | Annual | Included |
 |---|---|---|---|
 | free | 0 | — | 3 |
-| starter | 1 250 000 | 12 500 000 | 10 |
-| growth | 2 950 000 | 29 500 000 | 25 |
-| business | 5 950 000 | 59 500 000 | 50 |
-| scale | 10 950 000 | 109 500 000 | 100 |
+| starter | 500 000 | 5 000 000 | 10 |
+| growth | 1 000 000 | 10 000 000 | 25 |
+| business | 1 500 000 | 15 000 000 | 50 |
+| scale (withdrawn, not public, not active) | — | — | — |
+
+Extra active staff (paid plans only) and extra work locations: 100 000 a month or 1 200 000 a year
+each. Since `20261113000100`, `subscription_plans` also holds `extra_staff_annual_price_minor`,
+`allows_extra_staff`, `extra_work_location_price_minor`, `extra_work_location_annual_price_minor`,
+`allows_extra_work_locations`, `trial_days`, `support_level` and `report_history_months`;
+`company_subscriptions` holds `extra_staff`, `extra_work_locations`, `pending_plan_id`,
+`pending_change_at` and `staff_selection_required`.
+
+### Subscriptions, trials and billing records (2026-11-13)
+
+| Table | Notes |
+|---|---|
+| `employees` | Minimal staff record (full profile arrives in Phase 2). `status` includes `plan_suspended`, distinct from ordinary `suspended`; `status_before_plan_suspension` restores it. Active = `active`, `on_leave`, `suspended` |
+| `work_locations` | Approved places for clock-in; optional `branch_id`. Counted against the work-location allowance |
+| `trial_grants` | One per company (unique); `owner_user_id` enforces one per owner every 12 months; `outcome` |
+| `subscription_events` | Append-only history shown on the subscription page |
+| `notifications` | In-app reminders; unique `(user_id, dedupe_key)` prevents duplicates |
+| `billing_invoices` | WOHKAH-priced invoices with line items and a unique `reference`; `open`, `paid`, `void`, `failed` |
+| `payment_transactions` | Verified provider payments, unique per provider reference |
+| `webhook_events` | Raw verified webhooks, unique per `(provider, event_id)` |
 
 ## 4. Later-phase inventory (designed when each phase starts)
 

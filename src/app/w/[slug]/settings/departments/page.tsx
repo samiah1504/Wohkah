@@ -12,6 +12,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { listDepartments } from "@/modules/workspace/server/queries";
+import { limitOf } from "@/lib/entitlements";
+import { can } from "@/lib/permissions";
+import { limitPrompt } from "@/lib/upgrade";
+import { UpgradePrompt } from "@/components/upgrade-prompt";
 import { DepartmentDialog } from "@/modules/workspace/components/settings-forms";
 import { setDepartmentArchived } from "@/modules/workspace/server/actions";
 
@@ -24,15 +28,32 @@ export default function DepartmentsPage(props: PageProps<"/w/[slug]/settings/dep
         const all = await listDepartments(ctx);
         const active = all.filter((d) => !d.archived_at);
         const byId = new Map(all.map((d) => [d.id, d.name]));
+        const limit = limitOf(ctx, "departments");
+        const atLimit = limit !== null && active.length >= limit;
         const slug = ctx.company.slug;
         return (
           <div className="grid gap-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <p className="text-muted-foreground text-sm">
                 Departments group your people. Archived departments are kept for history.
+                {limit !== null
+                  ? ` ${active.length} of ${limit} on the ${ctx.plan.name} plan.`
+                  : ""}
               </p>
-              <DepartmentDialog slug={slug} departments={active} />
+              <DepartmentDialog
+                slug={slug}
+                departments={active}
+                disabledReason={
+                  atLimit ? "You've reached your plan's department limit." : undefined
+                }
+              />
             </div>
+            {atLimit && limit !== null ? (
+              <UpgradePrompt
+                prompt={limitPrompt(slug, ctx.plan.code, "departments", limit)}
+                canManage={can(ctx, "subscription.manage")}
+              />
+            ) : null}
             {all.length === 0 ? (
               <EmptyState
                 icon={<NetworkIcon />}

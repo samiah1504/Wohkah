@@ -113,3 +113,15 @@ export async function getSetupSummary(ctx: TenantContext) {
     pendingInvitations: invitations.count ?? 0,
   };
 }
+
+export async function listWorkLocations(ctx: TenantContext) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("work_locations")
+    .select("id, name, address, branch_id, archived_at, branch:branches(id, name)")
+    .eq("company_id", ctx.company.id)
+    .order("archived_at", { ascending: true, nullsFirst: true })
+    .order("name");
+  if (error) fail("work locations", error);
+  return data;
+}

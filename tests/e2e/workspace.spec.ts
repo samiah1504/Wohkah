@@ -26,6 +26,7 @@ test("an owner sets up departments, branches and holidays; changes are audited",
   await expectToast(page, "Branch saved.");
   await expect(page.getByText("1 active of 1 allowed on the Free plan")).toBeVisible();
   await expect(page.getByRole("button", { name: "Add branch" })).toBeDisabled();
+  await expect(page.getByText("You've reached your plan's limit of 1 branch")).toBeVisible();
 
   // Holidays
   await page.goto(`/w/${slug}/settings/holidays?year=2027`);
@@ -83,9 +84,7 @@ test("custom roles are not available on the Free plan", async ({ browser }) => {
   const page = await newSession(browser);
   await login(page, owner.email);
   await page.goto(`/w/${slug}/roles`);
-  await expect(
-    page.getByText(/Custom roles and editing role permissions are available on the Growth plan/),
-  ).toBeVisible();
+  await expect(page.getByText("Upgrade to Growth for custom roles and permissions")).toBeVisible();
   await expect(page.getByRole("button", { name: "Create role" })).toHaveCount(0);
   await expect(page.getByRole("columnheader", { name: "Staff Manager" })).toBeVisible();
 });

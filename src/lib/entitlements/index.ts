@@ -1,34 +1,28 @@
-import { FEATURE_COPY } from "@/lib/copy/terms";
-
 /**
- * Plan entitlements, resolved server-side per request from the database
- * (plans and features are data: ARCHITECTURE.md §7). The database also
- * enforces the important limits itself (RLS + triggers), so these checks give
- * clear messages and hide unavailable features; they are not the only guard.
+ * Plan entitlements as resolved for a workspace (from the database, per
+ * request). Labels, plans and prices come from the central catalogue
+ * (src/lib/plans/catalog.ts). The database also enforces the important limits
+ * itself, so these checks give clear messages; they are not the only guard.
  */
-export const FEATURES = [
-  "admins",
-  "branches",
-  "work_locations",
-  "storage_mb",
-  "custom_domains",
-  "custom_roles",
-  "advanced_onboarding",
-  "job_descriptions",
-  "digital_contracts",
-  "advanced_approvals",
-  "advanced_reporting",
-  "advanced_analytics",
-] as const;
+import {
+  FEATURE_INFO,
+  FEATURE_KEYS,
+  PLANS,
+  entitlement,
+  lowestPlanWith,
+  naira,
+  type FeatureKey,
+  type PlanCode,
+} from "@/lib/plans/catalog";
 
-export type Feature = (typeof FEATURES)[number];
+export const FEATURES = FEATURE_KEYS;
+export type Feature = FeatureKey;
 export type FeatureState = { enabled: boolean; limit: number | null };
 export type Entitlements = Partial<Record<Feature, FeatureState>>;
 export type HasEntitlements = { features: Entitlements; plan: { code: string; name: string } };
 
-/** Customer-facing labels live in the shared copy dictionary. */
 export const FEATURE_LABELS: Record<Feature, string> = Object.fromEntries(
-  FEATURES.map((f) => [f, FEATURE_COPY[f].label]),
+  FEATURE_KEYS.map((f) => [f, FEATURE_INFO[f].label]),
 ) as Record<Feature, string>;
 
 export class EntitlementError extends Error {
@@ -51,9 +45,7 @@ export function limitOf(ctx: HasEntitlements, feature: Feature): number | null {
 
 export function assertFeature(ctx: HasEntitlements, feature: Feature): void {
   if (!hasFeature(ctx, feature)) {
-    throw new EntitlementError(
-      `${FEATURE_LABELS[feature]} isn't included in the ${ctx.plan.name} plan. Upgrade to use it.`,
-    );
+    throw new EntitlementError(featureUpgradeMessage(feature, ctx.plan.name));
   }
 }
 
@@ -65,17 +57,47 @@ export function assertLimit(ctx: HasEntitlements, feature: Feature, currentCount
   }
 }
 
+/** Cheapest plan with a higher limit than `current` (for upgrade prompts). */
+export function planWithMoreOf(feature: Feature, current: number) {
+  return PLANS.find((p) => {
+    const e = entitlement(p.code, feature);
+    return e.enabled && (e.limit === null || e.limit > current);
+  });
+}
+
+function label(feature: Feature, count: number) {
+  const info = FEATURE_INFO[feature];
+  return count === 1 && info.singular ? info.singular : info.label.toLowerCase();
+}
+
+function allowance(feature: Feature, code: PlanCode): string {
+  const e = entitlement(code, feature);
+  if (e.limit === null) return `unlimited ${FEATURE_INFO[feature].label.toLowerCase()}`;
+  return `${e.limit} ${label(feature, e.limit)}`;
+}
+
+/**
+ * Explains what was attempted, why it's unavailable, which plan includes more,
+ * the price and how to proceed.
+ */
 export function limitMessage(feature: Feature, limit: number, planName?: string): string {
-  const label =
-    limit === 1 && FEATURE_COPY[feature].singular
-      ? FEATURE_COPY[feature].singular
-      : FEATURE_LABELS[feature].toLowerCase();
   const plan = planName ? `The ${planName} plan` : "Your plan";
-  return limit === 0
-    ? `${FEATURE_LABELS[feature]} aren't included in your plan. Upgrade to add them.`
-    : `${plan} allows up to ${limit} ${label}. Upgrade your plan to add more.`;
+  const next = planWithMoreOf(feature, limit);
+  const upgrade = next
+    ? ` ${next.name} includes ${allowance(feature, next.code)} for ${naira(next.monthlyMinor)} a month. Upgrade from Settings → Subscription.`
+    : "";
+  if (limit === 0) return `${FEATURE_INFO[feature].label} aren't included in your plan.${upgrade}`;
+  return `${plan} allows up to ${limit} ${label(feature, limit)}.${upgrade}`;
+}
+
+export function featureUpgradeMessage(feature: Feature, planName: string): string {
+  const plan = lowestPlanWith(feature);
+  const what = FEATURE_INFO[feature].label;
+  return plan
+    ? `${what} isn't included in the ${planName} plan. It's available on ${plan.name} and higher, from ${naira(plan.monthlyMinor)} a month. Upgrade from Settings → Subscription.`
+    : `${what} isn't included in the ${planName} plan.`;
 }
 
 export function isFeature(value: string): value is Feature {
-  return (FEATURES as readonly string[]).includes(value);
+  return (FEATURE_KEYS as readonly string[]).includes(value);
 }

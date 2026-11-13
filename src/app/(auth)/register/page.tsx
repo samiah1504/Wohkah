@@ -45,7 +45,12 @@ async function RegisterContent({
   searchParams: PageProps<"/register">["searchParams"];
 }) {
   const sp = await searchParams;
-  const next = safeNextPath(sp.next, "/onboarding");
+  // Pricing-page links carry the chosen plan through to workspace setup.
+  const plan =
+    typeof sp.plan === "string" && /^(free|starter|growth|business)$/.test(sp.plan)
+      ? sp.plan
+      : null;
+  const next = safeNextPath(sp.next, plan ? `/onboarding?plan=${plan}` : "/onboarding");
   if (await getSessionUser()) redirect(next);
   return (
     <RegisterForm next={next} defaultEmail={typeof sp.email === "string" ? sp.email : undefined} />
