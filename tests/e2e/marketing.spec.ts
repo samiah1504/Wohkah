@@ -78,7 +78,7 @@ test("pricing shows the approved plans, trial and add-on prices", async ({ page 
   await expect(table.locator("thead").getByRole("columnheader")).toHaveCount(5);
   await expect(table.getByRole("rowheader", { name: /Active staff included/ })).toBeVisible();
   // Branches 1/2/5/10, separate from work locations; no departments row.
-  await expect(table.getByRole("row", { name: /^Branches/ })).toHaveText(
+  await expect(table.getByRole("row", { name: /^Branches \d/ })).toHaveText(
     /^Branches\s*1\s*2\s*5\s*10$/,
   );
   await expect(table.getByRole("row", { name: /^Work locations included/ })).toHaveText(
