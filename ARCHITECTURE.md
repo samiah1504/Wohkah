@@ -149,10 +149,11 @@ sure a multi-company user sees only the *selected* workspace. Both layers are te
 
 - `permissions`: a global catalogue of keys such as `employees.view`, `employees.edit`,
   `payroll.approve`, `payroll.export` and `salary.view`.
-- `roles`: per company, seeded from six system templates (Owner, HR Admin, Operations Manager,
-  Department Manager, Accountant, Employee). Custom roles depend on the plan.
-- `member_roles`: (member, role, **scope**), where scope is `company`, `department:<id>` or
-  `branch:<id>`. A Department Manager role scoped to Sales can approve leave only for Sales employees.
+- `roles`: per company, seeded from five system templates (Owner, Staff Manager, Operations
+  Manager, Accountant, Staff Member). Custom roles depend on the plan. Departments and the
+  Department Manager role were removed on 2026-11-14 (migration `20261114000300`).
+- `member_roles`: (member, role, **scope**), where scope is `company` or `branch:<id>`. A role
+  scoped to the Lagos branch applies only to that branch.
 - The SQL helpers `app.has_permission(company_id, key)` and
   `app.can_access_employee(company_id, employee_id, key)` serve RLS. `lib/permissions` mirrors them for
   the UI and for clear error messages.

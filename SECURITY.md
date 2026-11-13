@@ -30,7 +30,7 @@ data-subject request workflow (Phase 7), breach runbook (Phase 11).
 
 ### Subscriptions and payments (2026-11-13)
 
-- Staff, work-location, branch and department allowances are enforced by database triggers; the UI
+- Staff, work-location and branch allowances are enforced by database triggers; the UI
   only explains them. Plan-suspended staff fail `app.is_member()` (when that is their only role), so
   they lose workspace access without their records changing.
 - Trial eligibility (one per workspace, one per owner every 12 months) is checked in `start_trial()`.

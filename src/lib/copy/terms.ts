@@ -18,10 +18,6 @@ export const SYSTEM_ROLE_COPY = {
     name: "Operations Manager",
     description: "Branches, attendance, shifts and daily operations.",
   },
-  dept_manager: {
-    name: "Department Manager",
-    description: "Their department's staff, tasks and approvals.",
-  },
   accountant: { name: "Accountant", description: "Salaries and financial records." },
   employee: {
     name: "Staff Member",

@@ -19,19 +19,20 @@ updated whenever a migration lands.
 
 | `20261113000100_pricing_trials_allowances.sql` | Approved prices, allowances and add-ons; generated feature matrix; Scale withdrawn; `employees` (minimal staff records with `plan_suspended`), `work_locations`; `trial_grants`, `subscription_events`, `notifications`, `billing_invoices`, `payment_transactions`, `webhook_events`; trial, selection, downgrade, quote, checkout and verified-payment functions; optional hourly `pg_cron` sync |
 | `20261114000100_business_language.sql` | Data only: plain-language permission descriptions, Owner role description, trial-ended notification text |
-| `20261114000200_branches_and_departments.sql` | Branch allowances 1/2/5/10; departments removed from plans, limits and the subscription overview (records kept) |
+| `20261114000200_branches_and_departments.sql` | Branch allowances 1/2/5/10; departments removed from plans, limits and the subscription overview |
+| `20261114000300_remove_departments.sql` | Departments removed entirely: Department Manager holders and invitations moved to Operations Manager; department-scoped roles removed; `departments` table, `departments.manage`, `member_roles.department_id`, `employees.department_id` and the `department` role scope dropped. Copies kept in the private `archive` schema |
 
 Each file documents its rollback steps in its header. Production is forward-only.
 
 **Differences from the Phase 0 design:**
 
-- `member_roles` uses separate `department_id` and `branch_id` columns (each with a composite
-  foreign key) instead of one polymorphic `scope_id`, so scoped roles get real referential integrity.
+- `member_roles` uses a real `branch_id` column (composite foreign key) instead of one polymorphic
+  `scope_id`, so scoped roles get referential integrity. (A `department_id` column existed until
+  2026-11-14.)
 - RLS is enabled but not FORCED (see conventions below).
 - Clients never write `company_id` on update and never read `company_invitations.token_hash`:
   enforced with column-level grants as well as policies.
-- Added `role_templates`, `features` and `rate_limit_buckets`; `departments.head_employee_id`
-  waits for Phase 2 (employees).
+- Added `role_templates`, `features` and `rate_limit_buckets`.
 
 ## 1. Conventions
 
@@ -39,7 +40,7 @@ Each file documents its rollback steps in its header. Production is forward-only
 |---|---|
 | Primary keys | `id uuid primary key default gen_random_uuid()` |
 | Tenancy | Every tenant-owned table has `company_id uuid not null references companies(id)`, plus `unique (company_id, id)` so composite foreign keys can target it. |
-| Cross-tenant integrity | References between tenant tables use **composite FKs**: `foreign key (company_id, department_id) references departments (company_id, id)`. The database therefore refuses to link Company A's employee to Company B's department. |
+| Cross-tenant integrity | References between tenant tables use **composite FKs**: `foreign key (company_id, branch_id) references branches (company_id, id)`. The database therefore refuses to link Company A's work location to Company B's branch. |
 | Timestamps | `created_at timestamptz not null default now()`, `updated_at` maintained by trigger. Every column is `timestamptz`. Business dates (pay period, leave day) are `date`, interpreted in the company's timezone. |
 | Actors | `created_by uuid references auth.users(id)` where meaningful |
 | Money | `amount_minor bigint not null` + `currency char(3) not null` (NGN = kobo). Never `float`/`numeric` for stored amounts. Rates are stored as `numeric(9,6)`. |
@@ -62,10 +63,10 @@ app.is_member(p_company uuid) returns boolean  -- active membership of the curre
 app.member_id(p_company uuid) returns uuid
 app.has_permission(p_company uuid, p_key text) returns boolean
        -- true if any of the user's member_roles in p_company grants p_key (any scope)
-app.has_permission_for(p_company uuid, p_key text, p_department uuid, p_branch uuid) returns boolean
-       -- scope-aware: company scope, or a matching department/branch scope
+app.has_permission_for(p_company uuid, p_key text, p_branch uuid) returns boolean
+       -- scope-aware: company scope, or a matching branch scope
 app.can_access_employee(p_company uuid, p_employee uuid, p_key text) returns boolean
-       -- self, or a scoped permission over that employee's department/branch
+       -- self, or a scoped permission over that employee's branch
 app.company_has_feature(p_company uuid, p_feature text) returns boolean
 app.is_platform_admin() returns boolean        -- platform_admins + aal2 in the JWT
 ```
@@ -74,12 +75,12 @@ Typical policy shapes:
 
 ```sql
 -- membership-gated read
-create policy departments_select on departments for select to authenticated
+create policy branches_select on branches for select to authenticated
   using (app.is_member(company_id));
 
 -- permission-gated write
-create policy departments_write on departments for insert to authenticated
-  with check (app.has_permission(company_id, 'departments.manage'));
+create policy branches_insert on branches for insert to authenticated
+  with check (app.has_permission(company_id, 'branches.manage'));
 
 -- employee-private data: self or scoped permission
 create policy bank_details_select on employee_bank_details for select to authenticated
@@ -96,7 +97,6 @@ create policy bank_details_select on employee_bank_details for select to authent
 | `companies` | `id`, `slug` (unique, citext), `name`, `legal_name`, `business_email`, `phone`, `industry`, `country_code`, `address jsonb`, `website`, `size_band`, `timezone`, `currency`, `working_days int[]`, `work_start time`, `work_end time`, `logo_path`, `status` (`active`, `suspended`, `closed`), `created_by` | Created only through an RPC `app.create_company()` that also seeds the owner member, roles and the Free subscription in one transaction. |
 | `company_members` | `id`, `company_id`, `user_id`, `status` (`invited`, `active`, `suspended`, `removed`), `invited_by`, `joined_at` | `unique (company_id, user_id)`. A user ↔ company link, separate from the HR record. |
 | `company_invitations` | `id`, `company_id`, `email`, `token_hash`, `role_ids uuid[]`, `expires_at`, `accepted_at` | Only a SHA-256 hash of the token is stored. |
-| `departments` | `id`, `company_id`, `name`, `parent_id`, `head_employee_id` (FK added in Phase 2), `archived_at`. **No longer a product feature (2026-11-14); kept for existing data.** See docs/PRICING_AUDIT.md §7 | `unique (company_id, lower(name))` where not archived |
 | `branches` | `id`, `company_id`, `name`, `address jsonb`, `timezone`, `archived_at` | |
 | `public_holidays` | `id`, `company_id`, `date`, `name`, `branch_id?` | Company calendar |
 
@@ -105,9 +105,9 @@ create policy bank_details_select on employee_bank_details for select to authent
 | Table | Key columns | Notes |
 |---|---|---|
 | `permissions` | `key text pk`, `module`, `description`, `is_sensitive` | Global catalogue, seeded by migration. Read-only to clients. |
-| `roles` | `id`, `company_id`, `name`, `system_key` (`owner`, `hr_admin`, `ops_manager`, `dept_manager`, `accountant`, `employee`, or null for custom roles), `is_locked` | The Owner role can't be deleted or emptied. |
+| `roles` | `id`, `company_id`, `name`, `system_key` (`owner`, `hr_admin`, `ops_manager`, `accountant`, `employee`, or null for custom roles), `is_locked` | The Owner role can't be deleted or emptied. |
 | `role_permissions` | `role_id`, `permission_key`, `company_id` | Composite FK to `roles (company_id, id)` |
-| `member_roles` | `id`, `company_id`, `member_id`, `role_id`, `scope_type` (`company`, `department`, `branch`), `department_id`, `branch_id`, `created_by` | Check constraint: exactly the column matching `scope_type` is set. The Owner role is company-scope only. A deferred trigger ensures each company always has ≥1 active Owner. Client inserts and deletes must pass the escalation check (`app.can_grant_role`). |
+| `member_roles` | `id`, `company_id`, `member_id`, `role_id`, `scope_type` (`company`, `branch`), `branch_id`, `created_by` | Check constraint: exactly the column matching `scope_type` is set. The Owner role is company-scope only. A deferred trigger ensures each company always has ≥1 active Owner. Client inserts and deletes must pass the escalation check (`app.can_grant_role`). |
 
 ### Platform
 
@@ -173,7 +173,7 @@ each. Since `20261113000100`, `subscription_plans` also holds `extra_staff_annua
 
 | Phase | Tables |
 |---|---|
-| 2 Employees | `positions`, `employees` (core HR identity: number, names, work email, status, department/branch/manager, employment type, dates; `member_id` nullable), `employee_personal_details` (DOB, gender, address: restricted), `employee_emergency_contacts`, `employee_next_of_kin`, `employee_bank_details`, `employee_tax_records` (TIN, pension PIN/PFA, NHF number), `employee_compensation` (effective-dated salary: restricted), `employee_documents`, `employee_history` (append-only status, role, transfer and promotion events) |
+| 2 Employees | `positions`, `employees` (core HR identity: number, names, email address, status, branch/manager, employment type, dates; `member_id` nullable), `employee_personal_details` (DOB, gender, address: restricted), `employee_emergency_contacts`, `employee_next_of_kin`, `employee_bank_details`, `employee_tax_records` (TIN, pension PIN/PFA, NHF number), `employee_compensation` (effective-dated salary: restricted), `employee_documents`, `employee_history` (append-only status, role, transfer and promotion events) |
 | 3 Recruitment / onboarding / contracts / JDs | `job_vacancies`, `applicants`, `applicant_stages`, `interviews`, `interview_feedback`, `onboarding_templates`, `onboarding_template_items`, `onboarding_assignments`, `onboarding_tasks`, `form_definitions`, `form_responses`, `contract_templates`, `contract_template_versions`, `employment_contracts`, `contract_versions`, `contract_signatures` (signer, consent text and hash, document SHA-256, IP, UA, OTP verification, timestamp), `signature_events`, `job_descriptions`, `job_description_versions`, `job_description_acknowledgements`, `policy_acknowledgements` |
 | 4 Attendance / shifts | `work_locations` (lat, lng, radius_m, operating hours), `work_location_assignments`, `attendance_records` (one per employee per work day), `attendance_events` (clock in/out and breaks with lat, lng, accuracy_m, distance_m, validation_outcome, flags, device info), `attendance_corrections`, `attendance_exceptions`, `shifts`, `shift_patterns`, `shift_assignments`, `shift_swap_requests` |
 | 5 Payroll / leave | `salary_components`, `salary_structures`, `salary_structure_components`, `employee_salary_assignments`, `statutory_jurisdictions`, `statutory_rule_versions` (country, effective_from, effective_to, rules jsonb, checksum, approved_by), `payroll_periods`, `payroll_runs` (status, rule_version_id, inputs_snapshot, totals, idempotency_key), `payroll_items`, `payroll_item_lines`, `payroll_adjustments`, `payroll_payments`, `payslips`, `leave_types`, `leave_policies`, `leave_balances`, `leave_ledger` (accruals, usage, carryover as ledger entries), `leave_requests`, `leave_approvals` |

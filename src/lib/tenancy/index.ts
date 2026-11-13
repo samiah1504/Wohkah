@@ -33,7 +33,7 @@ export type TenantContext = {
     roleId: string;
     name: string;
     systemKey: string | null;
-    scopeType: "company" | "department" | "branch";
+    scopeType: "company" | "branch";
   }[];
   plan: { code: string; name: string };
   subscriptionStatus: string | null;
@@ -58,7 +58,7 @@ const contextSchema = z.object({
       role_id: z.uuid(),
       name: z.string(),
       system_key: z.string().nullable(),
-      scope_type: z.enum(["company", "department", "branch"]),
+      scope_type: z.enum(["company", "branch"]),
     }),
   ),
   plan: z.object({ code: z.string(), name: z.string() }),

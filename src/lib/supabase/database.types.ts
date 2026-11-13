@@ -508,62 +508,12 @@ export type Database = {
           },
         ];
       };
-      departments: {
-        Row: {
-          archived_at: string | null;
-          company_id: string;
-          created_at: string;
-          description: string | null;
-          id: string;
-          name: string;
-          parent_id: string | null;
-          updated_at: string;
-        };
-        ComputedFields: never;
-        Insert: {
-          archived_at?: string | null;
-          company_id: string;
-          created_at?: string;
-          description?: string | null;
-          id?: string;
-          name: string;
-          parent_id?: string | null;
-          updated_at?: string;
-        };
-        Update: {
-          archived_at?: string | null;
-          company_id?: string;
-          created_at?: string;
-          description?: string | null;
-          id?: string;
-          name?: string;
-          parent_id?: string | null;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "departments_company_id_fkey";
-            columns: ["company_id"];
-            isOneToOne: false;
-            referencedRelation: "companies";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "departments_company_id_parent_id_fkey";
-            columns: ["company_id", "parent_id"];
-            isOneToOne: false;
-            referencedRelation: "departments";
-            referencedColumns: ["company_id", "id"];
-          },
-        ];
-      };
       employees: {
         Row: {
           branch_id: string | null;
           company_id: string;
           created_at: string;
           created_by: string | null;
-          department_id: string | null;
           email: string | null;
           full_name: string;
           id: string;
@@ -581,7 +531,6 @@ export type Database = {
           company_id: string;
           created_at?: string;
           created_by?: string | null;
-          department_id?: string | null;
           email?: string | null;
           full_name: string;
           id?: string;
@@ -598,7 +547,6 @@ export type Database = {
           company_id?: string;
           created_at?: string;
           created_by?: string | null;
-          department_id?: string | null;
           email?: string | null;
           full_name?: string;
           id?: string;
@@ -616,13 +564,6 @@ export type Database = {
             columns: ["company_id", "branch_id"];
             isOneToOne: false;
             referencedRelation: "branches";
-            referencedColumns: ["company_id", "id"];
-          },
-          {
-            foreignKeyName: "employees_company_id_department_id_fkey";
-            columns: ["company_id", "department_id"];
-            isOneToOne: false;
-            referencedRelation: "departments";
             referencedColumns: ["company_id", "id"];
           },
           {
@@ -697,7 +638,6 @@ export type Database = {
           company_id: string;
           created_at: string;
           created_by: string | null;
-          department_id: string | null;
           id: string;
           member_id: string;
           role_id: string;
@@ -709,7 +649,6 @@ export type Database = {
           company_id: string;
           created_at?: string;
           created_by?: string | null;
-          department_id?: string | null;
           id?: string;
           member_id: string;
           role_id: string;
@@ -720,7 +659,6 @@ export type Database = {
           company_id?: string;
           created_at?: string;
           created_by?: string | null;
-          department_id?: string | null;
           id?: string;
           member_id?: string;
           role_id?: string;
@@ -732,13 +670,6 @@ export type Database = {
             columns: ["company_id", "branch_id"];
             isOneToOne: false;
             referencedRelation: "branches";
-            referencedColumns: ["company_id", "id"];
-          },
-          {
-            foreignKeyName: "member_roles_company_id_department_id_fkey";
-            columns: ["company_id", "department_id"];
-            isOneToOne: false;
-            referencedRelation: "departments";
             referencedColumns: ["company_id", "id"];
           },
           {
@@ -1580,7 +1511,7 @@ export type Database = {
       company_status: "active" | "suspended" | "closed";
       invitation_status: "pending" | "accepted" | "revoked";
       member_status: "active" | "suspended" | "removed";
-      role_scope: "company" | "department" | "branch";
+      role_scope: "company" | "branch";
       staff_status:
         | "invited"
         | "onboarding"
@@ -1707,7 +1638,7 @@ export const Constants = {
       company_status: ["active", "suspended", "closed"],
       invitation_status: ["pending", "accepted", "revoked"],
       member_status: ["active", "suspended", "removed"],
-      role_scope: ["company", "department", "branch"],
+      role_scope: ["company", "branch"],
       staff_status: [
         "invited",
         "onboarding",

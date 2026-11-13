@@ -24,7 +24,7 @@ A product of **Crift Concepts**.
 ## Status
 
 **Phase 1: foundation and multi-tenancy.** Accounts, sign-in with optional two-step verification,
-business accounts, departments, branches, holidays, members, invitations, roles and permissions,
+business accounts, branches, holidays, members, invitations, roles and permissions,
 plan entitlements and the audit log. See [DEVELOPMENT_ROADMAP.md](DEVELOPMENT_ROADMAP.md).
 
 | Document | Purpose |

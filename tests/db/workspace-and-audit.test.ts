@@ -191,7 +191,7 @@ describe("audit log", () => {
     await createCompany(outsider.id);
 
     await asUser({ userId: owner.id }, (db) =>
-      db.query("insert into public.departments (company_id, name) values ($1, 'Finance')", [
+      db.query("insert into public.branches (company_id, name) values ($1, 'Finance')", [
         company.id,
       ]),
     );
@@ -202,7 +202,7 @@ describe("audit log", () => {
         (
           await db.query(
             `select actor_user_id, action, changes from public.audit_logs
-           where company_id = $1 and action = 'departments.insert'`,
+           where company_id = $1 and action = 'branches.insert'`,
             [company.id],
           )
         ).rows,

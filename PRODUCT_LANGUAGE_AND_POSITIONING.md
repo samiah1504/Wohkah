@@ -100,7 +100,6 @@ fields "Email address".
 | `owner` | Owner |
 | `hr_admin` | Staff Manager |
 | `ops_manager` | Operations Manager |
-| `dept_manager` | Department Manager |
 | `accountant` | Accountant |
 | `employee` | Staff Member |
 

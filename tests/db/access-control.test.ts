@@ -42,14 +42,7 @@ describe("permissions", () => {
       );
       return { roles: roles.rows.map((r) => r.system_key), plan: plan.rows[0]?.code };
     });
-    expect(out.roles).toEqual([
-      "accountant",
-      "dept_manager",
-      "employee",
-      "hr_admin",
-      "ops_manager",
-      "owner",
-    ]);
+    expect(out.roles).toEqual(["accountant", "employee", "hr_admin", "ops_manager", "owner"]);
     expect(out.plan).toBe("free");
   });
 
@@ -60,9 +53,7 @@ describe("permissions", () => {
     });
     await expectDbError(
       asUser({ userId: employee.id }, (db) =>
-        db.query("insert into public.departments (company_id, name) values ($1, 'X')", [
-          company.id,
-        ]),
+        db.query("insert into public.branches (company_id, name) values ($1, 'X')", [company.id]),
       ),
       /row-level security/,
     );
@@ -123,11 +114,22 @@ describe("privilege escalation is impossible", () => {
   });
 
   it("lets an HR Administrator assign roles within their own permissions", async () => {
-    const opsRole = await roleId(company.id, "dept_manager"); // members.view only
+    // A custom role with members.view only (a permission the Staff Manager holds).
+    const viewerRole = await asAdmin(async (db) => {
+      const r = await db.query<{ id: string }>(
+        "insert into public.roles (company_id, name) values ($1, 'Viewer') returning id",
+        [company.id],
+      );
+      await db.query(
+        "insert into public.role_permissions (company_id, role_id, permission_key) values ($1, $2, 'members.view')",
+        [company.id, r.rows[0]!.id],
+      );
+      return r.rows[0]!.id;
+    });
     await asUser({ userId: hr.id }, (db) =>
       db.query(
         "insert into public.member_roles (company_id, member_id, role_id) values ($1, $2, $3)",
-        [company.id, employee.memberId, opsRole],
+        [company.id, employee.memberId, viewerRole],
       ),
     );
   });

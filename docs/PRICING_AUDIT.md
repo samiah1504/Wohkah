@@ -126,13 +126,16 @@ copy. No department records were deleted.
 | **Department Manager** system role (`dept_manager`) | Still offered when inviting people and shown on the Roles page | People who hold it would lose their role |
 | `workspace_context()` role scope fields | Returned to the app (unused) | None, but cleanup touches the API |
 
-**Proposed safe migration (needs your approval before it runs):**
-1. Check the production and development databases for department data (department rows,
-   department-scoped roles, staff with a department, members holding Department Manager).
-2. Retire the **Department Manager** role: stop offering it for new invitations and new businesses;
-   move existing holders to **Operations Manager** (closest permissions) or to a role you choose,
-   recorded in the audit log.
-3. Convert any department-scoped role assignments to company-wide or branch-scoped ones.
-4. Revoke `departments.manage` from all roles (it already grants nothing visible).
-5. Keep the `departments` table and `employees.department_id` read-only as historical data for at
-   least one release, then archive or drop them in a later, separately approved migration.
+**Completed 2026-11-14 (approved by the product owner: "Remove the department in total, replace
+with Operations Manager"), migration `20261114000300_remove_departments.sql`:**
+1. Everyone holding **Department Manager** now holds **Operations Manager** company-wide; pending
+   invitations that offered Department Manager now offer Operations Manager.
+2. Department-scoped assignments of any other role were removed (fail closed: no one gained access).
+3. Removed: the Department Manager role and template, the `departments.manage` permission, the
+   `departments` table, `member_roles.department_id`, `employees.department_id` and the
+   `department` role scope.
+4. Copies of everything removed are in the private `archive` schema (not readable by app users or
+   the API) so it can be inspected or restored. Drop it in a later migration once you confirm.
+5. Audit-log entries about departments stay, because the audit log is append-only.
+
+The table above describes the state before this migration.

@@ -1,6 +1,6 @@
 /**
  * Approved pricing rules (docs/PRICING_AUDIT.md), proven in the database:
- * staff allowances, add-ons, work locations, branches, departments (removed), trials,
+ * staff allowances, add-ons, work locations, branches, trials,
  * expiry, downgrades, staff selection, reactivation and price quotes.
  */
 import { randomUUID } from "node:crypto";
@@ -135,7 +135,7 @@ describe("active staff allowances", () => {
   });
 });
 
-describe("work locations, branches and departments (removed)", () => {
+describe("work locations and branches", () => {
   const addLocations = (company: Company, userId: string, n: number, start = 1) =>
     asUser({ userId }, async (db) => {
       for (let i = 0; i < n; i++) {
@@ -225,43 +225,35 @@ describe("work locations, branches and departments (removed)", () => {
     await expectDbError(addLocations(company, owner.id, 1, 2), /work_location_limit_exceeded:1/);
   });
 
-  it("departments are no longer limited or sold, and existing ones are kept", async () => {
-    const { owner, company } = await owned(); // Free
-    await asUser({ userId: owner.id }, async (db) => {
-      for (let i = 1; i <= 3; i++)
-        await db.query("insert into public.departments (company_id, name) values ($1, $2)", [
-          company.id,
-          `Dept ${i}`,
-        ]);
-    });
-    const counts = await asAdmin(async (db) => ({
-      kept: Number(
-        (
-          await db.query("select count(*) from public.departments where company_id = $1", [
-            company.id,
-          ])
-        ).rows[0].count,
+  it("departments are gone: no table, permission, role or role scope", async () => {
+    const { company } = await owned();
+    const out = await asAdmin(async (db) => ({
+      table: (await db.query("select to_regclass('public.departments') as t")).rows[0].t,
+      permission: Number(
+        (await db.query("select count(*) from public.permissions where key = 'departments.manage'"))
+          .rows[0].count,
       ),
-      features: Number(
-        (await db.query("select count(*) from public.features where key = 'departments'")).rows[0]
-          .count,
-      ),
-      planRows: Number(
+      role: Number(
         (
           await db.query(
-            "select count(*) from public.plan_features where feature_key = 'departments'",
+            "select count(*) from public.roles where company_id = $1 and system_key = 'dept_manager'",
+            [company.id],
           )
         ).rows[0].count,
       ),
+      scopes: (await db.query("select enum_range(null::public.role_scope)::text[] as v")).rows[0].v,
+      feature: Number(
+        (await db.query("select count(*) from public.features where key = 'departments'")).rows[0]
+          .count,
+      ),
     }));
-    expect(counts).toEqual({ kept: 3, features: 0, planRows: 0 });
-    const o = await asUser(
-      { userId: owner.id },
-      async (db) =>
-        (await db.query("select public.subscription_overview($1) as o", [company.id])).rows[0].o,
-    );
-    expect(o.usage).not.toHaveProperty("departments");
-    expect(o.allowances).not.toHaveProperty("departments");
+    expect(out).toEqual({
+      table: null,
+      permission: 0,
+      role: 0,
+      scopes: ["company", "branch"],
+      feature: 0,
+    });
   });
 });
 

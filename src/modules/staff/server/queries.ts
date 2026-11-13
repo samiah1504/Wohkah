@@ -9,7 +9,7 @@ export async function listStaff(ctx: TenantContext) {
   const { data, error } = await supabase
     .from("employees")
     .select(
-      "id, full_name, job_title, email, phone, status, plan_suspended_at, created_at, department:departments(name), branch:branches(name)",
+      "id, full_name, job_title, email, phone, status, plan_suspended_at, created_at, branch:branches(name)",
     )
     .eq("company_id", ctx.company.id)
     .order("status")

@@ -7,7 +7,6 @@
  */
 export const PERMISSIONS = [
   "company.settings.manage",
-  "departments.manage",
   "branches.manage",
   "holidays.manage",
   "members.view",
@@ -26,13 +25,6 @@ export const PERMISSIONS = [
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
-
-/**
- * Still in the database (kept so existing roles and records stay valid) but no
- * longer offered: departments were removed from WOHKAH on 2026-11-14. Hidden
- * from the Roles page.
- */
-export const RETIRED_PERMISSIONS: readonly Permission[] = ["departments.manage"];
 
 export function isPermission(value: string): value is Permission {
   return (PERMISSIONS as readonly string[]).includes(value);

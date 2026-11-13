@@ -1,6 +1,5 @@
 import "server-only";
 import { z } from "zod";
-import { RETIRED_PERMISSIONS } from "@/lib/permissions";
 import { createClient } from "@/lib/supabase/server";
 import type { TenantContext } from "@/lib/tenancy";
 
@@ -15,7 +14,7 @@ const directoryRoles = z.array(
     role_id: z.uuid(),
     name: z.string(),
     system_key: z.string().nullable(),
-    scope_type: z.enum(["company", "department", "branch"]),
+    scope_type: z.enum(["company", "branch"]),
   }),
 );
 
@@ -62,14 +61,7 @@ export async function listRoles(ctx: TenantContext) {
   if (perms.error) fail("role permissions", perms.error);
   if (assignments.error) fail("role assignments", assignments.error);
 
-  const SYSTEM_ORDER = [
-    "owner",
-    "hr_admin",
-    "ops_manager",
-    "dept_manager",
-    "accountant",
-    "employee",
-  ];
+  const SYSTEM_ORDER = ["owner", "hr_admin", "ops_manager", "accountant", "employee"];
   return roles.data
     .map((r) => ({
       ...r,
@@ -92,7 +84,6 @@ export async function listPermissionCatalog() {
   const { data, error } = await supabase
     .from("permissions")
     .select("key, module, description, is_sensitive")
-    .not("key", "in", `(${RETIRED_PERMISSIONS.join(",")})`)
     .order("sort_order");
   if (error) fail("permissions", error);
   return data;

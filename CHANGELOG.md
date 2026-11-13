@@ -5,6 +5,14 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Departments removed entirely (2026-11-14)
+
+#### Removed
+- Departments are gone from WOHKAH: the Department Manager role (holders and pending invitations
+  moved to Operations Manager), the `departments.manage` permission, the `departments` table,
+  department links on staff records and role assignments, and department-scoped roles. Copies are
+  kept in a private archive schema until the product owner confirms they can be dropped.
+
 ### Branch allowances corrected; departments removed (2026-11-14)
 
 #### Changed

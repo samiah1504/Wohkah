@@ -12,7 +12,7 @@ and a user in several companies must see only the selected workspace. Workspaces
    every table. RLS is not FORCED, so the migration owner that owns the helper functions bypasses it;
    the API roles (`anon`, `authenticated`) are always subject to it.
 2. Policies call `security definer` helpers in a private `app` schema: `is_member`, `has_permission`,
-   `has_permission_for` (department or branch scope) and `can_access_employee`. The helpers wrap
+   `has_permission_for` (company or branch scope; department scope removed 2026-11-14) and `can_access_employee`. The helpers wrap
    `auth.uid()` in `(select …)` so the planner caches it, and the matching indexes exist.
 3. **Composite foreign keys** `(company_id, ref_id)` make cross-tenant references impossible.
 4. **The active workspace comes from the URL** (`/w/[slug]`). `proxy.ts` rewrites

@@ -27,7 +27,7 @@ let ownerA: { id: string };
 let ownerB: { id: string };
 let companyA: Company;
 let companyB: Company;
-let deptB: string;
+let locationB: string;
 let branchB: string;
 
 beforeAll(async () => {
@@ -39,16 +39,16 @@ beforeAll(async () => {
 
   // Give Company B data in every Phase 1 tenant table.
   await asUser({ userId: ownerB.id }, async (db) => {
-    deptB = (
-      await db.query<{ id: string }>(
-        "insert into public.departments (company_id, name) values ($1, 'Sales') returning id",
-        [companyB.id],
-      )
-    ).rows[0]!.id;
     branchB = (
       await db.query<{ id: string }>(
         "insert into public.branches (company_id, name) values ($1, 'Lagos HQ') returning id",
         [companyB.id],
+      )
+    ).rows[0]!.id;
+    locationB = (
+      await db.query<{ id: string }>(
+        "insert into public.work_locations (company_id, name, branch_id) values ($1, 'Ikeja shop', $2) returning id",
+        [companyB.id, branchB],
       )
     ).rows[0]!.id;
     await db.query(
@@ -143,7 +143,7 @@ describe("1. Company A cannot read Company B records", () => {
       /permission denied/,
     );
     await expectDbError(
-      asAnon((db) => db.query("select * from public.departments")),
+      asAnon((db) => db.query("select * from public.branches")),
       /permission denied/,
     );
   });
@@ -157,10 +157,10 @@ describe("2 & 6. Company A cannot modify Company B records, even with B's ids", 
     expect(res.rowCount).toBe(0);
   });
 
-  it("cannot insert a department into Company B by supplying B's company_id", async () => {
+  it("cannot insert a work location into Company B by supplying B's company_id", async () => {
     await expectDbError(
       asUser({ userId: ownerA.id }, (db) =>
-        db.query("insert into public.departments (company_id, name) values ($1, 'Spy')", [
+        db.query("insert into public.work_locations (company_id, name) values ($1, 'Spy')", [
           companyB.id,
         ]),
       ),
@@ -168,9 +168,9 @@ describe("2 & 6. Company A cannot modify Company B records, even with B's ids", 
     );
   });
 
-  it("cannot update or archive Company B's department or branch", async () => {
+  it("cannot update or archive Company B's work location or branch", async () => {
     const r1 = await asUser({ userId: ownerA.id }, (db) =>
-      db.query("update public.departments set name = 'X' where id = $1", [deptB]),
+      db.query("update public.work_locations set name = 'X' where id = $1", [locationB]),
     );
     const r2 = await asUser({ userId: ownerA.id }, (db) =>
       db.query("update public.branches set archived_at = now() where id = $1", [branchB]),
@@ -190,8 +190,8 @@ describe("2 & 6. Company A cannot modify Company B records, even with B's ids", 
     await expectDbError(
       asUser({ userId: ownerA.id }, (db) =>
         db.query(
-          "insert into public.departments (company_id, name, parent_id) values ($1, 'Child', $2)",
-          [companyA.id, deptB],
+          "insert into public.work_locations (company_id, name, branch_id) values ($1, 'Child', $2)",
+          [companyA.id, branchB],
         ),
       ),
       /foreign key|violates/,
@@ -199,12 +199,12 @@ describe("2 & 6. Company A cannot modify Company B records, even with B's ids", 
   });
 
   it("cannot move its own row into Company B", async () => {
-    const deptA = await asUser(
+    const branchA = await asUser(
       { userId: ownerA.id },
       async (db) =>
         (
           await db.query<{ id: string }>(
-            "insert into public.departments (company_id, name) values ($1, 'Ops') returning id",
+            "insert into public.branches (company_id, name) values ($1, 'Ops') returning id",
             [companyA.id],
           )
         ).rows[0]!.id,
@@ -212,9 +212,9 @@ describe("2 & 6. Company A cannot modify Company B records, even with B's ids", 
     // company_id is not even an updatable column for clients.
     await expectDbError(
       asUser({ userId: ownerA.id }, (db) =>
-        db.query("update public.departments set company_id = $1 where id = $2", [
+        db.query("update public.branches set company_id = $1 where id = $2", [
           companyB.id,
-          deptA,
+          branchA,
         ]),
       ),
       /permission denied/,
@@ -286,12 +286,12 @@ describe("5. A user in two companies only acts within the selected workspace", (
     expect(ctxA.company.id).toBe(companyA.id);
     expect(ctxA.permissions).toEqual([]);
     expect(ctx2.company.id).toBe(company2.id);
-    expect(ctx2.permissions).toContain("departments.manage");
+    expect(ctx2.permissions).toContain("branches.manage");
 
     // Owner rights in "Both Co" do not carry into Company A.
     await expectDbError(
       asUser({ userId: both.id }, (db) =>
-        db.query("insert into public.departments (company_id, name) values ($1, 'Nope')", [
+        db.query("insert into public.branches (company_id, name) values ($1, 'Nope')", [
           companyA.id,
         ]),
       ),

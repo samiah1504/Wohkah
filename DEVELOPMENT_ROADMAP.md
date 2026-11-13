@@ -98,7 +98,7 @@ locked runs are immutable (test), and approvals update leave balances correctly.
 
 ## Phase 6 — Tasks, messaging, meetings
 Projects, tasks (assignees, subtasks, checklists, dependencies, approvals, attachments, comments) and
-personal and team dashboards. Messaging: DMs, groups, department and team channels, announcements,
+personal and team dashboards. Messaging: DMs, groups and team channels, announcements,
 attachments, voice notes, reactions, replies, editing, deletion under retention rules, read receipts,
 typing, presence, search (Postgres full-text), unread counts, keyset pagination, idempotent sends.
 Meetings: agenda, attendees, invitations, minutes, decisions, action items → tasks.
