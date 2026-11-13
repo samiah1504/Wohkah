@@ -132,6 +132,9 @@ test("trial expiry with more than 3 staff: choose who stays, pause the rest, rea
   if (error) throw error;
 
   await page.goto(`/w/${slug}/staff`);
+  // TEMP diagnostic for CI
+  await page.waitForLoadState("networkidle");
+  console.log("DIAG staff page after expiry:\n" + (await page.locator("body").innerText()).slice(0, 2500));
   await expect(page.getByText(/more active staff \(5\) than your plan covers \(3\)/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Choose who stays active" })).toBeVisible();
   for (const name of ["Dayo", "Ese"]) await page.getByRole("checkbox", { name }).uncheck();
