@@ -97,6 +97,8 @@ The new database tests cover:
 
 ## 7. Issues found by testing
 - Column permissions already block changes to staff numbers and document names before the database triggers run. The tests now expect that stronger protection.
+- Saving private details for someone who already had some failed with "You don't have permission to do that." The save tried to rewrite the business and staff ids, which nobody may change. It now inserts new details or updates only the detail fields, and a database test covers the update.
+- Some browser tests typed into forms before the page had finished loading, so a picked country or typed name could be reset. The tests now wait until the page is ready.
 - The subscription page always showed 0 MB of storage used. It now counts staff documents (rounded up to the next MB).
 
 ## 8. Outstanding issues and follow-ups

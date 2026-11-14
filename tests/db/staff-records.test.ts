@@ -203,6 +203,25 @@ describe("staff records", () => {
     expect(ok).toBeTruthy();
   });
 
+  it("lets someone with private-details access update existing details, but never move them", async () => {
+    const updated = await asUser({ userId: owner.id }, (db) =>
+      db.query(
+        "update public.employee_private set bank_name = 'Example Bank' where employee_id = $1",
+        [lagosStaff],
+      ),
+    );
+    expect(updated.rowCount).toBe(1);
+    await expectDbError(
+      asUser({ userId: owner.id }, (db) =>
+        db.query("update public.employee_private set employee_id = $1 where employee_id = $2", [
+          abujaStaff,
+          lagosStaff,
+        ]),
+      ),
+      /permission denied/,
+    );
+  });
+
   it("lets staff see their own record but change nothing", async () => {
     const seen = await asUser({ userId: portal.id }, async (db) => {
       const staff = await db.query<{ id: string }>(

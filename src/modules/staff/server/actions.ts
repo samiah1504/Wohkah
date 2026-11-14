@@ -111,28 +111,41 @@ export async function savePrivateDetails(_prev: FormState, formData: FormData) {
           state: data.state,
         }).filter(([, v]) => v),
       );
-      const { error } = await supabase.from("employee_private").upsert(
-        {
-          employee_id: data.id,
-          company_id: ctx.company.id,
-          date_of_birth: data.dateOfBirth,
-          gender: data.gender ?? null,
-          home_address: address,
-          emergency_name: data.emergencyName,
-          emergency_phone: data.emergencyPhone,
-          emergency_relationship: data.emergencyRelationship,
-          kin_name: data.kinName,
-          kin_phone: data.kinPhone,
-          kin_relationship: data.kinRelationship,
-          bank_name: data.bankName,
-          bank_account_number: data.bankAccountNumber,
-          bank_account_name: data.bankAccountName,
-          tin: data.tin,
-          pension_pin: data.pensionPin,
-          pfa_name: data.pfaName,
-        },
-        { onConflict: "employee_id" },
-      );
+      const details = {
+        date_of_birth: data.dateOfBirth,
+        gender: data.gender ?? null,
+        home_address: address,
+        emergency_name: data.emergencyName,
+        emergency_phone: data.emergencyPhone,
+        emergency_relationship: data.emergencyRelationship,
+        kin_name: data.kinName,
+        kin_phone: data.kinPhone,
+        kin_relationship: data.kinRelationship,
+        bank_name: data.bankName,
+        bank_account_number: data.bankAccountNumber,
+        bank_account_name: data.bankAccountName,
+        tin: data.tin,
+        pension_pin: data.pensionPin,
+        pfa_name: data.pfaName,
+      };
+      // Two steps rather than an upsert: the company and staff ids can't be
+      // updated (column grants), and an upsert would try to.
+      const { data: existing, error: readError } = await supabase
+        .from("employee_private")
+        .select("employee_id")
+        .eq("company_id", ctx.company.id)
+        .eq("employee_id", data.id)
+        .maybeSingle();
+      check(readError, "load private details");
+      const { error } = existing
+        ? await supabase
+            .from("employee_private")
+            .update(details)
+            .eq("company_id", ctx.company.id)
+            .eq("employee_id", data.id)
+        : await supabase
+            .from("employee_private")
+            .insert({ ...details, employee_id: data.id, company_id: ctx.company.id });
       check(error, "save private details");
     },
   });

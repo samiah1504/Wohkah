@@ -16,6 +16,7 @@ test("a new user registers, confirms their email and creates a business account"
   const email = testEmail("founder");
 
   await page.goto("/register");
+  await page.waitForLoadState("networkidle");
   await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
   await expect(
     page.getByText(
