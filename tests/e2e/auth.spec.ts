@@ -57,6 +57,8 @@ test("registration: details are saved, consent is separate and E.164 phone is st
   const page = await newSession(browser);
   const email = testEmail("details");
   await page.goto("/register");
+  // Wait for the form to be interactive: a country picked before then is reset.
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("First name").fill("Bola");
   await page.getByLabel("Last name").fill("Adeyemi");
   await page.getByLabel("Email address").fill(email);

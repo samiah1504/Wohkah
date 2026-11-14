@@ -102,6 +102,13 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - name: End-to-end tests
         run: pnpm test:e2e --trace off
+      - name: Show what failing pages looked like
+        if: failure()
+        run: |
+          for f in test-results/*/error-context.md; do
+            [ -f "$f" ] || continue
+            echo "::group::$f"; cat "$f"; echo "::endgroup::"
+          done
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4

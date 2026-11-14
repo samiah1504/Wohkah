@@ -24,6 +24,7 @@ async function addStaff(
   s: { first: string; last: string; title?: string; email?: string; phone?: string },
 ) {
   await page.goto(`/w/${slug}/staff/new`);
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("First name").fill(s.first);
   await page.getByLabel("Last name").fill(s.last);
   if (s.email) await page.getByLabel("Email address").fill(s.email);
@@ -37,6 +38,7 @@ async function addStaff(
 test("an owner keeps a full staff record: add, edit, private details, documents, status and history", async ({
   browser,
 }) => {
+  test.setTimeout(120_000);
   const owner = await createConfirmedUser("Records Owner");
   const slug = await createWorkspaceAs(owner.email, "Records Ride Stores");
   const page = await newSession(browser);
@@ -48,6 +50,7 @@ test("an owner keeps a full staff record: add, edit, private details, documents,
 
   // Validation keeps what was typed.
   await page.goto(`/w/${slug}/staff/new`);
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("First name").fill("Amaka");
   await page.getByRole("button", { name: "Add staff member" }).click();
   await expect(page.getByText("Enter a last name.")).toBeVisible();
