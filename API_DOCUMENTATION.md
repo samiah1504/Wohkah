@@ -14,6 +14,8 @@ accepts a company id or user id from the browser as a source of truth (ADR-0003)
 | Route | Method | Auth | Purpose |
 |---|---|---|---|
 | `/auth/confirm` | GET | Public (link from email) | Completes email confirmation, password recovery and email change. Accepts `token_hash` + `type`, or `code` (PKCE). Redirects to a same-site `next` path only |
+| `/w/[slug]/staff/export` | GET | `staff.export` | CSV of the staff list with the page's filters (`q`, `status`, `branch`). Job and contact fields only; cells quoted and formula-neutralised; `no-store` |
+| `/w/[slug]/staff/[id]/documents/[docId]` | GET | RLS (private-details access for that staff member, or the staff member) | Redirects to a 60-second signed download link created with the viewer's own session; 404 otherwise |
 
 ## 2. Server Actions
 
@@ -39,7 +41,15 @@ with zod and write with the user's Supabase client, so RLS applies.
 | access | `acceptInvitation` | signed in | Calls `accept_invitation` |
 | access | `setMemberStatus` | `members.manage` | Not on yourself; owners only by owners |
 | access | `setMemberRoles` | `roles.assign` | Adds before removing; escalation blocked by the database |
-| access | `saveRole`, `setRolePermissions`, `deleteRole` | `roles.manage` + plan feature `custom_roles` | |
+| staff | `saveStaff` | `staff.manage` | Add or edit; phone stored in E.164; redirects to the profile |
+| staff | `changeStaffStatus` | `staff.manage` | Allowed transitions only (database rules) |
+| staff | `savePrivateDetails` | `staff.sensitive` | Upsert of `employee_private` |
+| staff | `prepareDocumentUpload` | `staff.manage` + `staff.sensitive` | Returns a signed upload URL for `<company>/<employee>/<uuid>-<name>`; type and 10 MB size checked |
+| staff | `saveDocument` | `staff.manage` + `staff.sensitive` | Reads the stored file's real size, then records it (storage allowance enforced by the database) |
+| staff | `setDocumentArchived` | `staff.manage` + `staff.sensitive` | Archive or restore; files are never deleted |
+| staff | `inviteToPortal` | `members.invite` (+ `staff.manage`, checked by the database) | Invitation to the staff record's email, with no roles; accepting links the sign-in to the record |
+| staff | `selectActiveStaff`, `reactivateStaff` | `staff.manage` | Plan-limit selection and reactivation |
+| access | `saveRole`, `setRolePermissions`, `deleteRole` | `roles.manage` | Every plan; Owner is the only built-in role |
 
 ## 3. Database RPC functions (`public` schema)
 

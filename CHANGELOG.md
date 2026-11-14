@@ -5,6 +5,29 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Phase 2: staff records (2026-11-14)
+
+#### Added
+- Staff list with search (name, job title, email address, phone, staff number), Current / Left /
+  Archived / All filters, a branch filter, 25 per page and a CSV download (`staff.export`).
+- Add and edit staff on their own pages: first and last name, email address, phone (E.164), job title
+  with suggestions, employment type, branch, who they report to and start date. Staff numbers are
+  assigned automatically.
+- Staff profile with Overview, Private details, Documents and History tabs; status changes (on leave,
+  suspended, resigned, let go, rejoined, archived) following fixed rules.
+- Private details: date of birth, gender, home address, emergency contact, next of kin, bank details,
+  TIN, pension PIN and PFA, visible only with the new "private staff details" access.
+- Private documents (PDF, Word, photos; 10 MB each) counted against the plan's storage; archive and
+  restore, never deleted.
+- Invite a staff member to the staff portal from their record; once they accept, they see their own
+  record (read only) under **My record**.
+- Migration `20261114000600_staff_records.sql`; permissions `staff.sensitive` and `staff.export`
+  (given to Owner).
+
+#### Changed
+- "Add staff" opens a full page instead of a small dialog.
+- Staff records are marked as available in the feature list and plan comparison.
+
 ### Registration page redesign (2026-11-14)
 
 #### Changed

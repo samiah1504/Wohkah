@@ -75,6 +75,11 @@ and a Vercel project.
 - Typecheck, lint and all tests are green in CI.
 
 ## Phase 2 — Employee management
+
+**Status: built (2026-11-14).** See `docs/PHASE_2_REPORT.md`. Decisions: the standard set of private
+details (no NIN or BVN); staff view their own record and change nothing; job titles are typed freely
+with suggestions.
+
 Employees (core and restricted sub-tables), positions, reporting lines (no cycles), statuses and the
 status state machine, employee history, search, filters, pagination, export (permission-gated), employee
 documents (private storage), profile pages, and employee self-service edits of allowed fields.

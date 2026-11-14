@@ -22,7 +22,8 @@
 --
 -- Rollback: drop the three new tables, the new employees columns, the two
 -- permissions, the storage bucket/policies; restore the employees policies
--- from migration 10 and accept_invitation() from migration 14.
+-- from migration 10, accept_invitation() from migration 14 and
+-- subscription_overview() from 20261114000200.
 -- =============================================================================
 
 -- ---------------------------------------------------------------------------
@@ -663,3 +664,63 @@ $$;
 
 
 grant execute on all functions in schema app to authenticated, service_role;
+
+-- ---------------------------------------------------------------------------
+-- Storage used on the subscription page now counts staff documents (MB, rounded up).
+-- ---------------------------------------------------------------------------
+create or replace function public.subscription_overview(p_company uuid)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  v_sub public.company_subscriptions;
+  v_plan public.subscription_plans;
+  v_pending text;
+  v_trial public.trial_grants;
+  v_extras record;
+begin
+  if not app.has_company_permission(p_company, 'subscription.view') then
+    raise exception 'not_authenticated' using errcode = '42501';
+  end if;
+  select * into v_sub from public.company_subscriptions where company_id = p_company;
+  select * into v_plan from public.subscription_plans where id = app.company_plan_id(p_company);
+  select code into v_pending from public.subscription_plans where id = v_sub.pending_plan_id;
+  select * into v_trial from public.trial_grants where company_id = p_company;
+  select * into v_extras from app.company_paid_extras(p_company);
+
+  return jsonb_build_object(
+    'plan_code', v_plan.code,
+    'status', v_sub.status,
+    'billing_interval', v_sub.billing_interval,
+    'current_period_end', v_sub.current_period_end,
+    'trial', case when v_trial.id is null then null else jsonb_build_object(
+      'plan_code', (select code from public.subscription_plans where id = v_trial.plan_id),
+      'started_at', v_trial.started_at, 'ends_at', v_trial.ends_at, 'outcome', v_trial.outcome) end,
+    'pending_plan_code', v_pending,
+    'pending_change_at', v_sub.pending_change_at,
+    'staff_selection_required', v_sub.staff_selection_required,
+    'usage', jsonb_build_object(
+      'active_staff', app.count_active_staff(p_company),
+      'paused_staff', (select count(*) from public.employees
+                        where company_id = p_company and status = 'plan_suspended'),
+      'admins', app.count_admins(p_company),
+      'branches', (select count(*) from public.branches where company_id = p_company and archived_at is null),
+      'work_locations', (select count(*) from public.work_locations where company_id = p_company and archived_at is null),
+      'storage_mb', (select ceil(coalesce(sum(size_bytes), 0) / 1048576.0)::int
+                       from public.employee_documents where company_id = p_company)
+    ),
+    'allowances', jsonb_build_object(
+      'staff', app.company_staff_allowance(p_company),
+      'extra_staff', v_extras.extra_staff,
+      'work_locations', app.company_work_location_allowance(p_company),
+      'extra_work_locations', v_extras.extra_locations,
+      'admins', app.company_feature_limit(p_company, 'admins'),
+      'branches', app.company_feature_limit(p_company, 'branches'),
+      'storage_mb', app.company_feature_limit(p_company, 'storage_mb')
+    )
+  );
+end;
+$$;

@@ -25,7 +25,7 @@ Status: **Proposed (Phase 0)**. Each phase adds verified controls to this docume
 | Baseline security headers (HSTS, no framing, nosniff, referrer, permissions) | `next.config.ts` | — |
 
 **Not yet in place (planned):** nonce-based Content-Security-Policy and Sentry (before launch),
-storage policies (Phase 2, with the first file uploads), support-access approval flow (Phase 11),
+support-access approval flow (Phase 11),
 data-subject request workflow (Phase 7), breach runbook (Phase 11).
 
 ### Subscriptions and payments (2026-11-13)
@@ -42,6 +42,21 @@ data-subject request workflow (Phase 7), breach runbook (Phase 11).
 - Webhooks: HMAC-SHA512 over the raw body with `timingSafeEqual`, stored once per event id.
 - `PAYSTACK_SECRET_KEY` is server-only (`src/lib/payments` is `server-only` and on the service-role
   allow-list). Live keys are refused unless `PAYSTACK_LIVE_APPROVED=true`.
+
+### Staff records (Phase 2, 2026-11-14)
+
+| Control | Where | Proven by |
+|---|---|---|
+| Private details and documents need `staff.sensitive`; viewing staff (`staff.view`) is not enough | RLS on `employee_private`, `employee_documents`, storage policies | `tests/db/staff-records.test.ts` |
+| Branch-scoped roles see and manage only their branch's staff, private details and files | `app.has_permission_for` / `app.has_staff_permission` | `staff-records.test.ts` |
+| Staff read their own record, private details, documents and history, and change nothing | `app.is_own_staff_record`; no write policy for self | `staff-records.test.ts`, `tests/e2e/staff.spec.ts` |
+| Files stay inside their business and staff member's folder; private bucket; 60-second signed links issued with the viewer's own access | storage policies, path check on `employee_documents`, `/staff/[id]/documents/[docId]` | `staff-records.test.ts` (runs on Supabase in CI), e2e |
+| Uploads go straight to storage with a signed upload URL; the server reads the stored size back before recording it, and the database enforces the plan's storage allowance | `prepareDocumentUpload`, `saveDocument`, `app.employee_documents_checks` | `staff-records.test.ts` |
+| History is append-only and written only by the database | triggers; no client grants | `staff-records.test.ts` |
+| No hard deletes of staff or documents | no DELETE grants; archive only | `staff-records.test.ts` |
+| Status changes follow fixed rules; plan pauses only via the subscription flow | `app.staff_status_allowed`, `app.employees_guard` | `staff-records.test.ts`, unit tests |
+| Staff portal invitations link to a record only for someone with `staff.manage`, a matching email and an unlinked record | `app.company_invitations_employee_guard` | `staff-records.test.ts`, e2e |
+| The staff list download needs `staff.export`, contains no private details and neutralises spreadsheet formulas | `/staff/export`, `src/lib/csv.ts` | unit tests, e2e |
 
 ## 1. Threat model (top concerns)
 
@@ -83,7 +98,7 @@ data-subject request workflow (Phase 7), breach runbook (Phase 11).
 
 These run in CI on every push (`tests/db`, Vitest + `pg`, executing as the `authenticated` role with
 real JWT claims exactly as PostgREST does) and in the end-to-end suite (`tests/e2e`). Items 3 and 4
-arrive with Phase 2, when employee records and file storage exist:
+are covered by `tests/db/staff-records.test.ts` since Phase 2:
 
 1. Company A user cannot SELECT any Company B row in any tenant table. The test iterates over **every
    table with a `company_id` column**, so new tables are covered automatically.

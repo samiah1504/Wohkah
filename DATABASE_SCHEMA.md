@@ -171,11 +171,23 @@ each. Since `20261113000100`, `subscription_plans` also holds `extra_staff_annua
 | `payment_transactions` | Verified provider payments, unique per provider reference |
 | `webhook_events` | Raw verified webhooks, unique per `(provider, event_id)` |
 
+### Staff records (Phase 2, 2026-11-14)
+
+| Table | Notes |
+|---|---|
+| `employees` | Job and contact record. `staff_number` is assigned per business by a trigger (advisory lock) and can't be changed; `full_name` is built from `first_name` / `last_name`; `reports_to` is a composite foreign key, never the person themselves and never a loop (`app.employees_no_cycle`). Status changes follow `app.staff_status_allowed()`; leaving sets `end_date`, rejoining clears it. Never deleted (no DELETE grant) |
+| `employee_private` | One row per staff member: date of birth, gender, home address (jsonb), emergency contact, next of kin, bank (name, 6–20 digit account number, account name), TIN, pension PIN, PFA. Read with `staff.sensitive` for that staff member's branch, or by the staff member; written with `staff.sensitive` only |
+| `employee_history` | Append-only events (`added`, `status_changed`, `job_title_changed`, `branch_changed`, `manager_changed`, `employment_type_changed`, `details_updated`, `private_details_updated`, `document_added`, `document_archived`, `portal_linked`). Written only by security-definer triggers; private-detail changes are recorded without the values |
+| `employee_documents` | Metadata for files in the private `staff-documents` bucket (`<company>/<employee>/<file>`, 10 MB, PDF/Word/images). Counted against the plan's `storage_mb`; archive and restore only, never deleted. Same visibility as private details |
+
+`app.has_staff_permission(company, employee, key)` checks a permission at the scope of that staff
+member's branch, so a branch manager sees and manages only their branch.
+
 ## 4. Later-phase inventory (designed when each phase starts)
 
 | Phase | Tables |
 |---|---|
-| 2 Employees | `positions`, `employees` (core HR identity: number, names, email address, status, branch/manager, employment type, dates; `member_id` nullable), `employee_personal_details` (DOB, gender, address: restricted), `employee_emergency_contacts`, `employee_next_of_kin`, `employee_bank_details`, `employee_tax_records` (TIN, pension PIN/PFA, NHF number), `employee_compensation` (effective-dated salary: restricted), `employee_documents`, `employee_history` (append-only status, role, transfer and promotion events) |
+| 2 Employees | **Built** (see "Staff records" above). Job titles are typed freely with suggestions instead of a `positions` table; personal, emergency, next-of-kin, bank and tax details share one restricted `employee_private` table. Salary amounts arrive with salaries in Phase 5 |
 | 3 Recruitment / onboarding / contracts / JDs | `job_vacancies`, `applicants`, `applicant_stages`, `interviews`, `interview_feedback`, `onboarding_templates`, `onboarding_template_items`, `onboarding_assignments`, `onboarding_tasks`, `form_definitions`, `form_responses`, `contract_templates`, `contract_template_versions`, `employment_contracts`, `contract_versions`, `contract_signatures` (signer, consent text and hash, document SHA-256, IP, UA, OTP verification, timestamp), `signature_events`, `job_descriptions`, `job_description_versions`, `job_description_acknowledgements`, `policy_acknowledgements` |
 | 4 Attendance / shifts | `work_locations` (lat, lng, radius_m, operating hours), `work_location_assignments`, `attendance_records` (one per employee per work day), `attendance_events` (clock in/out and breaks with lat, lng, accuracy_m, distance_m, validation_outcome, flags, device info), `attendance_corrections`, `attendance_exceptions`, `shifts`, `shift_patterns`, `shift_assignments`, `shift_swap_requests` |
 | 5 Payroll / leave | `salary_components`, `salary_structures`, `salary_structure_components`, `employee_salary_assignments`, `statutory_jurisdictions`, `statutory_rule_versions` (country, effective_from, effective_to, rules jsonb, checksum, approved_by), `payroll_periods`, `payroll_runs` (status, rule_version_id, inputs_snapshot, totals, idempotency_key), `payroll_items`, `payroll_item_lines`, `payroll_adjustments`, `payroll_payments`, `payslips`, `leave_types`, `leave_policies`, `leave_balances`, `leave_ledger` (accruals, usage, carryover as ledger entries), `leave_requests`, `leave_approvals` |

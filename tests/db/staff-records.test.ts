@@ -432,6 +432,17 @@ describe("staff records", () => {
     );
   });
 
+  it("shows documents in the storage used on the subscription page", async () => {
+    const usage = await asUser({ userId: owner.id }, (db) =>
+      db.query<{ mb: number }>(
+        "select (public.subscription_overview($1) -> 'usage' ->> 'storage_mb')::int as mb",
+        [company.id],
+      ),
+    );
+    // A few small test files round up to 1 MB.
+    expect(usage.rows[0]!.mb).toBe(1);
+  });
+
   it("refuses uploads past the plan's storage allowance", async () => {
     const o = await createUser();
     const co = await createCompany(o.id, "Small Co");
@@ -501,5 +512,49 @@ describe("staff records", () => {
       ),
       /staff_already_linked/,
     );
+  });
+  // Supabase Storage exists in CI (real Supabase Postgres), not in the local shim.
+  it("keeps document files private to the business, the right managers and the staff member", async (t) => {
+    const hasStorage = await asAdmin((db) =>
+      db.query("select 1 from pg_namespace where nspname = 'storage'"),
+    );
+    if (!hasStorage.rowCount) t.skip();
+    const files = [
+      `${company.id}/${abujaStaff}/abuja.pdf`,
+      `${company.id}/${portalStaff}/portal.pdf`,
+    ];
+    await asAdmin(async (db) => {
+      for (const name of files)
+        await db.query(
+          "insert into storage.objects (bucket_id, name) values ('staff-documents', $1)",
+          [name],
+        );
+    });
+    const visible = (userId: string) =>
+      asUser({ userId }, async (db) => {
+        const r = await db.query<{ name: string }>(
+          "select name from storage.objects where bucket_id = 'staff-documents' and name = any($1) order by name",
+          [files],
+        );
+        return r.rows.map((x) => x.name);
+      });
+    expect(await visible(owner.id)).toEqual([...files].sort());
+    expect(await visible(viewer.id)).toEqual([]);
+    expect(await visible(branchManager.id)).toEqual([files[1]]);
+    expect(await visible(portal.id)).toEqual([files[1]]);
+    const outsider = await createUser();
+    await createCompany(outsider.id, "Outsider Co");
+    expect(await visible(outsider.id)).toEqual([]);
+    // Nobody can place a file in another business's folder, or in their own record.
+    for (const userId of [outsider.id, portal.id, viewer.id]) {
+      await expectDbError(
+        asUser({ userId }, (db) =>
+          db.query("insert into storage.objects (bucket_id, name) values ('staff-documents', $1)", [
+            `${company.id}/${portalStaff}/sneaky-${userId}.pdf`,
+          ]),
+        ),
+        /row-level security/,
+      );
+    }
   });
 });
