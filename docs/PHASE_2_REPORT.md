@@ -4,7 +4,7 @@
 |---|---|
 | Date | 2026-11-14 |
 | Branch | `claude/wohkah-architecture-audit-fjcmga` |
-| Verified commit | CI_COMMIT (CI run CI_RUN) |
+| Verified commit | `82271b3` (CI run 43630210863: all jobs green; migration deployed to the development database, run 43630721422) |
 | Status | **Acceptance criteria met.** Follow-ups listed in §8. |
 
 ## 1. Phase completed
@@ -74,10 +74,10 @@ The two isolation checks that were waiting for Phase 2 are now automated: storag
 
 | Suite | Where | Result |
 |---|---|---|
-| Typecheck, lint, formatting, production build | Locally and CI | CI_STATIC |
-| Unit tests | Locally and CI | CI_UNIT |
-| Database security tests | Local PostgreSQL 16 and real Supabase Postgres in CI | CI_DB |
-| End-to-end on a full Supabase stack (desktop and phone) | CI | CI_E2E |
+| Typecheck, lint, formatting, production build | Locally and CI | ✅ Pass |
+| Unit tests | Locally and CI | ✅ 46/46 |
+| Database security tests | Local PostgreSQL 16 and real Supabase Postgres in CI | ✅ 115/115 on Supabase (114 locally, where the storage test is skipped because the local database has no storage schema) |
+| End-to-end on a full Supabase stack (desktop and phone) | CI | ✅ 28/28, no retries |
 
 The new database tests cover:
 - staff numbers;
