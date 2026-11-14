@@ -125,7 +125,7 @@ export function Pricing() {
               </ul>
               <div className="mt-auto pt-6">
                 <Button asChild variant={featured ? "default" : "outline"} className="w-full">
-                  <Link href={free ? "/register" : `/register?plan=${p.code}`}>
+                  <Link href={`/register?plan=${p.code}`}>
                     {free ? "Start free" : "Start free trial"}
                   </Link>
                 </Button>

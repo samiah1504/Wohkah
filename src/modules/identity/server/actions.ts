@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { env } from "@/lib/env";
 import { hashIdentifier, requestMeta } from "@/lib/request-meta";
 import { createClient } from "@/lib/supabase/server";
+import { toE164 } from "@/lib/phone";
 import { hitRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/rate-limit";
 import { recordLoginEvent } from "@/lib/audit/security-events";
 import { requireUser, safeNextPath } from "@/lib/auth/session";
@@ -14,6 +15,7 @@ import {
   mfaCodeSchema,
   profileSchema,
   registerSchema,
+  TERMS_VERSION,
   resetPasswordSchema,
 } from "../schemas";
 
@@ -83,7 +85,15 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
       values,
     });
   }
-  const { fullName, email, password } = parsed.data;
+  const d = parsed.data;
+  const phone = toE164(d.phoneCountry, d.phone);
+  if (!phone) {
+    return errorState("Check the highlighted fields.", {
+      fieldErrors: { phone: "Enter a valid phone number for the country you picked." },
+      values,
+    });
+  }
+  const { email, password } = d;
 
   const rl = await hitRateLimit(RATE_LIMITS.registerByIp, await ipSubject());
   if (!rl.allowed) return errorState(rateLimitMessage(rl.retryAfterSeconds), { values });
@@ -94,7 +104,18 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
     email,
     password,
     options: {
-      data: { full_name: fullName },
+      // Read by the database sign-up trigger, which checks every value again.
+      data: {
+        full_name: `${d.firstName} ${d.lastName}`.slice(0, 120),
+        first_name: d.firstName,
+        last_name: d.lastName,
+        phone,
+        acquisition_source: d.acquisitionSource ?? null,
+        acquisition_detail: d.acquisitionSource === "other" ? (d.acquisitionOther ?? null) : null,
+        terms_accepted: true,
+        terms_version: TERMS_VERSION,
+        marketing_consent: d.marketing,
+      },
       emailRedirectTo: `${env.appUrl}/auth/confirm?next=${encodeURIComponent(next)}`,
     },
   });

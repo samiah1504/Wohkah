@@ -22,6 +22,7 @@ updated whenever a migration lands.
 | `20261114000200_branches_and_departments.sql` | Branch allowances 1/2/5/10; departments removed from plans, limits and the subscription overview |
 | `20261114000300_remove_departments.sql` | Departments removed entirely: Department Manager holders and invitations moved to Operations Manager; department-scoped roles removed; `departments` table, `departments.manage`, `member_roles.department_id`, `employees.department_id` and the `department` role scope dropped. Copies kept in the private `archive` schema |
 | `20261114000400_business_defined_roles.sql` | Owner is the only built-in role; existing roles become the business's own; new businesses start with Owner only; roles on every plan (`custom_roles` feature removed); administrators counted by access; invitations without a role give basic access |
+| `20261114000500_registration_details.sql` | `profiles.first_name` / `last_name`; `user_registrations` (acquisition source, terms acceptance with database timestamp and version, separate marketing consent; owner-readable only); sign-up trigger validates every value (E.164 phone) |
 
 Each file documents its rollback steps in its header. Production is forward-only.
 

@@ -5,13 +5,7 @@ import { useActionState } from "react";
 import { Field, Input } from "@/components/ui/form-controls";
 import { FormMessage, SubmitButton, errorProps } from "@/components/forms";
 import { initialFormState } from "@/lib/forms";
-import {
-  login,
-  register,
-  requestPasswordReset,
-  resetPassword,
-  verifyMfaLogin,
-} from "../server/actions";
+import { login, requestPasswordReset, resetPassword, verifyMfaLogin } from "../server/actions";
 
 export function LoginForm({ next, defaultEmail }: { next?: string; defaultEmail?: string }) {
   const [state, action] = useActionState(login, initialFormState);
@@ -46,56 +40,6 @@ export function LoginForm({ next, defaultEmail }: { next?: string; defaultEmail?
         </Link>
       </div>
       <SubmitButton pendingLabel="Signing in…">Sign in</SubmitButton>
-    </form>
-  );
-}
-
-export function RegisterForm({ next, defaultEmail }: { next?: string; defaultEmail?: string }) {
-  const [state, action] = useActionState(register, initialFormState);
-  return (
-    <form action={action} className="grid gap-4" noValidate>
-      <FormMessage state={state} />
-      <input type="hidden" name="next" value={next ?? ""} />
-      <Field label="Full name" htmlFor="fullName" error={state.fieldErrors?.fullName}>
-        <Input
-          id="fullName"
-          name="fullName"
-          autoComplete="name"
-          required
-          defaultValue={state.values?.fullName}
-          {...errorProps(state, "fullName")}
-        />
-      </Field>
-      <Field label="Email address" htmlFor="email" error={state.fieldErrors?.email}>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          defaultValue={state.values?.email ?? defaultEmail}
-          {...errorProps(state, "email")}
-        />
-      </Field>
-      <Field
-        label="Password"
-        htmlFor="password"
-        hint="At least 10 characters, with uppercase and lowercase letters, a number and a symbol."
-        error={state.fieldErrors?.password}
-      >
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          required
-          {...errorProps(state, "password")}
-        />
-      </Field>
-      <p className="text-muted-foreground text-xs">
-        By creating an account you agree to the Terms of Service and acknowledge the Privacy Notice.
-      </p>
-      <SubmitButton pendingLabel="Creating account…">Create account</SubmitButton>
     </form>
   );
 }

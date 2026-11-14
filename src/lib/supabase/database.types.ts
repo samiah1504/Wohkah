@@ -885,8 +885,10 @@ export type Database = {
         Row: {
           avatar_path: string | null;
           created_at: string;
+          first_name: string | null;
           full_name: string;
           id: string;
+          last_name: string | null;
           locale: string;
           phone: string | null;
           timezone: string;
@@ -896,8 +898,10 @@ export type Database = {
         Insert: {
           avatar_path?: string | null;
           created_at?: string;
+          first_name?: string | null;
           full_name?: string;
           id: string;
+          last_name?: string | null;
           locale?: string;
           phone?: string | null;
           timezone?: string;
@@ -906,8 +910,10 @@ export type Database = {
         Update: {
           avatar_path?: string | null;
           created_at?: string;
+          first_name?: string | null;
           full_name?: string;
           id?: string;
+          last_name?: string | null;
           locale?: string;
           phone?: string | null;
           timezone?: string;
@@ -1314,6 +1320,40 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      user_registrations: {
+        Row: {
+          acquisition_detail: string | null;
+          acquisition_source: string | null;
+          created_at: string;
+          marketing_consent: boolean;
+          marketing_consent_at: string | null;
+          terms_accepted_at: string | null;
+          terms_version: string | null;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          acquisition_detail?: string | null;
+          acquisition_source?: string | null;
+          created_at?: string;
+          marketing_consent?: boolean;
+          marketing_consent_at?: string | null;
+          terms_accepted_at?: string | null;
+          terms_version?: string | null;
+          user_id: string;
+        };
+        Update: {
+          acquisition_detail?: string | null;
+          acquisition_source?: string | null;
+          created_at?: string;
+          marketing_consent?: boolean;
+          marketing_consent_at?: string | null;
+          terms_accepted_at?: string | null;
+          terms_version?: string | null;
+          user_id?: string;
+        };
+        Relationships: [];
       };
       webhook_events: {
         Row: {

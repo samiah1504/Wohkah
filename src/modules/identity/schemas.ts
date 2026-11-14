@@ -17,10 +17,52 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Enter your password."),
 });
 
+/** "How did you hear about WOHKAH?" options (stored keys match the database check). */
+export const ACQUISITION_SOURCES = [
+  ["instagram", "Instagram"],
+  ["facebook", "Facebook"],
+  ["tiktok", "TikTok"],
+  ["linkedin", "LinkedIn"],
+  ["google_search", "Google Search"],
+  ["youtube", "YouTube"],
+  ["whatsapp", "WhatsApp"],
+  ["referral", "Referral from a friend"],
+  ["business_community", "Business community"],
+  ["other", "Other"],
+] as const;
+
+const sourceKeys = ACQUISITION_SOURCES.map(([k]) => k) as [string, ...string[]];
+
+/** Bump when the Terms of Use or Privacy Policy change materially. */
+export const TERMS_VERSION = "2026-11-14";
+
+const personName = (label: string) =>
+  z.string().trim().min(1, `Enter your ${label}.`).max(60, `That ${label} is too long.`);
+
 export const registerSchema = z.object({
-  fullName: z.string().trim().min(2, "Enter your full name.").max(120, "That name is too long."),
+  firstName: personName("first name"),
+  lastName: personName("last name"),
   email,
+  phoneCountry: z.string().trim().length(2),
+  phone: z.string().trim().min(1, "Enter your phone number.").max(32, "That number is too long."),
   password: passwordSchema,
+  acquisitionSource: z
+    .enum(sourceKeys)
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  acquisitionOther: z
+    .string()
+    .trim()
+    .max(100, "Please keep this under 100 characters.")
+    .optional()
+    .transform((v) => (v ? v : undefined)),
+  terms: z.literal("on", {
+    error: "Please agree to the General Terms of Use and Privacy Policy to continue.",
+  }),
+  marketing: z
+    .literal("on")
+    .optional()
+    .transform((v) => v === "on"),
 });
 
 export const forgotPasswordSchema = z.object({ email });

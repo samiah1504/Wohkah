@@ -5,6 +5,24 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Registration page redesign (2026-11-14)
+
+#### Changed
+- `/register` has a plain, focused layout (logo, heading, form) and the copy "Create your account /
+  Start your 7-day free trial and experience a better way to manage your business and your people."
+- Fields: first name, last name, email, phone (country picker with flags, Nigeria +234 by default,
+  validated with libphonenumber-js and stored in E.164), password with show/hide and live
+  requirements, optional "How did you hear about WOHKAH?" (with "Other" detail).
+- Required, unticked Terms of Use / Privacy Policy checkbox; separate optional marketing consent.
+- Button "Start my free trial". After confirming their email, new owners start business setup with
+  the 7-day trial of the recommended plan selected (Free is still one tap away; trial rules
+  unchanged). Pricing "Start free" keeps Free selected.
+- Login page unchanged.
+
+#### Added
+- `user_registrations` table and `profiles.first_name` / `last_name` (migration
+  `20261114000500_registration_details.sql`); timestamps come from the database clock.
+
 ### Copy written as if every feature is live (2026-11-14)
 
 #### Changed
