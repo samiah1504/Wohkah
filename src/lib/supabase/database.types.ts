@@ -333,6 +333,7 @@ export type Database = {
           company_id: string;
           created_at: string;
           email: string;
+          employee_id: string | null;
           expires_at: string;
           id: string;
           invited_by: string | null;
@@ -349,6 +350,7 @@ export type Database = {
           company_id: string;
           created_at?: string;
           email: string;
+          employee_id?: string | null;
           expires_at?: string;
           id?: string;
           invited_by?: string | null;
@@ -364,6 +366,7 @@ export type Database = {
           company_id?: string;
           created_at?: string;
           email?: string;
+          employee_id?: string | null;
           expires_at?: string;
           id?: string;
           invited_by?: string | null;
@@ -380,6 +383,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "companies";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "company_invitations_employee_fk";
+            columns: ["company_id", "employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["company_id", "id"];
           },
         ];
       };
@@ -508,6 +518,177 @@ export type Database = {
           },
         ];
       };
+      employee_documents: {
+        Row: {
+          archived_at: string | null;
+          archived_by: string | null;
+          category: string;
+          company_id: string;
+          content_type: string | null;
+          created_at: string;
+          employee_id: string;
+          id: string;
+          name: string;
+          size_bytes: number;
+          storage_path: string;
+          uploaded_by: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string | null;
+          archived_by?: string | null;
+          category: string;
+          company_id: string;
+          content_type?: string | null;
+          created_at?: string;
+          employee_id: string;
+          id?: string;
+          name: string;
+          size_bytes: number;
+          storage_path: string;
+          uploaded_by?: string | null;
+        };
+        Update: {
+          archived_at?: string | null;
+          archived_by?: string | null;
+          category?: string;
+          company_id?: string;
+          content_type?: string | null;
+          created_at?: string;
+          employee_id?: string;
+          id?: string;
+          name?: string;
+          size_bytes?: number;
+          storage_path?: string;
+          uploaded_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "employee_documents_company_id_employee_id_fkey";
+            columns: ["company_id", "employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
+      employee_history: {
+        Row: {
+          actor_user_id: string | null;
+          company_id: string;
+          created_at: string;
+          details: NonNullable<Json>;
+          employee_id: string;
+          event: string;
+          id: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          actor_user_id?: string | null;
+          company_id: string;
+          created_at?: string;
+          details?: NonNullable<Json>;
+          employee_id: string;
+          event: string;
+          id?: never;
+        };
+        Update: {
+          actor_user_id?: string | null;
+          company_id?: string;
+          created_at?: string;
+          details?: NonNullable<Json>;
+          employee_id?: string;
+          event?: string;
+          id?: never;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "employee_history_company_id_employee_id_fkey";
+            columns: ["company_id", "employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
+      employee_private: {
+        Row: {
+          bank_account_name: string | null;
+          bank_account_number: string | null;
+          bank_name: string | null;
+          company_id: string;
+          created_at: string;
+          date_of_birth: string | null;
+          emergency_name: string | null;
+          emergency_phone: string | null;
+          emergency_relationship: string | null;
+          employee_id: string;
+          gender: string | null;
+          home_address: NonNullable<Json>;
+          kin_name: string | null;
+          kin_phone: string | null;
+          kin_relationship: string | null;
+          pension_pin: string | null;
+          pfa_name: string | null;
+          tin: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          bank_account_name?: string | null;
+          bank_account_number?: string | null;
+          bank_name?: string | null;
+          company_id: string;
+          created_at?: string;
+          date_of_birth?: string | null;
+          emergency_name?: string | null;
+          emergency_phone?: string | null;
+          emergency_relationship?: string | null;
+          employee_id: string;
+          gender?: string | null;
+          home_address?: NonNullable<Json>;
+          kin_name?: string | null;
+          kin_phone?: string | null;
+          kin_relationship?: string | null;
+          pension_pin?: string | null;
+          pfa_name?: string | null;
+          tin?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          bank_account_name?: string | null;
+          bank_account_number?: string | null;
+          bank_name?: string | null;
+          company_id?: string;
+          created_at?: string;
+          date_of_birth?: string | null;
+          emergency_name?: string | null;
+          emergency_phone?: string | null;
+          emergency_relationship?: string | null;
+          employee_id?: string;
+          gender?: string | null;
+          home_address?: NonNullable<Json>;
+          kin_name?: string | null;
+          kin_phone?: string | null;
+          kin_relationship?: string | null;
+          pension_pin?: string | null;
+          pfa_name?: string | null;
+          tin?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "employee_private_company_id_employee_id_fkey";
+            columns: ["company_id", "employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
       employees: {
         Row: {
           branch_id: string | null;
@@ -515,12 +696,19 @@ export type Database = {
           created_at: string;
           created_by: string | null;
           email: string | null;
+          employment_type: Database["public"]["Enums"]["employment_type"];
+          end_date: string | null;
+          first_name: string | null;
           full_name: string;
           id: string;
           job_title: string | null;
+          last_name: string | null;
           member_id: string | null;
           phone: string | null;
           plan_suspended_at: string | null;
+          reports_to: string | null;
+          staff_number: number;
+          start_date: string | null;
           status: Database["public"]["Enums"]["staff_status"];
           status_before_plan_suspension: Database["public"]["Enums"]["staff_status"] | null;
           updated_at: string;
@@ -532,12 +720,19 @@ export type Database = {
           created_at?: string;
           created_by?: string | null;
           email?: string | null;
+          employment_type?: Database["public"]["Enums"]["employment_type"];
+          end_date?: string | null;
+          first_name?: string | null;
           full_name: string;
           id?: string;
           job_title?: string | null;
+          last_name?: string | null;
           member_id?: string | null;
           phone?: string | null;
           plan_suspended_at?: string | null;
+          reports_to?: string | null;
+          staff_number?: number;
+          start_date?: string | null;
           status?: Database["public"]["Enums"]["staff_status"];
           status_before_plan_suspension?: Database["public"]["Enums"]["staff_status"] | null;
           updated_at?: string;
@@ -548,12 +743,19 @@ export type Database = {
           created_at?: string;
           created_by?: string | null;
           email?: string | null;
+          employment_type?: Database["public"]["Enums"]["employment_type"];
+          end_date?: string | null;
+          first_name?: string | null;
           full_name?: string;
           id?: string;
           job_title?: string | null;
+          last_name?: string | null;
           member_id?: string | null;
           phone?: string | null;
           plan_suspended_at?: string | null;
+          reports_to?: string | null;
+          staff_number?: number;
+          start_date?: string | null;
           status?: Database["public"]["Enums"]["staff_status"];
           status_before_plan_suspension?: Database["public"]["Enums"]["staff_status"] | null;
           updated_at?: string;
@@ -578,6 +780,13 @@ export type Database = {
             columns: ["company_id", "member_id"];
             isOneToOne: false;
             referencedRelation: "company_members";
+            referencedColumns: ["company_id", "id"];
+          },
+          {
+            foreignKeyName: "employees_reports_to_fk";
+            columns: ["company_id", "reports_to"];
+            isOneToOne: false;
+            referencedRelation: "employees";
             referencedColumns: ["company_id", "id"];
           },
         ];
@@ -1549,6 +1758,7 @@ export type Database = {
     Enums: {
       billing_interval: "monthly" | "annual";
       company_status: "active" | "suspended" | "closed";
+      employment_type: "full_time" | "part_time" | "contract" | "casual" | "intern";
       invitation_status: "pending" | "accepted" | "revoked";
       member_status: "active" | "suspended" | "removed";
       role_scope: "company" | "branch";
@@ -1676,6 +1886,7 @@ export const Constants = {
     Enums: {
       billing_interval: ["monthly", "annual"],
       company_status: ["active", "suspended", "closed"],
+      employment_type: ["full_time", "part_time", "contract", "casual", "intern"],
       invitation_status: ["pending", "accepted", "revoked"],
       member_status: ["active", "suspended", "removed"],
       role_scope: ["company", "branch"],

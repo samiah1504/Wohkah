@@ -55,6 +55,8 @@ test("signed-in screens use small-business language", async ({ browser }) => {
     `/w/${slug}/settings/subscription/checkout?plan=growth`,
     `/w/${slug}/settings/work-locations`,
     `/w/${slug}/staff`,
+    `/w/${slug}/staff/new`,
+    `/w/${slug}/me`,
     `/w/${slug}/settings/audit`,
     "/account",
     "/onboarding",

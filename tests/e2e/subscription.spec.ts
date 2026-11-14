@@ -20,11 +20,15 @@ async function companyId(slug: string) {
   return data.id as string;
 }
 
+/** Adds "<name> Test" through the add-staff page and returns to the list. */
 async function addStaff(page: Page, name: string) {
-  await page.getByRole("button", { name: "Add staff" }).click();
-  await page.getByLabel("Full name").fill(name);
-  await page.getByRole("dialog").getByRole("button", { name: "Add staff" }).click();
-  await expectToast(page, "Staff member added.");
+  const list = page.url().split("?")[0]!;
+  await page.getByRole("link", { name: "Add staff", exact: true }).click();
+  await page.getByLabel("First name").fill(name);
+  await page.getByLabel("Last name").fill("Test");
+  await page.getByRole("button", { name: "Add staff member" }).click();
+  await expect(page.getByText(`${name} Test has been added.`)).toBeVisible();
+  await page.goto(list);
 }
 
 test("Free plan: 3 active staff, the 4th is blocked with an upgrade prompt", async ({
@@ -123,7 +127,6 @@ test("trial expiry with more than 3 staff: choose who stays, pause the rest, rea
 
   await page.goto(`/w/${slug}/staff`);
   for (const name of ["Ada", "Bola", "Chidi", "Dayo", "Ese"]) await addStaff(page, name);
-  // Wait for the real count: an earlier "added" toast can still be on screen.
   await expect(page.getByText("5 of 10 active staff places in use.")).toBeVisible();
 
   // The trial runs out (test fixture moves the end date into the past).

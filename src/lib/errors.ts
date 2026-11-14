@@ -37,7 +37,20 @@ export function userMessageFor(
     return `That plan includes ${selection[1]} active staff. Choose which staff stay active first (on the Staff page), then try again. No records are deleted.`;
   }
 
+  const storage = /storage_limit_exceeded:(\d+)/.exec(msg);
+  if (storage) {
+    const mb = Number(storage[1]);
+    const size = mb >= 1024 ? `${Math.round(mb / 1024)} GB` : `${mb} MB`;
+    return `This file would take you past your plan's ${size} of file storage. Upgrade your plan from Settings → Subscription to store more.`;
+  }
+
   const known: Record<string, string> = {
+    reporting_cycle: "That would create a loop in who reports to whom. Choose a different person.",
+    status_change_not_allowed: "That status change isn't possible from the current status.",
+    staff_already_linked: "This staff member already has a sign-in for the staff portal.",
+    staff_email_mismatch:
+      "Add this staff member's email address to their record first; the invitation is sent there.",
+    "access to this staff record": "You don't have access to this staff record.",
     "trial_not_eligible:owner_trial_used":
       "You've already used a free trial in the last 12 months. You can subscribe, or keep using the Free plan.",
     "trial_not_eligible:workspace_already_trialled":

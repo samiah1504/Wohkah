@@ -21,6 +21,8 @@ export const PERMISSIONS = [
   "support_access.manage",
   "staff.view",
   "staff.manage",
+  "staff.sensitive",
+  "staff.export",
   "work_locations.manage",
 ] as const;
 

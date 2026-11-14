@@ -18,6 +18,7 @@ export function navItemsFor(ctx: TenantContext): NavItem[] {
   const items: NavItem[] = [{ key: "home", label: NAV.home.label, href: base }];
   if (can(ctx, "staff.view"))
     items.push({ key: "staff", label: NAV.staff.label, href: `${base}/staff` });
+  else items.push({ key: "me", label: NAV.me.label, href: `${base}/me` });
   if (can(ctx, "members.view"))
     items.push({ key: "members", label: NAV.access.label, href: `${base}/members` });
   if (can(ctx, "roles.view"))

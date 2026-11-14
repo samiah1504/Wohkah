@@ -26,7 +26,7 @@ export const PRIMARY_FEATURES: MarketingFeature[] = [
       "Branches and who reports to whom",
       "Invite staff to their own portal with one link",
     ],
-    available: false,
+    available: true,
     phase: 2,
   },
   {

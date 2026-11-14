@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useMemo, useState } from "react";
-import { ChevronDownIcon, EyeIcon, EyeOffIcon } from "lucide-react";
+import { useActionState, useState } from "react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { Field, Input, NativeSelect } from "@/components/ui/form-controls";
+import { PhoneInput } from "@/components/phone-input";
 import { FormMessage, SubmitButton } from "@/components/forms";
 import { initialFormState, type FormState } from "@/lib/forms";
-import { DEFAULT_COUNTRY, countryOptions, toE164 } from "@/lib/phone";
+import { toE164 } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 import { register } from "../server/actions";
 import { ACQUISITION_SOURCES } from "../schemas";
@@ -46,12 +47,9 @@ function check(form: FormData): Errors {
 export function RegisterForm({ next, defaultEmail }: { next?: string; defaultEmail?: string }) {
   const [state, action] = useActionState<FormState, FormData>(register, initialFormState);
   const [clientErrors, setClientErrors] = useState<Errors>({});
-  const [country, setCountry] = useState<string>(state.values?.phoneCountry ?? DEFAULT_COUNTRY);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [source, setSource] = useState(state.values?.acquisitionSource ?? "");
-  const countries = useMemo(() => countryOptions(), []);
-  const selected = countries.find((c) => c.code === country) ?? countries[0]!;
 
   const errors: Errors = { ...(state.fieldErrors ?? {}), ...clientErrors };
   const v = state.values ?? {};
@@ -129,52 +127,13 @@ export function RegisterForm({ next, defaultEmail }: { next?: string; defaultEma
       </Field>
 
       <Field label="Phone number" htmlFor="phone" error={errors.phone}>
-        <div
-          className={cn(
-            "border-input bg-surface focus-within:border-ring focus-within:ring-ring/30 flex h-10 items-stretch overflow-hidden rounded-md border shadow-xs focus-within:ring-2",
-            errors.phone && "border-destructive",
-          )}
-        >
-          {/* A native select sits invisibly over the flag and code: easy on phones, accessible. */}
-          <div className="relative flex shrink-0 items-center gap-1 border-r px-3 text-sm">
-            <span aria-hidden className="text-base leading-none">
-              {selected.flag}
-            </span>
-            <span aria-hidden className="tabular-nums">
-              {selected.dial}
-            </span>
-            <ChevronDownIcon aria-hidden className="text-muted-foreground size-3.5" />
-            <select
-              name="phoneCountry"
-              aria-label="Country"
-              value={country}
-              onChange={(e) => {
-                setCountry(e.target.value);
-                clear("phone");
-              }}
-              className="absolute inset-0 cursor-pointer opacity-0"
-            >
-              {countries.map((c) => (
-                <option key={c.code} value={c.code}>
-                  {c.flag} {c.name} ({c.dial})
-                </option>
-              ))}
-            </select>
-          </div>
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel-national"
-            placeholder={country === "NG" ? "803 123 4567" : "Phone number"}
-            required
-            defaultValue={v.phone}
-            onChange={() => clear("phone")}
-            className="placeholder:text-muted-foreground min-w-0 flex-1 bg-transparent px-3 text-sm outline-none"
-            {...invalid("phone")}
-          />
-        </div>
+        <PhoneInput
+          defaultCountry={v.phoneCountry}
+          defaultValue={v.phone}
+          invalid={Boolean(errors.phone)}
+          required
+          onChange={() => clear("phone")}
+        />
       </Field>
 
       <div className="grid gap-1.5">

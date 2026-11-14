@@ -1,91 +1,9 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { PlusIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Field, Input } from "@/components/ui/form-controls";
-import { ActionDialog } from "@/components/action-forms";
-import { FormMessage, SubmitButton, errorProps, useSuccessToast } from "@/components/forms";
+import { FormMessage, SubmitButton, useSuccessToast } from "@/components/forms";
 import { initialFormState, type FormState } from "@/lib/forms";
-import { addStaff, reactivateStaff, selectActiveStaff } from "../server/actions";
-
-export function AddStaffDialog({
-  slug,
-  disabledReason,
-}: {
-  slug: string;
-  disabledReason?: string;
-}) {
-  return (
-    <ActionDialog
-      title="Add a staff member"
-      description="They count as active staff on your subscription."
-      action={addStaff}
-      hidden={{ slug }}
-      submitLabel="Add staff"
-      trigger={
-        <Button disabled={Boolean(disabledReason)} title={disabledReason}>
-          <PlusIcon /> Add staff
-        </Button>
-      }
-    >
-      {(state) => (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field
-            label="Full name"
-            htmlFor="staff-name"
-            error={state.fieldErrors?.fullName}
-            className="sm:col-span-2"
-          >
-            <Input
-              id="staff-name"
-              name="fullName"
-              defaultValue={state.values?.fullName ?? ""}
-              autoFocus
-              {...errorProps(state, "fullName")}
-            />
-          </Field>
-          <Field
-            label="Job title"
-            htmlFor="staff-title"
-            hint="Optional"
-            error={state.fieldErrors?.jobTitle}
-          >
-            <Input id="staff-title" name="jobTitle" defaultValue={state.values?.jobTitle ?? ""} />
-          </Field>
-          <Field
-            label="Phone"
-            htmlFor="staff-phone"
-            hint="Optional"
-            error={state.fieldErrors?.phone}
-          >
-            <Input
-              id="staff-phone"
-              name="phone"
-              type="tel"
-              defaultValue={state.values?.phone ?? ""}
-            />
-          </Field>
-          <Field
-            label="Email"
-            htmlFor="staff-email"
-            hint="Optional"
-            error={state.fieldErrors?.email}
-            className="sm:col-span-2"
-          >
-            <Input
-              id="staff-email"
-              name="email"
-              type="email"
-              defaultValue={state.values?.email ?? ""}
-              {...errorProps(state, "email")}
-            />
-          </Field>
-        </div>
-      )}
-    </ActionDialog>
-  );
-}
+import { reactivateStaff, selectActiveStaff } from "../server/actions";
 
 type Person = { id: string; full_name: string; job_title: string | null };
 

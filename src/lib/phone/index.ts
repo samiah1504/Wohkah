@@ -45,3 +45,10 @@ export function toE164(country: string, input: string): string | null {
   const parsed = parsePhoneNumberFromString(input.trim(), country);
   return parsed && parsed.isValid() ? parsed.number : null;
 }
+
+/** "+234 803 123 4567" for display; anything unparseable is shown as stored. */
+export function formatPhone(value: string | null | undefined): string {
+  if (!value) return "";
+  const parsed = parsePhoneNumberFromString(value);
+  return parsed ? parsed.formatInternational() : value;
+}

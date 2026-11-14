@@ -23,12 +23,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/overlays";
 
-export type NavKey = "home" | "staff" | "members" | "roles" | "settings" | "profile";
+export type NavKey = "home" | "staff" | "me" | "members" | "roles" | "settings" | "profile";
 export type NavItem = { key: NavKey; label: string; href: string };
 
 const ICONS: Record<NavKey, React.ComponentType<{ className?: string }>> = {
   home: HomeIcon,
   staff: ContactIcon,
+  me: ContactIcon,
   members: UsersIcon,
   roles: ShieldIcon,
   settings: SettingsIcon,

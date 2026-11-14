@@ -1,16 +1,13 @@
 "use server";
 
-import { createHash, randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
-import { env } from "@/lib/env";
 import { requireUser } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
-import { hitRateLimit, RATE_LIMITS, rateLimitMessage } from "@/lib/rate-limit";
-import { brandedEmail, sendEmail } from "@/lib/email";
 import { isPermission } from "@/lib/permissions";
 import { userMessageFor } from "@/lib/errors";
 import { errorState, type FormState } from "@/lib/forms";
 import { ActionError, check, workspaceAction } from "@/lib/tenancy/actions";
+import { createInvitation } from "./invitations";
 import {
   invitationIdSchema,
   inviteSchema,
@@ -33,65 +30,14 @@ export async function inviteMember(_prev: InviteState, formData: FormData): Prom
     permission: "members.invite",
     schema: inviteSchema,
     run: async ({ ctx, data, supabase }) => {
-      const rl = await hitRateLimit(RATE_LIMITS.inviteByUser, ctx.user.id);
-      if (!rl.allowed) throw new ActionError(rateLimitMessage(rl.retryAfterSeconds));
-
-      const roleIds = uuidsFrom(formData, "roleIds");
-      // 256-bit random token; only its SHA-256 hash is stored.
-      const token = randomBytes(32).toString("base64url");
-      const tokenHash = createHash("sha256").update(token, "utf8").digest("hex");
-
-      const { data: inv, error } = await supabase
-        .from("company_invitations")
-        .insert({
-          company_id: ctx.company.id,
-          email: data.email,
-          role_ids: roleIds,
-          token_hash: tokenHash,
-        })
-        .select("id")
-        .single();
-      if (error?.code === "23505") {
-        throw new ActionError(
-          "There's already a pending invitation for this email. Revoke it first to send a new one.",
-        );
-      }
-      check(error, "create invitation");
-
-      const link = `${env.appUrl}/invite/${token}`;
-      const { data: inviter } = await supabase
-        .from("profiles")
-        .select("full_name")
-        .eq("id", ctx.user.id)
-        .single();
-      const who = inviter?.full_name || "A colleague";
-      const email = brandedEmail({
-        heading: `Join ${ctx.company.name} on WOHKAH`,
-        paragraphs: [
-          `${who} has invited you to join ${ctx.company.name} on WOHKAH.`,
-          "Accept the invitation to set up your account. You'll use it to see your work information, and more as your company enables it.",
-        ],
-        cta: { label: "Accept invitation", url: link },
-        footnote: `This invitation was sent to ${data.email} and expires in 7 days. If you weren't expecting it, you can ignore this email.`,
+      const out = await createInvitation({
+        ctx,
+        supabase,
+        email: data.email,
+        roleIds: uuidsFrom(formData, "roleIds"),
       });
-      const sent = await sendEmail({
-        to: data.email,
-        subject: `${who} invited you to ${ctx.company.name} on WOHKAH`,
-        ...email,
-        idempotencyKey: `invite-${inv?.id}`,
-      });
-
-      if (sent.sent) {
-        return { status: "success", message: `Invitation sent to ${data.email}.` };
-      }
-      inviteLink = link;
-      return {
-        status: "success",
-        message:
-          sent.reason === "not_configured"
-            ? "Invitation created. Email sending isn't configured yet, so copy this link and send it to them yourself."
-            : "Invitation created, but the email couldn't be sent. Copy this link and send it to them yourself.",
-      };
+      inviteLink = out.link;
+      return { status: "success", message: out.message };
     },
   });
   return { ...result, inviteLink };

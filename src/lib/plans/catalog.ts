@@ -181,7 +181,7 @@ export const FEATURE_INFO: Record<
   work_locations: { label: "Work locations included", singular: "work location", available: true },
   storage_mb: { label: "File storage", available: true },
   custom_domains: { label: "Custom domains", available: false, hidden: true },
-  staff_records: { label: "Staff profiles and records", available: false },
+  staff_records: { label: "Staff profiles and records", available: true },
   staff_portal: { label: "Staff portal", available: false },
   gps_clock_in: { label: "GPS clock-in and clock-out", available: false },
   basic_attendance: { label: "Basic attendance tracking", available: false },

@@ -80,7 +80,11 @@ async function Home({ params, searchParams }: PageProps<"/w/[slug]">) {
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {summary ? <SetupChecklist ctx={ctx} summary={summary} /> : <StaffWelcome />}
+        {summary ? (
+          <SetupChecklist ctx={ctx} summary={summary} />
+        ) : (
+          <StaffWelcome slug={ctx.company.slug} />
+        )}
 
         <div className="grid content-start gap-6">
           <NotificationsCard ctx={ctx} />
@@ -190,7 +194,7 @@ function SetupChecklist({
   );
 }
 
-function StaffWelcome() {
+function StaffWelcome({ slug }: { slug: string }) {
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
@@ -204,7 +208,11 @@ function StaffWelcome() {
         </CardDescription>
       </CardHeader>
       <CardContent className="text-muted-foreground text-sm">
-        Keep your profile up to date from{" "}
+        See your job details, private details and documents in{" "}
+        <Link href={`/w/${slug}/me`} className="text-walnut font-medium underline">
+          My record
+        </Link>
+        . Your sign-in details are in{" "}
         <Link href="/account" className="text-walnut font-medium underline">
           Profile
         </Link>

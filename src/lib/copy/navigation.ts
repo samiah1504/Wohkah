@@ -10,6 +10,12 @@ export const NAV = {
     description:
       "The people who work for your business. Active staff count toward your subscription.",
   },
+  me: {
+    label: "My record",
+    title: "My record",
+    description:
+      "Your staff record at this business. To change anything in it, ask your manager or the business owner.",
+  },
   access: {
     label: "Team Access",
     title: "Team Access",
