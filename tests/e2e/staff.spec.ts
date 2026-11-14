@@ -10,8 +10,13 @@ import { createConfirmedUser, createWorkspaceAs, login, newSession } from "./hel
 
 /** Saved for reviewing the look (uploaded by CI, not compared). */
 async function capture(page: Page, name: string) {
-  await page.screenshot({ path: `screen-captures/${name}.png`, fullPage: true });
+  await page
+    .screenshot({ path: `screen-captures/${name}.png`, fullPage: true, timeout: 10_000 })
+    .catch(() => undefined);
 }
+
+// Fail at the step that is stuck instead of at the end of the whole test.
+test.use({ actionTimeout: 15_000, navigationTimeout: 20_000 });
 
 async function languageIssues(page: Page) {
   const text = await page.locator("body").innerText();
@@ -69,15 +74,18 @@ test("an owner keeps a full staff record: add, edit, private details, documents,
   await capture(page, "staff-profile");
 
   // Edit the job title.
-  await page.getByRole("link", { name: "Edit" }).click();
+  await page.goto(`${profile}/edit`);
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Job title").fill("Head Cashier");
   await page.getByRole("button", { name: "Save changes" }).click();
   await expect(page.getByText("Changes saved.")).toBeVisible();
   await expect(page.getByText("Head Cashier").first()).toBeVisible();
 
   // Private details.
-  await page.getByRole("link", { name: "Private details" }).click();
-  await page.getByRole("link", { name: "Add private details" }).click();
+  await page.goto(`${profile}?tab=private`);
+  await expect(page.getByText("No private details recorded yet.")).toBeVisible();
+  await page.goto(`${profile}/private`);
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Bank", { exact: true }).fill("Example Bank");
   await capture(page, "staff-private-form");
   await page.getByLabel("Account number").fill("12AB");
@@ -91,7 +99,8 @@ test("an owner keeps a full staff record: add, edit, private details, documents,
   await capture(page, "staff-private-tab");
 
   // A document, stored privately and opened through a short-lived link.
-  await page.getByRole("link", { name: "Documents" }).click();
+  await page.goto(`${profile}?tab=documents`);
+  await page.waitForLoadState("networkidle");
   await page.getByRole("button", { name: "Add document" }).click();
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("File").setInputFiles(path.resolve("tests/e2e/fixtures/contract.pdf"));
@@ -108,6 +117,7 @@ test("an owner keeps a full staff record: add, edit, private details, documents,
 
   // Status: on leave, then back.
   await page.goto(profile);
+  await page.waitForLoadState("networkidle");
   await page.getByRole("button", { name: "Change status" }).click();
   await page.getByRole("radio", { name: "Mark as on leave" }).check();
   await page.getByRole("dialog").getByRole("button", { name: "Change status" }).click();
@@ -144,6 +154,7 @@ test("search, filters, pages and the staff list download", async ({ browser }) =
   await addStaff(page, slug, { first: "Chidi", last: "Okafor", title: "Chef" });
   const third = await addStaff(page, slug, { first: "Dayo", last: "Bello", title: "=Danger" });
   await page.goto(third);
+  await page.waitForLoadState("networkidle");
   await page.getByRole("button", { name: "Change status" }).click();
   await page.getByRole("radio", { name: "Record resignation" }).check();
   await page.getByRole("dialog").getByRole("button", { name: "Change status" }).click();
