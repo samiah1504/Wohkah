@@ -51,9 +51,11 @@ test("an owner sets up branches and holidays; changes are audited", async ({ bro
   await expect(page.getByRole("cell", { name: "Holiday created" }).first()).toBeVisible();
   await expect(page.getByRole("cell", { name: "Company changed" }).first()).toBeVisible();
 
-  // Home checklist reflects real data
+  // The setup guide reflects real data: the branch and the saved working hours.
   await page.goto(`/w/${slug}`);
-  await expect(page.getByText("2 of 3 steps complete")).toBeVisible();
+  await expect(page.getByText("2 of 6 steps done")).toBeVisible();
+  await page.goto(`/w/${slug}/setup`);
+  await expect(page.getByText("2 of 6 steps done")).toBeVisible();
 });
 
 test("the Free plan's one-administrator limit is enforced", async ({ browser }) => {

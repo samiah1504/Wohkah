@@ -257,8 +257,10 @@ export async function setupSteps(ctx: TenantContext): Promise<SetupStep[]> {
   ]);
   const c = company.data;
   const address = (c?.address ?? {}) as Record<string, string | undefined>;
+  // Saved at least once after the business was created (creation sets both
+  // timestamps in the same transaction, so they're equal until then).
   const profileSaved = c
-    ? new Date(c.updated_at).getTime() - new Date(c.created_at).getTime() > 60_000
+    ? new Date(c.updated_at).getTime() > new Date(c.created_at).getTime()
     : false;
   return [
     {

@@ -23,7 +23,7 @@ async function companyId(slug: string) {
 /** Adds "<name> Test" through the add-staff page and returns to the list. */
 async function addStaff(page: Page, name: string) {
   const list = page.url().split("?")[0]!;
-  await page.getByRole("link", { name: "Add staff", exact: true }).click();
+  await page.locator("main").getByRole("link", { name: "Add staff", exact: true }).click();
   await page.getByLabel("First name").fill(name);
   await page.getByLabel("Last name").fill("Test");
   await page.getByRole("button", { name: "Add staff member" }).click();
