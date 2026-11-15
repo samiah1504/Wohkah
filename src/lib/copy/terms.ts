@@ -22,6 +22,7 @@ const PERMISSION_GROUP_LABELS: Record<string, string> = {
   workspace: "Business setup",
   access: "Team access",
   staff: "Staff",
+  documents: "Contracts and job descriptions",
   billing: "Subscription",
   security: "Security",
 };

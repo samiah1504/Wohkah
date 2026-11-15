@@ -13,6 +13,8 @@ const ADMIN_CLIENT_ALLOWED = [
   "src/lib/audit/**",
   // Applies VERIFIED provider payments (service role only; see SECURITY.md).
   "src/lib/payments/**",
+  // Records electronic signatures and signed documents (service role only; see SECURITY.md).
+  "src/lib/signing/**",
 ];
 
 const ADMIN_IMPORT = {

@@ -6,7 +6,13 @@
 import path from "node:path";
 import { devices, expect, test, type Page } from "@playwright/test";
 import { DISALLOWED_TERMS } from "../../src/lib/copy/terms";
-import { createConfirmedUser, createWorkspaceAs, login, newSession } from "./helpers";
+import {
+  createConfirmedUser,
+  createWorkspaceAs,
+  login,
+  newSession,
+  latestEmailLink,
+} from "./helpers";
 
 /** Saved for reviewing the look (uploaded by CI, not compared). */
 async function capture(page: Page, name: string) {
@@ -213,9 +219,8 @@ test("staff see their own record in the staff portal, and can't change it", asyn
 
   await page.getByRole("button", { name: "Invite to staff portal" }).click();
   await page.getByRole("dialog").getByRole("button", { name: "Send invitation" }).click();
-  const linkField = page.getByLabel("Invitation link");
-  await expect(linkField).toBeVisible();
-  const invite = await linkField.inputValue();
+  await expect(page.getByText(`Invitation sent to ${person.email}.`)).toBeVisible();
+  const invite = await latestEmailLink(person.email, "/invite/");
 
   const staffPage = await newSession(browser, { ...devices["Pixel 7"] });
   await login(staffPage, person.email);

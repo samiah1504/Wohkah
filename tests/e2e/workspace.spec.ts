@@ -1,5 +1,12 @@
 import { expect, test } from "@playwright/test";
-import { createConfirmedUser, createWorkspaceAs, expectToast, login, newSession } from "./helpers";
+import {
+  createConfirmedUser,
+  createWorkspaceAs,
+  expectToast,
+  login,
+  newSession,
+  latestEmailLink,
+} from "./helpers";
 
 test("an owner sets up branches and holidays; changes are audited", async ({ browser }) => {
   const owner = await createConfirmedUser("Sade Setup");
@@ -72,7 +79,8 @@ test("the Free plan's one-administrator limit is enforced", async ({ browser }) 
   await ownerPage.getByLabel("Email address").fill(hire.email);
   await ownerPage.getByLabel(/Supervisor/).check();
   await ownerPage.getByRole("button", { name: "Send invitation" }).click();
-  const link = await ownerPage.getByLabel("Invitation link").inputValue();
+  await expect(ownerPage.getByText(`Invitation sent to ${hire.email}.`)).toBeVisible();
+  const link = await latestEmailLink(hire.email, "/invite/");
 
   const hirePage = await newSession(browser);
   await login(hirePage, hire.email);

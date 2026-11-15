@@ -1,5 +1,11 @@
 import { devices, expect, test } from "@playwright/test";
-import { createConfirmedUser, createWorkspaceAs, login, newSession } from "./helpers";
+import {
+  createConfirmedUser,
+  createWorkspaceAs,
+  login,
+  newSession,
+  latestEmailLink,
+} from "./helpers";
 
 test("a user cannot open a workspace they don't belong to", async ({ browser }) => {
   const a = await createConfirmedUser("Amaka Alpha");
@@ -24,18 +30,15 @@ test("an invited person joins a second workspace and switches between them", asy
   const ownerSlug = await createWorkspaceAs(owner.email, "Owner Industries");
   const ownSlug = await createWorkspaceAs(person.email, "Person Ventures");
 
-  // Owner invites the person as an Employee. Email isn't configured in CI, so
-  // the app shows a copyable link instead of claiming it sent an email.
+  // Owner invites the person. In CI the email arrives in the local test inbox.
   const ownerPage = await newSession(browser);
   await login(ownerPage, owner.email);
   await ownerPage.goto(`/w/${ownerSlug}/members`);
   await ownerPage.getByRole("button", { name: "Invite people" }).click();
   await ownerPage.getByLabel("Email address").fill(person.email);
   await ownerPage.getByRole("button", { name: "Send invitation" }).click();
-  const linkField = ownerPage.getByLabel("Invitation link");
-  await expect(linkField).toBeVisible();
-  const inviteLink = await linkField.inputValue();
-  expect(inviteLink).toContain("/invite/");
+  await expect(ownerPage.getByText(`Invitation sent to ${person.email}.`)).toBeVisible();
+  const inviteLink = await latestEmailLink(person.email, "/invite/");
 
   const personPage = await newSession(browser);
   await login(personPage, person.email);

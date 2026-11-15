@@ -103,6 +103,14 @@ export const MORE_FEATURES: MarketingFeature[] = [
     phase: 6,
   },
   {
+    key: "contracts",
+    title: "Contracts and job descriptions",
+    summary: "Send contracts from your templates, sign online and share job descriptions.",
+    points: [],
+    available: true,
+    phase: 3,
+  },
+  {
     key: "documents",
     title: "Staff documents",
     summary: "Contracts, certificates and policies stored securely.",
@@ -148,6 +156,8 @@ export const MORE_FEATURES: MarketingFeature[] = [
 export const AVAILABLE_NOW = [
   "Create your business account",
   "Set up branches and public holidays",
+  "Keep staff records with private details, documents and history",
+  "Send contracts from your templates, signed online, and job descriptions staff confirm",
   "Invite managers and staff, with roles that control what each person can see",
   "A record of every change made in your business account",
   "Two-step sign-in for extra security",

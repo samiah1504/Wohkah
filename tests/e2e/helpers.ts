@@ -105,6 +105,44 @@ export async function latestEmailLink(to: string, contains: string): Promise<str
   throw new Error(`No email to ${to} containing a link with "${contains}"`);
 }
 
+/** The newest WOHKAH signing code emailed to `to` (local Mailpit inbox). */
+export async function latestSigningCode(to: string, after = 0): Promise<string> {
+  const mailpit = process.env.MAILPIT_URL ?? "http://127.0.0.1:54324";
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const res = await fetch(`${mailpit}/api/v1/search?query=${encodeURIComponent(`to:"${to}"`)}`);
+    if (res.ok) {
+      const body = (await res.json()) as { messages?: { Subject: string; Created: string }[] };
+      const hit = body.messages?.find(
+        (m) =>
+          /^\d{6} is your WOHKAH signing code/.test(m.Subject) && Date.parse(m.Created) > after,
+      );
+      if (hit) return hit.Subject.slice(0, 6);
+    }
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  throw new Error(`No signing code emailed to ${to}`);
+}
+
+/** Put a business on a paid plan (test fixture; real payments go through Paystack). */
+export async function setPlanFor(slug: string, code: string) {
+  const { data: company } = await admin.from("companies").select("id").eq("slug", slug).single();
+  const { data: plan } = await admin
+    .from("subscription_plans")
+    .select("id")
+    .eq("code", code)
+    .single();
+  const { error } = await admin
+    .from("company_subscriptions")
+    .update({
+      plan_id: plan!.id,
+      status: "active",
+      billing_interval: "monthly",
+      current_period_end: new Date(Date.now() + 30 * 86_400_000).toISOString(),
+    })
+    .eq("company_id", company!.id);
+  if (error) throw error;
+}
+
 export async function expectToast(page: Page, text: string | RegExp) {
   await expect(page.locator("[data-sonner-toast]").filter({ hasText: text }).first()).toBeVisible();
 }

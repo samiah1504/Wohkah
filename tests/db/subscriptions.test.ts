@@ -337,8 +337,11 @@ describe("seven-day trial", () => {
     await start(owner.id, company.id);
     await asAdmin((db) =>
       db.query(
-        `update public.company_subscriptions set trial_ends_at = now() + interval '1 day 2 hours',
-           current_period_end = now() + interval '1 day 2 hours' where company_id = $1`,
+        // Tomorrow at noon in the business's time zone, whatever the time of day the test runs.
+        `update public.company_subscriptions s
+           set trial_ends_at = (date_trunc('day', now() at time zone c.timezone) + interval '1 day 12 hours') at time zone c.timezone,
+               current_period_end = (date_trunc('day', now() at time zone c.timezone) + interval '1 day 12 hours') at time zone c.timezone
+         from public.companies c where c.id = s.company_id and s.company_id = $1`,
         [company.id],
       ),
     );

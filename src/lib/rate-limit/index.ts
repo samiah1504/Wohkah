@@ -13,6 +13,7 @@ export const RATE_LIMITS = {
   mfaByUser: { name: "mfa:user", limit: 10, windowSeconds: 900 },
   inviteByUser: { name: "invite:user", limit: 30, windowSeconds: 3600 },
   createCompanyByUser: { name: "company:user", limit: 5, windowSeconds: 86400 },
+  signingCodeByUser: { name: "signing-code:user", limit: 5, windowSeconds: 900 },
 } satisfies Record<string, RateLimitRule>;
 
 export type RateLimitResult = { allowed: boolean; retryAfterSeconds: number };

@@ -37,6 +37,14 @@ function isLogOrImport(node: ts.Node): boolean {
   for (let p = node.parent; p; p = p.parent) {
     if (ts.isImportDeclaration(p) || ts.isExportDeclaration(p)) return true;
     if (ts.isCallExpression(p) && /^console\./.test(p.expression.getText())) return true;
+    // Database column lists (supabase.from(...).select("id, employee:employees(...)")).
+    if (
+      ts.isCallExpression(p) &&
+      ts.isPropertyAccessExpression(p.expression) &&
+      p.expression.name.text === "select" &&
+      p.arguments[0] === node
+    )
+      return true;
   }
   return false;
 }

@@ -26,6 +26,8 @@ import {
   InviteToPortal,
   UploadDocument,
 } from "@/modules/staff/components/profile-actions";
+import { listContracts, staffJobDescription } from "@/modules/documents/server/queries";
+import { ContractsTab, JobDescriptionTab } from "@/modules/documents/components/staff-tabs";
 
 export const metadata: Metadata = { title: "Staff record" };
 
@@ -41,8 +43,11 @@ export default function StaffProfilePage(props: PageProps<"/w/[slug]/staff/[id]"
         const canPrivate = can(ctx, "staff.sensitive");
         const canManage = can(ctx, "staff.manage");
         const requested = typeof sp.tab === "string" ? sp.tab : "overview";
+        const canContracts = can(ctx, "contracts.manage");
         const tab: ProfileTab =
           requested === "history" ||
+          requested === "job" ||
+          (canContracts && requested === "contracts") ||
           (canPrivate && (requested === "private" || requested === "documents"))
             ? requested
             : "overview";
@@ -86,7 +91,36 @@ export default function StaffProfilePage(props: PageProps<"/w/[slug]/staff/[id]"
                 ) : null
               }
             />
-            <ProfileTabs base={base} current={tab} showPrivate={canPrivate} />
+            <ProfileTabs
+              base={base}
+              current={tab}
+              showPrivate={canPrivate}
+              extra={[
+                ["job", "Job description"],
+                ...(canContracts ? ([["contracts", "Contracts"]] as [ProfileTab, string][]) : []),
+              ]}
+            />
+            {tab === "job" ? (
+              <JobDescriptionTab
+                slug={slug}
+                jd={await staffJobDescription(ctx, staff.id)}
+                self={false}
+                timezone={ctx.company.timezone}
+                manageHref={
+                  can(ctx, "job_descriptions.manage")
+                    ? `/w/${slug}/documents/job-descriptions`
+                    : undefined
+                }
+              />
+            ) : null}
+            {tab === "contracts" ? (
+              <ContractsTab
+                slug={slug}
+                rows={await listContracts(ctx, "all", staff.id)}
+                self={false}
+                newHref={`/w/${slug}/documents/contracts/new?staff=${staff.id}`}
+              />
+            ) : null}
             {tab === "overview" ? <OverviewTab staff={staff} base={base} /> : null}
             {tab === "private" ? (
               <PrivateTab

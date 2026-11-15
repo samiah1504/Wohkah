@@ -19,6 +19,8 @@ export function navItemsFor(ctx: TenantContext): NavItem[] {
   if (can(ctx, "staff.view"))
     items.push({ key: "staff", label: NAV.staff.label, href: `${base}/staff` });
   else items.push({ key: "me", label: NAV.me.label, href: `${base}/me` });
+  if (canAny(ctx, ["contracts.manage", "contracts.sign", "job_descriptions.manage"]))
+    items.push({ key: "documents", label: NAV.documents.label, href: `${base}/documents` });
   if (can(ctx, "members.view"))
     items.push({ key: "members", label: NAV.access.label, href: `${base}/members` });
   if (can(ctx, "roles.view"))

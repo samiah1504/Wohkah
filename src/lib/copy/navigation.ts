@@ -16,6 +16,12 @@ export const NAV = {
     description:
       "Your staff record at this business. To change anything in it, ask your manager or the business owner.",
   },
+  documents: {
+    label: "Documents",
+    title: "Contracts and job descriptions",
+    description:
+      "Prepare contracts from your templates, get them signed online, and share job descriptions your staff acknowledge.",
+  },
   access: {
     label: "Team Access",
     title: "Team Access",

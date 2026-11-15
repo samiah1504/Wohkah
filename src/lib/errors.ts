@@ -45,6 +45,19 @@ export function userMessageFor(
   }
 
   const known: Record<string, string> = {
+    "feature_not_in_plan:digital_contracts":
+      "Contracts and signing are available on the Starter plan and above. Upgrade from Settings → Subscription.",
+    "feature_not_in_plan:job_descriptions":
+      "Job descriptions are available on the Starter plan and above. Upgrade from Settings → Subscription.",
+    contract_locked:
+      "This document has already been sent, so it can't be changed. Cancel it and prepare a new one.",
+    contract_has_blanks: "Fill in every blank (shown in yellow) before sending.",
+    job_description_changed:
+      "This job description has just been updated. Reload the page to read the new version.",
+    "access to this contract": "You don't have access to this document.",
+    "access to this job description": "You don't have access to this job description.",
+    "Only a signed contract":
+      "Only a signed contract for the same staff member can be changed this way.",
     reporting_cycle: "That would create a loop in who reports to whom. Choose a different person.",
     status_change_not_allowed: "That status change isn't possible from the current status.",
     staff_already_linked: "This staff member already has a sign-in for the staff portal.",

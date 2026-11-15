@@ -1,5 +1,5 @@
 import "server-only";
-import { env, isEmailConfigured } from "@/lib/env";
+import { devInboxUrl, env, isEmailConfigured } from "@/lib/env";
 
 export type EmailResult =
   { sent: true; id: string } | { sent: false; reason: "not_configured" | "failed" };
@@ -17,6 +17,8 @@ export async function sendEmail(input: {
   idempotencyKey?: string;
 }): Promise<EmailResult> {
   if (!isEmailConfigured()) return { sent: false, reason: "not_configured" };
+  const inbox = devInboxUrl();
+  if (inbox) return sendToDevInbox(inbox, input);
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -42,6 +44,39 @@ export async function sendEmail(input: {
     return { sent: true, id: body.id ?? "" };
   } catch (err) {
     console.error("[email] send failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return { sent: false, reason: "failed" };
+  }
+}
+
+/** Local development and CI: Mailpit's send API (see env.devInboxUrl). */
+async function sendToDevInbox(
+  inbox: string,
+  input: { to: string; subject: string; html: string; text: string },
+): Promise<EmailResult> {
+  const from = /<([^>]+)>/.exec(env.emailFrom)?.[1] ?? env.emailFrom;
+  try {
+    const res = await fetch(`${inbox}/api/v1/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        From: { Email: from, Name: "WOHKAH" },
+        To: [{ Email: input.to }],
+        Subject: input.subject,
+        HTML: input.html,
+        Text: input.text,
+      }),
+      signal: AbortSignal.timeout(5_000),
+    });
+    if (!res.ok) {
+      console.error("[email] development inbox rejected the message", { status: res.status });
+      return { sent: false, reason: "failed" };
+    }
+    const body = (await res.json().catch(() => ({}))) as { ID?: string };
+    return { sent: true, id: body.ID ?? "" };
+  } catch (err) {
+    console.error("[email] development inbox unreachable", {
       error: err instanceof Error ? err.message : String(err),
     });
     return { sent: false, reason: "failed" };

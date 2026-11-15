@@ -518,6 +518,306 @@ export type Database = {
           },
         ];
       };
+      contract_events: {
+        Row: {
+          actor_user_id: string | null;
+          company_id: string;
+          contract_id: string;
+          created_at: string;
+          details: NonNullable<Json>;
+          event: string;
+          id: number;
+          party: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          actor_user_id?: string | null;
+          company_id: string;
+          contract_id: string;
+          created_at?: string;
+          details?: NonNullable<Json>;
+          event: string;
+          id?: never;
+          party?: string | null;
+        };
+        Update: {
+          actor_user_id?: string | null;
+          company_id?: string;
+          contract_id?: string;
+          created_at?: string;
+          details?: NonNullable<Json>;
+          event?: string;
+          id?: never;
+          party?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "contract_events_company_id_contract_id_fkey";
+            columns: ["company_id", "contract_id"];
+            isOneToOne: false;
+            referencedRelation: "contracts";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
+      contract_signatures: {
+        Row: {
+          code_verified_at: string;
+          company_id: string;
+          consent_text: string;
+          consent_version: string;
+          content_hash: string;
+          contract_id: string;
+          id: string;
+          ip_address: unknown;
+          mark: string;
+          mark_type: string;
+          party: string;
+          signed_at: string;
+          signer_name: string;
+          signer_user_id: string;
+          user_agent: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          code_verified_at: string;
+          company_id: string;
+          consent_text: string;
+          consent_version: string;
+          content_hash: string;
+          contract_id: string;
+          id?: string;
+          ip_address?: unknown;
+          mark: string;
+          mark_type: string;
+          party: string;
+          signed_at?: string;
+          signer_name: string;
+          signer_user_id: string;
+          user_agent?: string | null;
+        };
+        Update: {
+          code_verified_at?: string;
+          company_id?: string;
+          consent_text?: string;
+          consent_version?: string;
+          content_hash?: string;
+          contract_id?: string;
+          id?: string;
+          ip_address?: unknown;
+          mark?: string;
+          mark_type?: string;
+          party?: string;
+          signed_at?: string;
+          signer_name?: string;
+          signer_user_id?: string;
+          user_agent?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "contract_signatures_company_id_contract_id_fkey";
+            columns: ["company_id", "contract_id"];
+            isOneToOne: false;
+            referencedRelation: "contracts";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
+      contract_signing_codes: {
+        Row: {
+          attempts: number;
+          code_hash: string;
+          company_id: string;
+          contract_id: string;
+          created_at: string;
+          expires_at: string;
+          id: string;
+          used_at: string | null;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          attempts?: number;
+          code_hash: string;
+          company_id: string;
+          contract_id: string;
+          created_at?: string;
+          expires_at: string;
+          id?: string;
+          used_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          attempts?: number;
+          code_hash?: string;
+          company_id?: string;
+          contract_id?: string;
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          used_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "contract_signing_codes_company_id_contract_id_fkey";
+            columns: ["company_id", "contract_id"];
+            isOneToOne: false;
+            referencedRelation: "contracts";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
+      contract_templates: {
+        Row: {
+          archived_at: string | null;
+          body: string;
+          company_id: string;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          kind: Database["public"]["Enums"]["contract_kind"];
+          name: string;
+          starter_key: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string | null;
+          body: string;
+          company_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          kind?: Database["public"]["Enums"]["contract_kind"];
+          name: string;
+          starter_key?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          body?: string;
+          company_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          kind?: Database["public"]["Enums"]["contract_kind"];
+          name?: string;
+          starter_key?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "contract_templates_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: false;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      contracts: {
+        Row: {
+          amends_id: string | null;
+          body: string;
+          cancel_reason: string | null;
+          cancelled_at: string | null;
+          cancelled_by: string | null;
+          company_id: string;
+          completed_at: string | null;
+          content_hash: string | null;
+          created_at: string;
+          created_by: string | null;
+          employee_id: string;
+          final_pdf_hash: string | null;
+          final_pdf_path: string | null;
+          id: string;
+          kind: Database["public"]["Enums"]["contract_kind"];
+          sent_at: string | null;
+          sent_by: string | null;
+          status: Database["public"]["Enums"]["contract_status"];
+          template_id: string | null;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          amends_id?: string | null;
+          body: string;
+          cancel_reason?: string | null;
+          cancelled_at?: string | null;
+          cancelled_by?: string | null;
+          company_id: string;
+          completed_at?: string | null;
+          content_hash?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          employee_id: string;
+          final_pdf_hash?: string | null;
+          final_pdf_path?: string | null;
+          id?: string;
+          kind?: Database["public"]["Enums"]["contract_kind"];
+          sent_at?: string | null;
+          sent_by?: string | null;
+          status?: Database["public"]["Enums"]["contract_status"];
+          template_id?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          amends_id?: string | null;
+          body?: string;
+          cancel_reason?: string | null;
+          cancelled_at?: string | null;
+          cancelled_by?: string | null;
+          company_id?: string;
+          completed_at?: string | null;
+          content_hash?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          employee_id?: string;
+          final_pdf_hash?: string | null;
+          final_pdf_path?: string | null;
+          id?: string;
+          kind?: Database["public"]["Enums"]["contract_kind"];
+          sent_at?: string | null;
+          sent_by?: string | null;
+          status?: Database["public"]["Enums"]["contract_status"];
+          template_id?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "contracts_company_id_amends_id_fkey";
+            columns: ["company_id", "amends_id"];
+            isOneToOne: false;
+            referencedRelation: "contracts";
+            referencedColumns: ["company_id", "id"];
+          },
+          {
+            foreignKeyName: "contracts_company_id_employee_id_fkey";
+            columns: ["company_id", "employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["company_id", "id"];
+          },
+          {
+            foreignKeyName: "contracts_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: false;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "contracts_company_id_template_id_fkey";
+            columns: ["company_id", "template_id"];
+            isOneToOne: false;
+            referencedRelation: "contract_templates";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
       employee_documents: {
         Row: {
           archived_at: string | null;
@@ -701,6 +1001,7 @@ export type Database = {
           first_name: string | null;
           full_name: string;
           id: string;
+          job_description_id: string | null;
           job_title: string | null;
           last_name: string | null;
           member_id: string | null;
@@ -725,6 +1026,7 @@ export type Database = {
           first_name?: string | null;
           full_name: string;
           id?: string;
+          job_description_id?: string | null;
           job_title?: string | null;
           last_name?: string | null;
           member_id?: string | null;
@@ -748,6 +1050,7 @@ export type Database = {
           first_name?: string | null;
           full_name?: string;
           id?: string;
+          job_description_id?: string | null;
           job_title?: string | null;
           last_name?: string | null;
           member_id?: string | null;
@@ -783,6 +1086,13 @@ export type Database = {
             referencedColumns: ["company_id", "id"];
           },
           {
+            foreignKeyName: "employees_job_description_fk";
+            columns: ["company_id", "job_description_id"];
+            isOneToOne: false;
+            referencedRelation: "job_descriptions";
+            referencedColumns: ["company_id", "id"];
+          },
+          {
             foreignKeyName: "employees_reports_to_fk";
             columns: ["company_id", "reports_to"];
             isOneToOne: false;
@@ -809,6 +1119,133 @@ export type Database = {
           kind?: string;
         };
         Relationships: [];
+      };
+      job_description_acknowledgements: {
+        Row: {
+          acknowledged_at: string;
+          company_id: string;
+          employee_id: string;
+          id: string;
+          user_agent: string | null;
+          user_id: string;
+          version_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          acknowledged_at?: string;
+          company_id: string;
+          employee_id: string;
+          id?: string;
+          user_agent?: string | null;
+          user_id: string;
+          version_id: string;
+        };
+        Update: {
+          acknowledged_at?: string;
+          company_id?: string;
+          employee_id?: string;
+          id?: string;
+          user_agent?: string | null;
+          user_id?: string;
+          version_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "job_description_acknowledgements_company_id_employee_id_fkey";
+            columns: ["company_id", "employee_id"];
+            isOneToOne: false;
+            referencedRelation: "employees";
+            referencedColumns: ["company_id", "id"];
+          },
+          {
+            foreignKeyName: "job_description_acknowledgements_company_id_version_id_fkey";
+            columns: ["company_id", "version_id"];
+            isOneToOne: false;
+            referencedRelation: "job_description_versions";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
+      job_description_versions: {
+        Row: {
+          body: string;
+          change_note: string | null;
+          company_id: string;
+          id: string;
+          job_description_id: string;
+          published_at: string;
+          published_by: string | null;
+          version: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          body: string;
+          change_note?: string | null;
+          company_id: string;
+          id?: string;
+          job_description_id: string;
+          published_at?: string;
+          published_by?: string | null;
+          version?: number;
+        };
+        Update: {
+          body?: string;
+          change_note?: string | null;
+          company_id?: string;
+          id?: string;
+          job_description_id?: string;
+          published_at?: string;
+          published_by?: string | null;
+          version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "job_description_versions_company_id_job_description_id_fkey";
+            columns: ["company_id", "job_description_id"];
+            isOneToOne: false;
+            referencedRelation: "job_descriptions";
+            referencedColumns: ["company_id", "id"];
+          },
+        ];
+      };
+      job_descriptions: {
+        Row: {
+          archived_at: string | null;
+          company_id: string;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string | null;
+          company_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          company_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "job_descriptions_company_id_fkey";
+            columns: ["company_id"];
+            isOneToOne: false;
+            referencedRelation: "companies";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       login_events: {
         Row: {
@@ -1662,6 +2099,10 @@ export type Database = {
     };
     Functions: {
       accept_invitation: { Args: { p_token: string }; Returns: string };
+      acknowledge_job_description: {
+        Args: { p_user_agent?: string; p_version: string };
+        Returns: undefined;
+      };
       apply_verified_payment: {
         Args: {
           p_amount_minor: number;
@@ -1673,6 +2114,11 @@ export type Database = {
         };
         Returns: string;
       };
+      assign_job_description: {
+        Args: { p_employee_ids: string[]; p_job_description: string };
+        Returns: number;
+      };
+      cancel_contract: { Args: { p_contract: string; p_reason?: string }; Returns: undefined };
       cancel_scheduled_change: { Args: { p_company: string }; Returns: undefined };
       change_to_lower_plan: { Args: { p_company: string; p_plan_code: string }; Returns: string };
       create_checkout_invoice: {
@@ -1716,11 +2162,34 @@ export type Database = {
         }[];
       };
       reactivate_staff: { Args: { p_company: string; p_ids: string[] }; Returns: number };
+      record_contract_signature: {
+        Args: {
+          p_code_verified_at: string;
+          p_consent_text: string;
+          p_consent_version: string;
+          p_content_hash: string;
+          p_contract: string;
+          p_ip: unknown;
+          p_mark: string;
+          p_mark_type: string;
+          p_party: string;
+          p_signer_name: string;
+          p_user: string;
+          p_user_agent: string;
+        };
+        Returns: Json;
+      };
+      record_contract_view: { Args: { p_contract: string }; Returns: undefined };
       refresh_subscription: { Args: { p_company: string }; Returns: undefined };
       refresh_workspace_subscription: { Args: { p_slug: string }; Returns: undefined };
       select_active_staff: {
         Args: { p_company: string; p_for_plan_code?: string; p_keep: string[] };
         Returns: number;
+      };
+      send_contract: { Args: { p_contract: string }; Returns: string };
+      set_contract_final_document: {
+        Args: { p_contract: string; p_hash: string; p_path: string };
+        Returns: undefined;
       };
       start_trial: { Args: { p_company: string; p_plan_code: string }; Returns: string };
       subscription_overview: { Args: { p_company: string }; Returns: Json };
@@ -1758,6 +2227,8 @@ export type Database = {
     Enums: {
       billing_interval: "monthly" | "annual";
       company_status: "active" | "suspended" | "closed";
+      contract_kind: "contract" | "policy";
+      contract_status: "draft" | "awaiting_signatures" | "completed" | "cancelled";
       employment_type: "full_time" | "part_time" | "contract" | "casual" | "intern";
       invitation_status: "pending" | "accepted" | "revoked";
       member_status: "active" | "suspended" | "removed";
@@ -1886,6 +2357,8 @@ export const Constants = {
     Enums: {
       billing_interval: ["monthly", "annual"],
       company_status: ["active", "suspended", "closed"],
+      contract_kind: ["contract", "policy"],
+      contract_status: ["draft", "awaiting_signatures", "completed", "cancelled"],
       employment_type: ["full_time", "part_time", "contract", "casual", "intern"],
       invitation_status: ["pending", "accepted", "revoked"],
       member_status: ["active", "suspended", "removed"],

@@ -18,6 +18,12 @@ const schema = z.object({
   emailFrom: z.string().default("WOHKAH <no-reply@wohkah.com>"),
   /** Public contact address shown on the website. */
   contactEmail: z.email().optional(),
+  /**
+   * Local development and CI only: deliver emails to a Mailpit inbox (the one
+   * `supabase start` runs) instead of Resend. Ignored unless the app URL is
+   * localhost, so it can never be switched on for real customers.
+   */
+  devInboxUrl: z.url().optional(),
 });
 
 function read() {
@@ -36,6 +42,7 @@ function read() {
     resendApiKey: blank(e.RESEND_API_KEY),
     emailFrom: blank(e.EMAIL_FROM),
     contactEmail: blank(e.NEXT_PUBLIC_CONTACT_EMAIL),
+    devInboxUrl: blank(e.EMAIL_DEV_INBOX_URL)?.replace(/\/+$/, ""),
   });
 }
 
@@ -52,8 +59,15 @@ export function isSupabaseConfigured(): boolean {
   return Boolean(env.supabaseUrl && env.supabasePublishableKey);
 }
 
+/** The development inbox is used only when the app itself runs on this machine. */
+export function devInboxUrl(): string | undefined {
+  if (!env.devInboxUrl || env.resendApiKey) return undefined;
+  const host = new URL(env.appUrl).hostname;
+  return host === "localhost" || host === "127.0.0.1" ? env.devInboxUrl : undefined;
+}
+
 export function isEmailConfigured(): boolean {
-  return Boolean(env.resendApiKey);
+  return Boolean(env.resendApiKey) || Boolean(devInboxUrl());
 }
 
 export function supabaseConfig(): { url: string; publishableKey: string } {

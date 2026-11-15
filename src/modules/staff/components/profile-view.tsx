@@ -19,7 +19,7 @@ import {
 import type { StaffMember, StaffPrivate } from "../server/queries";
 import { setDocumentArchived } from "../server/actions";
 
-export type ProfileTab = "overview" | "private" | "documents" | "history";
+export type ProfileTab = "overview" | "job" | "contracts" | "private" | "documents" | "history";
 
 export function StatusBadge({ status }: { status: keyof typeof STAFF_STATUS }) {
   const s = STAFF_STATUS[status];
@@ -77,13 +77,17 @@ export function ProfileTabs({
   base,
   current,
   showPrivate,
+  extra = [],
 }: {
   base: string;
   current: ProfileTab;
   showPrivate: boolean;
+  /** Tabs from other modules (job description, contracts), shown after Overview. */
+  extra?: [ProfileTab, string][];
 }) {
   const tabs: [ProfileTab, string][] = [
     ["overview", "Overview"],
+    ...extra,
     ...(showPrivate
       ? ([
           ["private", "Private details"],

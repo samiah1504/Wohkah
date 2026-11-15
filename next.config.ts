@@ -24,6 +24,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,
+  // Fonts embedded in signed PDFs (read from disk at runtime).
+  outputFileTracingIncludes: { "/w/**": ["./assets/fonts/**"] },
   turbopack: {
     rules: {
       "*.css": {
