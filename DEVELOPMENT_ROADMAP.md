@@ -87,6 +87,12 @@ documents (private storage), profile pages, and employee self-service edits of a
 no cross-tenant leaks, history preserved, no hard deletes.
 
 ## Phase 3 — Recruitment, onboarding, contracts, job descriptions
+
+**Status: contracts, signing, policy acknowledgements and job descriptions built (2026-11-15).** See
+`docs/PHASE_3_CONTRACTS_REPORT.md`. Decisions: templates written in WOHKAH's editor with starter
+templates; contracts signed by both the staff member and the business; email code confirmation.
+Recruitment, new-staff checklists and the form builder are still to do.
+
 Vacancies, applicants and stages, interviews and feedback, conversion of a candidate to an employee,
 invitation acceptance, onboarding templates and checklists, a form builder with responses, required
 document collection, contract templates (with DOCX/PDF upload and merge fields), contract generation,

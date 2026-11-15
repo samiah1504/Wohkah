@@ -5,6 +5,32 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Phase 3 (part): contracts, signing and job descriptions (2026-11-15)
+
+#### Added
+- **Documents** area (Contracts, Job descriptions, Templates) for people with the new access
+  "prepare contracts", "sign for the business" or "write job descriptions" (all given to Owner).
+- Template editor with formatting toolbar, live preview and fields filled from the staff record
+  ({{Staff name}}, {{Job title}}, {{Start date}}…) or completed per contract ({{Monthly salary}}…).
+  Four starter templates: contract of employment, confidentiality agreement, staff handbook
+  acknowledgement and workplace rules acknowledgement, marked as not legal advice.
+- Contracts: prepare for a staff member, fill in the blanks, send. The text is locked and
+  fingerprinted. The staff member and someone signing for the business sign online (typed or drawn
+  signature, consent, 6-digit email code). A signed PDF with a signing certificate is stored
+  privately and can be downloaded. Cancel, and prepare an updated version of a signed contract.
+- Policies to acknowledge: the staff member confirms they have read them.
+- Job descriptions with versions. Assign them to staff, who confirm in the staff portal (again after
+  each change). Managers see who has confirmed.
+- Staff portal: "Waiting for you", plus Job description and Contracts tabs in My record. Staff
+  records gain the same tabs for managers.
+- Migration `20261115000100_contracts_and_job_descriptions.sql`; `pdf-lib` and `@pdf-lib/fontkit`
+  (exact versions); Inter font files (SIL Open Font License) in `assets/fonts`.
+- `EMAIL_DEV_INBOX_URL`: emails go to the local Mailpit inbox in development and CI.
+
+#### Changed
+- Contracts and job descriptions are shown as available on Starter and above.
+- Test fix: a trial reminder test no longer fails late in the evening (Lagos time).
+
 ### Phase 2: staff records (2026-11-14)
 
 #### Added

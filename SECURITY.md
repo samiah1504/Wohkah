@@ -58,6 +58,21 @@ data-subject request workflow (Phase 7), breach runbook (Phase 11).
 | Staff portal invitations link to a record only for someone with `staff.manage`, a matching email and an unlinked record | `app.company_invitations_employee_guard` | `staff-records.test.ts`, e2e |
 | The staff list download needs `staff.export`, contains no private details and neutralises spreadsheet formulas | `/staff/export`, `src/lib/csv.ts` | unit tests, e2e |
 
+### Contracts and electronic signing (Phase 3 part, 2026-11-15)
+
+| Control | Where | Proven by |
+|---|---|---|
+| What is signed can't change: the database fingerprints the text when it's sent and refuses later edits; a signature is accepted only for the current fingerprint | `send_contract`, `app.contracts_guard`, `record_contract_signature` | `tests/db/contracts.test.ts` |
+| Browsers can't write signatures, events or codes; signatures go through a service-role-only function that re-checks the signer's right to sign for that side | grants, `record_contract_signature`, `src/lib/signing` (service-role allow-list) | `contracts.test.ts` |
+| The signer proves control of their email address: 6-digit code, hashed, 10 minutes, 5 tries, a new code cancels the old, 5 codes per 15 minutes | `src/lib/signing`, `contract_signing_codes`, rate limit `signing-code:user` | e2e `contracts.spec.ts` (wrong code refused) |
+| One person can't sign for both the business and the staff member | `record_contract_signature` | `contracts.test.ts` |
+| Drafts are visible only to people preparing contracts; staff see only their own sent documents; branch-scoped preparers see their branch | `app.can_view_contract` | `contracts.test.ts` |
+| Evidence is append-only: signatures, events, job description versions and confirmations | `app.block_mutation` triggers | `contracts.test.ts` |
+| Signed copies are private PDFs with a signing certificate, opened through 60-second links | `contracts` bucket policy, `/documents/contracts/[id]/download` | `contracts.test.ts` (storage, in CI), e2e |
+| Plan features enforced in the database | RLS and guards (`digital_contracts`, `job_descriptions`) | `contracts.test.ts`, e2e |
+
+No marketing or in-app text claims these signatures are legally binding; that waits for review by a Nigerian lawyer (ADR-0007). Starter templates say they are not legal advice.
+
 ## 1. Threat model (top concerns)
 
 | Threat | Control |

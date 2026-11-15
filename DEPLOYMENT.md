@@ -24,7 +24,8 @@ Copy `.env.example` to `.env.local`. Only `NEXT_PUBLIC_*` values reach the brows
 | `SUPABASE_SECRET_KEY` | **server only** | Or the legacy `SUPABASE_SERVICE_ROLE_KEY`. Bypasses RLS; only allow-listed modules may use it |
 | `NEXT_PUBLIC_APP_URL` | browser + server | Public base URL, used in email links |
 | `APP_ROOT_DOMAIN` | server | e.g. `wohkah.com` (subdomain routing arrives in Phase 9) |
-| `RESEND_API_KEY`, `EMAIL_FROM` | server | Optional. Without them, invitations show a copyable link instead of emailing |
+| `RESEND_API_KEY`, `EMAIL_FROM` | server | Needed in production for invitation emails and **signing codes** (contracts can't be signed without email). Without them, invitations show a copyable link |
+| `EMAIL_DEV_INBOX_URL` | server | Local development and CI only: sends emails to the Mailpit inbox from `supabase start` (`http://127.0.0.1:54324`). Ignored when `RESEND_API_KEY` is set or the app URL isn't localhost |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | server (build) | Optional. Public contact address shown on `/contact`; without it the page says the inbox is being set up |
 | `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN` | — | Reserved; Sentry is wired up before launch |
 | `JOBS_WORKER_SECRET` | server | Reserved for the job worker (Phase 3) |

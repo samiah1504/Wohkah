@@ -14,6 +14,7 @@ accepts a company id or user id from the browser as a source of truth (ADR-0003)
 | Route | Method | Auth | Purpose |
 |---|---|---|---|
 | `/auth/confirm` | GET | Public (link from email) | Completes email confirmation, password recovery and email change. Accepts `token_hash` + `type`, or `code` (PKCE). Redirects to a same-site `next` path only |
+| `/w/[slug]/documents/contracts/[id]/download` | GET | RLS (anyone who can see the contract) | Redirects to a 60-second signed link to the signed PDF |
 | `/w/[slug]/staff/export` | GET | `staff.export` | CSV of the staff list with the page's filters (`q`, `status`, `branch`). Job and contact fields only; cells quoted and formula-neutralised; `no-store` |
 | `/w/[slug]/staff/[id]/documents/[docId]` | GET | RLS (private-details access for that staff member, or the staff member) | Redirects to a 60-second signed download link created with the viewer's own session; 404 otherwise |
 
@@ -49,6 +50,12 @@ with zod and write with the user's Supabase client, so RLS applies.
 | staff | `setDocumentArchived` | `staff.manage` + `staff.sensitive` | Archive or restore; files are never deleted |
 | staff | `inviteToPortal` | `members.invite` (+ `staff.manage`, checked by the database) | Invitation to the staff record's email, with no roles; accepting links the sign-in to the record |
 | staff | `selectActiveStaff`, `reactivateStaff` | `staff.manage` | Plan-limit selection and reactivation |
+| documents | `saveTemplate`, `setTemplateArchived` | `contracts.manage` + plan feature `digital_contracts` | |
+| documents | `createContract` | `contracts.manage` | From a template, a starter template or a signed contract (updated version); fills staff and business fields |
+| documents | `saveDraft`, `sendContract`, `cancelContract`, `retrySignedCopy` | `contracts.manage` | Sending emails the staff member a link when they have a staff portal sign-in |
+| documents | `requestSigningCode`, `signContract` | the staff member, or `contracts.sign` for the business side | Code emailed to the signed-in person; signature recorded by `src/lib/signing` |
+| documents | `saveJobDescription`, `setJobDescriptionArchived`, `assignJobDescription` | `job_descriptions.manage` + plan feature `job_descriptions` | Saving changed text publishes a new version |
+| documents | `acknowledgeJobDescription` | the staff member | Current version of their own job description |
 | access | `saveRole`, `setRolePermissions`, `deleteRole` | `roles.manage` | Every plan; Owner is the only built-in role |
 
 ## 3. Database RPC functions (`public` schema)
