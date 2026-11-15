@@ -1,24 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeftIcon, DownloadIcon, PenLineIcon, SendIcon, XIcon } from "lucide-react";
+import { ArrowLeftIcon, DownloadIcon, PenLineIcon, SendIcon } from "lucide-react";
 import { TenantPage } from "@/components/shell/tenant-page";
-import { ActionButton, ActionDialog } from "@/components/action-forms";
+import { ActionButton } from "@/components/action-forms";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/display";
-import { Field, Textarea } from "@/components/ui/form-controls";
 import { can } from "@/lib/permissions";
 import { CONTRACT_KIND } from "@/lib/copy/documents";
 import { findBlanks } from "@/lib/contracts/document";
 import { getContract, signingPartyFor } from "@/modules/documents/server/queries";
-import {
-  cancelContract,
-  createContract,
-  retrySignedCopy,
-  sendContract,
-} from "@/modules/documents/server/actions";
+import { createContract, retrySignedCopy, sendContract } from "@/modules/documents/server/actions";
 import { DocumentView } from "@/modules/documents/components/document-view";
 import { DraftForm } from "@/modules/documents/components/forms";
+import { CancelContract } from "@/modules/documents/components/contract-actions";
 import { ContractStatusBadge } from "@/modules/documents/components/shared";
 import {
   ContractHistory,
@@ -115,28 +110,7 @@ export default function ContractPage(props: PageProps<"/w/[slug]/documents/contr
                   </ActionButton>
                 ) : null}
                 {manage && (c.status === "draft" || c.status === "awaiting_signatures") ? (
-                  <ActionDialog
-                    title="Cancel this document?"
-                    description={
-                      c.status === "draft"
-                        ? "The draft is kept in the history but can't be sent."
-                        : "Nobody can sign it after this. Signatures already given stay in its history."
-                    }
-                    action={cancelContract}
-                    hidden={{ slug, id: c.id }}
-                    submitLabel="Cancel document"
-                    trigger={
-                      <Button variant="ghost" size="sm">
-                        <XIcon /> Cancel
-                      </Button>
-                    }
-                  >
-                    {() => (
-                      <Field label="Reason (optional)" htmlFor="reason">
-                        <Textarea id="reason" name="reason" rows={2} maxLength={300} />
-                      </Field>
-                    )}
-                  </ActionDialog>
+                  <CancelContract slug={slug} id={c.id} draft={c.status === "draft"} />
                 ) : null}
               </div>
             </div>
