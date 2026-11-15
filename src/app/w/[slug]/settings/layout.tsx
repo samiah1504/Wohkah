@@ -5,12 +5,15 @@ import { can, type Permission } from "@/lib/permissions";
 import { requireTenant } from "@/lib/tenancy";
 
 const SETTINGS_SECTIONS: { key: string; label: string; anyOf: Permission[] | null }[] = [
-  { key: "company", label: "Company", anyOf: null },
+  { key: "", label: "Overview", anyOf: null },
+  { key: "company", label: "Business profile", anyOf: null },
   { key: "branches", label: "Branches", anyOf: ["branches.manage"] },
   { key: "work-locations", label: "Work locations", anyOf: ["work_locations.manage"] },
+  { key: "../members", label: "Team Access", anyOf: ["members.view"] },
+  { key: "../roles", label: "Roles", anyOf: ["roles.view"] },
   { key: "holidays", label: "Holidays", anyOf: ["holidays.manage"] },
   { key: "subscription", label: "Subscription", anyOf: ["subscription.view"] },
-  { key: "audit", label: "Audit log", anyOf: ["audit.view"] },
+  { key: "audit", label: "Activity log", anyOf: ["audit.view"] },
 ];
 
 export default function SettingsLayout({ children, params }: LayoutProps<"/w/[slug]/settings">) {
@@ -34,6 +37,11 @@ async function Tabs({ params }: { params: Promise<{ slug: string }> }) {
   const ctx = await requireTenant(slug);
   const tabs: SettingsTab[] = SETTINGS_SECTIONS.filter(
     (s) => s.anyOf === null || s.anyOf.some((p) => can(ctx, p)),
-  ).map((s) => ({ label: s.label, href: `/w/${slug}/settings/${s.key}` }));
+  ).map((s) => ({
+    label: s.label,
+    href: s.key.startsWith("../")
+      ? `/w/${slug}/${s.key.slice(3)}`
+      : `/w/${slug}/settings${s.key ? `/${s.key}` : ""}`,
+  }));
   return <SettingsTabs tabs={tabs} />;
 }

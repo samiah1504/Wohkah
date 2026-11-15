@@ -48,8 +48,14 @@ test("a new user registers, confirms their email and creates a business account"
   await expect(page.getByText("Your business account is ready")).toBeVisible();
   // Business setup started with the 7-day trial selected.
   await expect(page.getByText("Your 7-day free trial has started.")).toBeVisible();
-  await expect(page.getByRole("heading", { name: `Welcome to ${company}` })).toBeVisible();
+  // Home greets the owner and points to the setup guide (not a full-page checklist).
+  await expect(
+    page.getByRole("heading", { name: /^Good (morning|afternoon|evening)/ }),
+  ).toBeVisible();
+  await expect(page.getByText(company).first()).toBeVisible();
   await expect(page.getByText("Owner").first()).toBeVisible();
+  await page.getByRole("link", { name: /Finish setting up your business/ }).click();
+  await expect(page.getByRole("heading", { name: "Setup guide" })).toBeVisible();
 });
 
 test("registration: details are saved, consent is separate and E.164 phone is stored", async ({

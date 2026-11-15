@@ -5,6 +5,30 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Dashboard and navigation redesign (2026-11-15)
+
+#### Changed
+- New navigation in six sections: Home, People, Salary Management, Settings, Work and More, built
+  from each person's access (`src/lib/navigation`). Staff with no management access get Home,
+  My Work, My Attendance, My Salary and More.
+- Desktop and tablet: a sidebar that collapses to icons (remembered), with each section's pages
+  nested under it, the business switcher, a notification centre and the account menu.
+- Phones: a five-item bottom bar (safe-area aware); Settings sits in More and the account menu.
+- Section overview pages for People, Salary Management, Work, More and My Attendance; Settings has
+  an overview grouped into Company, Team, Workplace and Account (Team Access and Roles appear under
+  Team; their addresses haven't changed). Pages not built yet show "Coming soon" and are not links.
+- Home: a greeting with the business and your role; staff numbers by status; "Needs your attention"
+  (documents to sign, unconfirmed job descriptions, drafts, invitations); recent staff activity;
+  quick actions; public holidays. Only real numbers are shown. Staff see what's waiting for them.
+- The setup checklist moved to its own Setup guide (six steps checked against real records). Home
+  shows a one-line progress bar until setup is done, and the guide stays in Settings.
+- Notifications moved from a Home card to the bell in the header.
+
+#### Added
+- Permission "See and manage staff salaries" (`salaries.view`, migration
+  `20261115000200_salaries_permission.sql`), given to Owner, so managers don't see Salary
+  Management unless the owner allows it.
+
 ### Phase 3 (part): contracts, signing and job descriptions (2026-11-15)
 
 #### Added

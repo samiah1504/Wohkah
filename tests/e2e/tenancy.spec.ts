@@ -47,10 +47,12 @@ test("an invited person joins a second workspace and switches between them", asy
   await personPage.waitForURL(new RegExp(`/w/${ownerSlug}$`));
 
   // As a Staff Member there: the staff portal, no administration.
-  await expect(personPage.getByText("Your staff portal")).toBeVisible();
+  await expect(personPage.getByText("Staff portal", { exact: true })).toBeVisible();
   const sidebar = personPage.getByRole("navigation", { name: "Business" }).first();
-  await expect(sidebar.getByRole("link", { name: "Settings" })).toHaveCount(0);
-  await expect(sidebar.getByRole("link", { name: "Team Access" })).toHaveCount(0);
+  for (const name of ["Home", "My Work", "My Attendance", "My Salary", "More"])
+    await expect(sidebar.getByRole("link", { name, exact: true })).toBeVisible();
+  for (const name of ["Settings", "People", "Salary Management", "Team Access"])
+    await expect(sidebar.getByRole("link", { name, exact: true })).toHaveCount(0);
   await personPage.goto(`/w/${ownerSlug}/settings/branches`);
   await expect(personPage.getByText("You don't have access to this page")).toBeVisible();
 
@@ -62,9 +64,7 @@ test("an invited person joins a second workspace and switches between them", asy
     .click();
   await personPage.getByRole("menuitem", { name: /Person Ventures/ }).click();
   await personPage.waitForURL(new RegExp(`/w/${ownSlug}$`));
-  await expect(
-    personPage.getByRole("heading", { name: "Welcome to Person Ventures" }),
-  ).toBeVisible();
+  await expect(personPage.getByText("Person Ventures").first()).toBeVisible();
   await expect(
     personPage
       .getByRole("navigation", { name: "Business" })
@@ -85,8 +85,17 @@ test("the staff portal is usable on a phone", async ({ browser }) => {
   await page.goto(`/w/${slug}`);
   const bottomNav = page.getByRole("navigation", { name: "Business" }).last();
   await expect(bottomNav).toBeVisible();
-  await expect(bottomNav.getByRole("link", { name: "Home" })).toBeVisible();
-  await expect(bottomNav.getByRole("link", { name: "Profile" })).toBeVisible();
+  // Five items at most: Settings lives under More.
+  await expect(bottomNav.getByRole("link")).toHaveText([
+    "Home",
+    "People",
+    "Salary",
+    "Work",
+    "More",
+  ]);
+  await bottomNav.getByRole("link", { name: "More" }).click();
+  await expect(page.getByRole("heading", { name: "More", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Settings/ })).toBeVisible();
   // No horizontal scrolling at phone width.
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - window.innerWidth,

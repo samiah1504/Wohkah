@@ -12,7 +12,11 @@ export function SettingsTabs({ tabs }: { tabs: SettingsTab[] }) {
     <nav aria-label="Settings sections" className="mb-6 overflow-x-auto border-b">
       <ul className="flex min-w-max gap-1">
         {tabs.map((t) => {
-          const active = pathname === t.href || pathname.startsWith(`${t.href}/`);
+          // "Overview" (/settings) is current only on its own page.
+          const overview = /\/settings$/.test(t.href);
+          const active = overview
+            ? pathname === t.href
+            : pathname === t.href || pathname.startsWith(`${t.href}/`);
           return (
             <li key={t.href}>
               <Link

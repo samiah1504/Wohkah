@@ -19,11 +19,14 @@ export function UserMenu({
   email,
   align = "end",
   tone = "light",
+  compact = false,
 }: {
   name: string;
   email: string;
   align?: "start" | "end";
   tone?: "light" | "dark";
+  /** Avatar only (collapsed sidebar). */
+  compact?: boolean;
 }) {
   const [signingOut, startTransition] = useTransition();
   return (
@@ -37,7 +40,7 @@ export function UserMenu({
         aria-label="Account menu"
       >
         <Avatar name={name || email} className="size-8" />
-        {tone === "dark" ? (
+        {tone === "dark" && !compact ? (
           <span className="min-w-0">
             <span className="block truncate text-sm font-semibold">{name || "Your account"}</span>
             <span className="text-sidebar-muted block truncate text-xs">{email}</span>

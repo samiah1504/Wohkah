@@ -29,7 +29,7 @@ async function Shell({
 function ShellSkeleton() {
   return (
     <div className="flex min-h-screen">
-      <div className="bg-sidebar hidden w-64 lg:block" />
+      <div className="bg-sidebar hidden w-64 md:block" />
       <div className="flex-1 p-6">
         <Skeleton className="mb-6 h-9 w-64" />
         <Skeleton className="h-48" />

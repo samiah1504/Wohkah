@@ -178,10 +178,25 @@ headings and Inter for body text. Text on Deep Yellow is Dark Walnut, never whit
 
 ## 8. Navigation naming rules
 
-- One or two plain words: **Home, Staff, Attendance, Salaries, Leave, Tasks, Messages, Meetings,
-  Documents, Staff Performance, Assets, Reports, Settings**.
-- Nouns, not verbs or jargon ("Salaries", not "Run payroll").
-- Labels come from `src/lib/copy/navigation.ts`. Unbuilt modules never appear in navigation.
+**Main navigation (approved by the product owner, 2026-11-15).** Six sections, defined in
+`src/lib/navigation`:
+
+- Business owners and managers: **Home · People · Salary Management · Settings · Work · More**.
+  Each person sees only the sections and pages their access allows; Salary Management needs the
+  salary access the owner gives (managers don't get it automatically).
+- Staff with no management access (staff portal): **Home · My Work · My Attendance · My Salary ·
+  More**.
+- Phones show at most five items in the bottom bar (Home, People, Salary, Work, More); Settings is
+  in More and the account menu.
+- The six sections always appear for the people they belong to, even before every page inside
+  them is built. Inside a section, pages that aren't built yet are shown on its overview page with
+  the automatic "Coming soon" label (from `src/lib/copy/features.ts`) and are **never links**.
+  Individual unbuilt pages never appear in the sidebar.
+
+Labels:
+
+- One or two plain words. Nouns, not verbs or jargon ("Salaries", not "Run payroll").
+- Labels and page wording come from `src/lib/navigation` and `src/lib/copy/navigation.ts`.
 
 | Module | Nav label | Page title | Description |
 |---|---|---|---|

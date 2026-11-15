@@ -23,6 +23,7 @@ const PERMISSION_GROUP_LABELS: Record<string, string> = {
   access: "Team access",
   staff: "Staff",
   documents: "Contracts and job descriptions",
+  salaries: "Salaries",
   billing: "Subscription",
   security: "Security",
 };

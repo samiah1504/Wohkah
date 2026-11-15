@@ -46,6 +46,13 @@ test("signed-in screens use small-business language", async ({ browser }) => {
   const issues: string[] = [];
   for (const path of [
     `/w/${slug}`,
+    `/w/${slug}/people`,
+    `/w/${slug}/salaries`,
+    `/w/${slug}/work`,
+    `/w/${slug}/more`,
+    `/w/${slug}/settings`,
+    `/w/${slug}/setup`,
+    `/w/${slug}/documents`,
     `/w/${slug}/members`,
     `/w/${slug}/roles`,
     `/w/${slug}/settings/company`,
@@ -68,7 +75,12 @@ test("signed-in screens use small-business language", async ({ browser }) => {
   }
   // Mobile layout: header, switcher and bottom navigation.
   await page.setViewportSize({ width: 390, height: 844 });
-  for (const path of [`/w/${slug}`, `/w/${slug}/staff`, `/w/${slug}/settings/subscription`]) {
+  for (const path of [
+    `/w/${slug}`,
+    `/w/${slug}/staff`,
+    `/w/${slug}/more`,
+    `/w/${slug}/settings/subscription`,
+  ]) {
     await page.goto(path);
     await page.waitForLoadState("networkidle");
     issues.push(...(await visibleTextIssues(page)));
