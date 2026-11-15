@@ -4,8 +4,8 @@
 |---|---|
 | Date | 2026-11-15 |
 | Branch | `claude/wohkah-architecture-audit-fjcmga` |
-| Verified commit | CI_COMMIT |
-| Status | CI_STATUS |
+| Verified commit | `2b63f5b` (CI run 43769682584: all jobs green; migration deployed to the development database, run 43770252659) |
+| Status | **Built and verified.** Follow-ups listed in §8. |
 
 ## 1. Scope
 This covers the contracts and job descriptions part of roadmap Phase 3: templates, signing and acknowledgement. Recruitment, checklists for new staff and the form builder are not included and stay on the roadmap.
@@ -67,10 +67,10 @@ See `SECURITY.md`, "Contracts and electronic signing". The new service-role modu
 
 | Suite | Where | Result |
 |---|---|---|
-| Typecheck, lint, formatting, production build | Locally and CI | CI_STATIC |
-| Unit tests (document format, fields and blanks, starter templates, a full signed PDF with ₦ and Yoruba names) | Locally and CI | CI_UNIT |
-| Database security tests | Local PostgreSQL 16 and real Supabase Postgres in CI | CI_DB |
-| End-to-end (contract from starter template to both signatures and PDF download; job description publish, assign, confirm, re-confirm after a change; Free plan prompt) | CI | CI_E2E |
+| Typecheck, lint, formatting, production build | Locally and CI | ✅ Pass |
+| Unit tests (document format, fields and blanks, starter templates, a full signed PDF with ₦ and Yoruba names) | Locally and CI | ✅ 50/50 |
+| Database security tests | Local PostgreSQL 16 and real Supabase Postgres in CI | ✅ 124/124 on Supabase (122 locally, where the 2 storage tests are skipped) |
+| End-to-end (contract from starter template to both signatures and PDF download; job description publish, assign, confirm, re-confirm after a change; Free plan prompt) | CI | ✅ 31/31, no retries |
 
 The new database tests cover:
 - plan rules;
@@ -94,6 +94,9 @@ The new database tests cover:
 ## 7. Issues found while building
 - The PDF library's font subsetting dropped most letters. I found this by viewing a rendered page, and fixed it by embedding the full Inter font.
 - A Phase 2 entry in `DATABASE_SCHEMA.md`'s migration table had been lost in an earlier edit. It's restored.
+- The browser tests caught two real bugs, both fixed:
+  - Draft contracts failed to open, because the Cancel dialog was built in a way this version of Next.js rejects.
+  - After a wrong signing code, the consent box was silently unticked while still looking ticked, so the next attempt was refused. Consent is now kept by the form itself.
 - A trial-reminder database test failed when run after about 10 pm Lagos time. It's fixed to use "tomorrow at noon" in the business's time zone.
 
 ## 8. Outstanding issues and follow-ups
