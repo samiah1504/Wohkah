@@ -125,6 +125,9 @@ export function SignForm({
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="markType" value={markType} />
       <input type="hidden" name="drawn" value={drawn} />
+      {/* Sent from state: React resets form fields after a failed attempt (wrong code),
+          which would otherwise untick the box while it still looks ticked. */}
+      <input type="hidden" name="consent" value={agreed ? "on" : ""} />
       {state.status === "error" && !e.code ? <FormMessage state={state} /> : null}
 
       <section className="grid gap-4">
@@ -181,7 +184,6 @@ export function SignForm({
         <label className="flex items-start gap-3 text-sm leading-relaxed">
           <input
             type="checkbox"
-            name="consent"
             checked={agreed}
             onChange={(ev) => setAgreed(ev.target.checked)}
             className="mt-0.5 size-4 shrink-0 accent-[var(--brand-yellow)]"
