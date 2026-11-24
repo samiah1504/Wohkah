@@ -17,6 +17,10 @@ All notable changes to WOHKAH are documented here. The format follows
   phone sits between the words and the button.
 - The hero ends at "Create your free account". The second button, the extra paragraph and the
   ticks below the button were removed.
+- Phones (under 768px) follow the owner's reference: the label across the top, the headline and
+  paragraph on the left, the full phone beside them on the right, then the button. A golden curve
+  lights the phone from behind. Tested at 360, 375, 390 and 430px. Tablet and desktop layouts are
+  unchanged.
 - The site header is transparent with light text over the hero on the homepage until you scroll.
   Its side padding on phones is now 24px, to line up with the hero.
 
