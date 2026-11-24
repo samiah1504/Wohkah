@@ -5,6 +5,21 @@ All notable changes to WOHKAH are documented here. The format follows
 
 ## [Unreleased]
 
+### Homepage hero refresh (2026-11-24)
+
+#### Changed
+- The hero has an art-directed background in the brand colours: walnut and espresso gradients,
+  golden light, flowing shapes and fine grain.
+- Two-weight headline (ivory, then golden emphasis) with a smaller, lighter supporting line.
+- A phone showing WOHKAH, built in code with sample data that is labelled as such; modules not yet
+  live show "Soon".
+- More room on phones: 24px side padding, a narrower text column and larger gaps. On phones the
+  phone sits between the words and the button.
+- The hero ends at "Create your free account". The second button, the extra paragraph and the
+  ticks below the button were removed.
+- The site header is transparent with light text over the hero on the homepage until you scroll.
+  Its side padding on phones is now 24px, to line up with the hero.
+
 ### Dashboard and navigation redesign (2026-11-15)
 
 #### Changed

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MenuIcon, XIcon } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
@@ -18,6 +19,8 @@ export const MARKETING_NAV = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // On the homepage the header sits over the dark hero until you scroll.
+  const overlay = usePathname() === "/" && !scrolled && !open;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -30,14 +33,16 @@ export function SiteHeader() {
     <header
       className={cn(
         "sticky top-0 z-50 border-b transition-colors",
-        scrolled || open
-          ? "border-border bg-background/95 backdrop-blur"
-          : "bg-background border-transparent",
+        overlay
+          ? "text-ivory border-transparent bg-transparent"
+          : scrolled || open
+            ? "border-border bg-background/95 backdrop-blur"
+            : "bg-background border-transparent",
       )}
     >
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-6">
         <Link href="/" aria-label="WOHKAH home" onClick={() => setOpen(false)}>
-          <Logo />
+          <Logo tone={overlay ? "light" : "dark"} />
         </Link>
 
         <nav aria-label="Main" className="hidden lg:block">
@@ -46,7 +51,12 @@ export function SiteHeader() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="text-foreground/80 hover:text-walnut hover:bg-sand/60 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+                  className={cn(
+                    "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                    overlay
+                      ? "text-sand/85 hover:bg-white/10 hover:text-white"
+                      : "text-foreground/80 hover:text-walnut hover:bg-sand/60",
+                  )}
                 >
                   {item.label}
                 </Link>
@@ -56,7 +66,11 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
-          <Button asChild variant="ghost">
+          <Button
+            asChild
+            variant="ghost"
+            className={overlay ? "text-ivory hover:bg-white/10 hover:text-white" : undefined}
+          >
             <Link href="/login">Log In</Link>
           </Button>
           <Button asChild>
@@ -66,7 +80,10 @@ export function SiteHeader() {
 
         <button
           type="button"
-          className="hover:bg-sand/60 -mr-2 rounded-md p-2 lg:hidden"
+          className={cn(
+            "-mr-2 rounded-md p-2 lg:hidden",
+            overlay ? "text-ivory hover:bg-white/10" : "hover:bg-sand/60",
+          )}
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={open ? "Close menu" : "Open menu"}

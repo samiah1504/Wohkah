@@ -26,7 +26,6 @@ import { Reveal } from "./motion";
 import {
   AttendanceScene,
   BranchesScene,
-  HeroScene,
   LeaveScene,
   PaidScene,
   RecordsScene,
@@ -59,82 +58,7 @@ function Status({ available, tone = "light" }: { available: boolean; tone?: "lig
 // ---------------------------------------------------------------------------
 // Hero
 // ---------------------------------------------------------------------------
-export function Hero() {
-  return (
-    <section className="relative overflow-hidden">
-      <div className="mx-auto grid w-full max-w-6xl gap-12 px-4 pt-10 pb-14 sm:px-6 sm:pt-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-8 lg:pb-20">
-        <Reveal>
-          <p
-            data-reveal
-            className="text-walnut inline-flex items-center gap-2 text-sm font-semibold"
-          >
-            <span className="bg-primary h-0.5 w-6" aria-hidden />
-            Staff management for small and growing businesses
-          </p>
-          <h1
-            data-reveal
-            style={delay(80)}
-            className="font-heading text-walnut mt-4 text-[2.4rem] leading-[1.04] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-[3.5rem]"
-          >
-            Running a business is already hard.{" "}
-            <span className="bg-[linear-gradient(transparent_60%,rgba(214,158,0,0.65)_60%,rgba(214,158,0,0.65)_92%,transparent_92%)] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">
-              Managing your staff
-            </span>{" "}
-            shouldn&apos;t make it harder.
-          </h1>
-          <p
-            data-reveal
-            style={delay(160)}
-            className="text-foreground/80 mt-5 max-w-xl text-lg leading-relaxed sm:text-xl"
-          >
-            From tracking attendance and managing leave to working out salaries and keeping your
-            team organised, WOHKAH takes the stress out of managing your staff.
-          </p>
-          <p
-            data-reveal
-            style={delay(200)}
-            className="text-walnut mt-3 max-w-xl text-lg leading-relaxed font-semibold"
-          >
-            Know who is working, who is absent, what you&apos;re paying and when you&apos;re paying
-            them. One place to keep your people and your business organised.
-          </p>
-          <div data-reveal style={delay(240)} className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg" className="h-13 px-7 text-base">
-              <Link href="/register">
-                Create your free account <ArrowRightIcon />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="h-13 px-7 text-base">
-              <Link href="#how-it-works">See how it works</Link>
-            </Button>
-          </div>
-          <p
-            data-reveal
-            style={delay(320)}
-            className="text-muted-foreground mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm"
-          >
-            <span className="flex items-center gap-1.5">
-              <CheckIcon className="text-success size-4" aria-hidden /> Free plan for up to 3 staff
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckIcon className="text-success size-4" aria-hidden /> Made for businesses with
-              1–50 staff
-            </span>
-          </p>
-        </Reveal>
-        <div>
-          <HeroScene />
-          <p className="text-muted-foreground mt-4 text-center text-xs lg:text-left">
-            Preview with sample data.
-            {PRIMARY_FEATURES.find((f) => f.key === "attendance")?.available
-              ? ""
-              : " Attendance is coming soon."}
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
+export { Hero } from "./hero";
 
 // ---------------------------------------------------------------------------
 // A slow strip of the businesses WOHKAH is for (no claims, no logos)
