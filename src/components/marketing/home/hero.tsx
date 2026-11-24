@@ -13,6 +13,7 @@ import {
   WalletIcon,
 } from "lucide-react";
 import { PRIMARY_FEATURES } from "@/lib/copy/features";
+import { HeroArt } from "./hero-art";
 import { Reveal } from "./motion";
 
 const delay = (ms: number) => ({ "--wk-delay": `${ms}ms` }) as React.CSSProperties;
@@ -28,7 +29,7 @@ export function Hero() {
   return (
     <section
       aria-labelledby="hero-heading"
-      className="relative isolate -mt-16 overflow-hidden bg-[#110b08] pt-16 text-white"
+      className="relative isolate -mt-16 overflow-hidden bg-[#2B1D18] pt-16 text-white"
     >
       <HeroArt />
       {/*
@@ -42,7 +43,7 @@ export function Hero() {
         <Reveal className="relative z-10 col-span-2 row-start-1 md:col-span-1 md:col-start-1 md:row-start-2">
           <p
             data-reveal
-            className="text-sand/90 flex items-center gap-2.5 text-[10px] font-semibold tracking-[0.16em] uppercase min-[390px]:text-[10.5px] sm:gap-3 sm:text-xs sm:tracking-[0.22em]"
+            className="flex items-center gap-2.5 text-[10px] font-semibold tracking-[0.16em] text-white uppercase min-[390px]:text-[10.5px] sm:gap-3 sm:text-xs sm:tracking-[0.22em]"
           >
             <span
               className="bg-primary h-3.5 w-[3px] shrink-0 rounded-full shadow-[0_0_12px_rgba(255,190,70,0.8)] sm:h-4"
@@ -57,12 +58,12 @@ export function Hero() {
             id="hero-heading"
             data-reveal
             style={delay(80)}
-            className="font-heading text-[clamp(1.36rem,6.25vw,1.8rem)] leading-[1.13] tracking-[-0.02em] sm:text-[2.6rem] sm:leading-[1.05] md:max-w-[26rem] md:text-[2.85rem] lg:max-w-[34rem] lg:text-[3.2rem] xl:max-w-[36rem] xl:text-[3.6rem]"
+            className="font-heading pr-3 text-[clamp(1.36rem,6.25vw,1.8rem)] leading-[1.13] tracking-[-0.02em] min-[420px]:pr-7 sm:pr-0 sm:text-[2.6rem] sm:leading-[1.05] md:max-w-[26rem] md:text-[2.85rem] md:text-balance lg:max-w-[34rem] lg:text-[3.2rem] xl:max-w-[36rem] xl:text-[3.6rem]"
           >
-            <span className="text-ivory block font-bold md:font-semibold">
+            <span className="block font-bold text-white md:font-semibold">
               Running a business is already hard.
             </span>
-            <span className="mt-0.5 block bg-[linear-gradient(180deg,#ffd36b_0%,#f2b21c_45%,#d69e00_100%)] bg-clip-text font-extrabold text-transparent [filter:drop-shadow(0_0_28px_rgba(255,176,40,0.28))] md:mt-1">
+            <span className="mt-0.5 block font-extrabold text-[#FFC629] [text-shadow:0_0_32px_rgba(255,198,41,0.22)] md:mt-1">
               Managing your staff shouldn&rsquo;t make it harder.
             </span>
           </h1>
@@ -72,7 +73,7 @@ export function Hero() {
           <p
             data-reveal
             style={delay(160)}
-            className="text-sand/80 mt-4 pr-8 text-[12.5px] leading-[1.55] min-[390px]:mt-5 min-[390px]:pr-9 min-[420px]:text-[13px] sm:mt-6 sm:pr-0 sm:text-base sm:leading-7 md:max-w-[25rem] lg:max-w-[28rem] xl:max-w-[30rem] xl:text-[17px] xl:leading-8"
+            className="mt-4 pr-8 text-[12.5px] leading-[1.55] text-white min-[390px]:mt-5 min-[390px]:pr-9 min-[420px]:text-[13px] sm:mt-6 sm:pr-0 sm:text-base sm:leading-7 md:max-w-[25rem] lg:max-w-[28rem] xl:max-w-[30rem] xl:text-[17px] xl:leading-8"
           >
             From tracking attendance and managing leave to working out salaries and keeping your
             team organised, WOHKAH takes the stress out of managing your staff.
@@ -88,7 +89,7 @@ export function Hero() {
           <div data-reveal style={delay(240)}>
             <Link
               href="/register"
-              className="group bg-primary text-walnut hover:bg-primary/90 focus-visible:ring-primary/50 inline-flex h-12 items-center justify-center gap-1.5 rounded-xl px-4 text-[13px] font-bold shadow-[0_18px_44px_-12px_rgba(255,170,30,0.6),inset_0_1px_0_rgba(255,255,255,0.35)] transition-[transform,background-color] outline-none hover:-translate-y-0.5 focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-[#110b08] min-[390px]:px-5 min-[390px]:text-[13.5px] sm:h-14 sm:rounded-2xl sm:px-8 sm:text-base"
+              className="group bg-primary text-walnut hover:bg-primary/90 focus-visible:ring-primary/50 inline-flex h-12 items-center justify-center gap-1.5 rounded-xl px-4 text-[13px] font-bold shadow-[0_18px_44px_-12px_rgba(255,170,30,0.6),inset_0_1px_0_rgba(255,255,255,0.35)] transition-[transform,background-color] outline-none hover:-translate-y-0.5 focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-[#2B1D18] min-[390px]:px-5 min-[390px]:text-[13.5px] sm:h-14 sm:rounded-2xl sm:px-8 sm:text-base"
             >
               Create your free account
               <ArrowRightIcon
@@ -100,61 +101,6 @@ export function Hero() {
         </Reveal>
       </div>
     </section>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Background: deep walnut and espresso, lit by warm golden light
-// ---------------------------------------------------------------------------
-function HeroArt() {
-  return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-      {/* Deep, neutral walnut base: almost black at the edges. */}
-      <div className="absolute inset-0 bg-[linear-gradient(165deg,#1e1510_0%,#150e0b_40%,#0d0806_100%)]" />
-      {/* Ambient warmth: light spilling across the room from the right. */}
-      <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_82%_42%,rgba(255,168,40,0.20)_0%,rgba(190,110,10,0.08)_38%,transparent_72%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(45%_35%_at_8%_100%,rgba(255,170,50,0.10)_0%,transparent_70%)]" />
-      {/* A large curved surface catching the light (abstract, like a lit edge). */}
-      <div className="absolute top-[52%] right-[-62%] size-[64rem] rounded-full bg-[radial-gradient(circle_at_22%_28%,rgba(255,190,80,0.16)_0%,rgba(255,160,40,0.05)_30%,transparent_55%)] shadow-[inset_3px_3px_2px_-1px_rgba(255,206,120,0.35),inset_40px_40px_80px_-40px_rgba(255,170,50,0.25)] max-md:hidden sm:top-[30%] sm:right-[-40%] md:max-lg:hidden lg:top-[-8%] lg:right-[-48%] lg:size-[70rem] xl:right-[-30%]" />
-      <div className="absolute top-[70%] right-[-75%] size-[64rem] rounded-full shadow-[inset_2px_2px_2px_-1px_rgba(255,206,120,0.18)] max-md:hidden sm:top-[50%] sm:right-[-55%] md:max-lg:hidden lg:top-[20%] lg:right-[-60%] lg:size-[72rem] xl:right-[-42%]" />
-      {/* Phones: a large curved surface filled with golden light behind the phone,
-          brightest along its edge, plus a lit arc at the bottom left (reference). */}
-      <div className="absolute top-[13%] left-[44%] size-[44rem] rounded-full bg-[radial-gradient(circle_at_14%_44%,rgba(255,206,105,0.92)_0%,rgba(250,170,35,0.72)_14%,rgba(226,140,12,0.46)_30%,rgba(160,85,0,0.2)_48%,rgba(80,40,0,0.06)_62%,transparent_72%)] shadow-[inset_6px_4px_10px_-4px_rgba(255,214,140,0.55),-10px_0_60px_-10px_rgba(255,170,40,0.35)] blur-[1px] sm:left-[48%] md:hidden" />
-      <div className="absolute inset-0 bg-[radial-gradient(60%_45%_at_95%_40%,rgba(255,170,40,0.35)_0%,rgba(200,110,0,0.12)_45%,transparent_75%)] md:hidden" />
-      <div className="absolute top-[30%] left-[52%] size-[20rem] rounded-full bg-[radial-gradient(circle,rgba(255,200,110,0.35)_0%,rgba(255,160,40,0.12)_45%,transparent_70%)] blur-2xl md:hidden" />
-      <div className="absolute bottom-[-26rem] left-[-12rem] size-[34rem] rounded-full bg-[radial-gradient(circle_at_70%_20%,rgba(255,180,60,0.40)_0%,rgba(200,120,10,0.14)_35%,transparent_62%)] shadow-[inset_0_5px_8px_-3px_rgba(255,210,130,0.5)] md:hidden" />
-      {/* Soft light lines. */}
-      <svg
-        className="absolute inset-0 h-full w-full"
-        viewBox="0 0 1200 900"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <defs>
-          <linearGradient id="wk-line" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#ffd391" stopOpacity="0" />
-            <stop offset="55%" stopColor="#ffd391" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#ffd391" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M-40 790 C 260 680, 560 720, 820 880"
-          stroke="url(#wk-line)"
-          strokeWidth="1"
-          fill="none"
-        />
-        <path
-          d="M-40 840 C 320 740, 620 790, 920 920"
-          stroke="url(#wk-line)"
-          strokeWidth="0.8"
-          fill="none"
-          opacity="0.6"
-        />
-      </svg>
-      {/* Vignette for a cinematic frame. */}
-      <div className="absolute inset-0 bg-[radial-gradient(120%_90%_at_60%_45%,transparent_55%,rgba(5,3,2,0.65)_100%)]" />
-      {/* Fine grain so the light doesn't band. */}
-      <div className="[background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22 stitchTiles=%22stitch%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>')] absolute inset-0 opacity-[0.08] mix-blend-overlay" />
-    </div>
   );
 }
 
@@ -175,11 +121,11 @@ function PhonePreview() {
       {/* Golden light behind the phone: a wide haze, a warm core and a bright centre. */}
       <div
         aria-hidden
-        className="absolute top-1/2 left-1/2 -z-10 size-[calc(900px*var(--s))] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,170,40,0.38)_0%,rgba(214,130,0,0.16)_32%,rgba(120,60,0,0.06)_52%,transparent_70%)] blur-2xl"
+        className="absolute top-1/2 left-1/2 -z-10 size-[calc(900px*var(--s))] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,198,41,0.26)_0%,rgba(214,158,0,0.1)_45%,transparent_100%)] blur-2xl"
       />
       <div
         aria-hidden
-        className="absolute top-[46%] left-[58%] -z-10 size-[calc(420px*var(--s))] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,214,130,0.55)_0%,rgba(255,170,40,0.22)_40%,transparent_70%)] blur-3xl"
+        className="absolute top-[46%] left-[58%] -z-10 size-[calc(420px*var(--s))] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,217,120,0.45)_0%,rgba(255,198,41,0.16)_50%,transparent_100%)] blur-3xl"
       />
       <div
         aria-hidden
@@ -188,7 +134,7 @@ function PhonePreview() {
       {/* Floor reflection. */}
       <div
         aria-hidden
-        className="absolute bottom-[calc(-26px*var(--s))] left-1/2 h-[calc(46px*var(--s))] w-[115%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(ellipse,rgba(255,190,80,0.5)_0%,rgba(255,160,40,0.15)_45%,transparent_72%)] blur-md"
+        className="absolute bottom-[calc(-26px*var(--s))] left-1/2 h-[calc(46px*var(--s))] w-[115%] -translate-x-1/2 rounded-[50%] bg-[radial-gradient(closest-side,rgba(255,217,120,0.6)_0%,rgba(255,198,41,0.18)_50%,transparent_100%)] blur-md"
       />
 
       <div className="relative h-[calc(640px*var(--s))] w-[calc(300px*var(--s))]">
@@ -311,7 +257,7 @@ function PhonePreview() {
           </div>
         </div>
       </div>
-      <figcaption className="text-sand/55 mt-[calc(30px*var(--s))] text-center text-[9.5px] sm:text-[11px]">
+      <figcaption className="relative z-10 mx-auto mt-[calc(30px*var(--s))] w-fit rounded-full bg-[#2B1D18]/80 px-2.5 py-0.5 text-center text-[9.5px] text-white/75 backdrop-blur-sm sm:text-[11px]">
         Preview with sample data.
       </figcaption>
     </figure>

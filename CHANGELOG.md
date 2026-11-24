@@ -21,6 +21,11 @@ All notable changes to WOHKAH are documented here. The format follows
   paragraph on the left, the full phone beside them on the right, then the button. A golden curve
   lights the phone from behind. Tested at 360, 375, 390 and 430px. Tablet and desktop layouts are
   unchanged.
+- Hero art direction: a solid walnut background (#2B1D18) with sculptural metallic-gold ribbons
+  drawn in SVG (#D69E00, #FFC629, #FFD978 with deep-amber folds, lit edges, light trails, glints
+  and cast shadows) sweeping behind the phone and along the bottom and right. The top-right
+  corner stays dark. Separate compositions for phones and for tablets and desktops. Text is pure
+  white with #FFC629 gold emphasis.
 - The site header is transparent with light text over the hero on the homepage until you scroll.
   Its side padding on phones is now 24px, to line up with the hero.
 
