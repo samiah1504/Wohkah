@@ -32,17 +32,20 @@ export function Hero() {
     >
       <HeroArt />
       {/*
-        Phones: headline across the top, then the words and the phone side by side, then the button.
-        Desktop: words and button on the left, the full phone on the right.
+        Each size has its own composition:
+        - phones (< 640px): one column. Words, then the phone, then the button.
+        - large phones (640–767px): the same column with more room and a larger phone.
+        - tablets (768–1023px): two columns, words and button left, phone right.
+        - laptops and desktops (1024px+): the full side-by-side composition.
       */}
-      <div className="relative mx-auto grid w-full max-w-6xl grid-cols-[minmax(0,1fr)_auto] gap-x-5 px-6 pt-12 pb-16 sm:gap-x-8 sm:px-8 sm:pt-16 md:pb-20 lg:min-h-[calc(100svh-4rem)] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:grid-rows-[1fr_auto_auto_auto_1fr] lg:content-center lg:gap-x-10 lg:px-6 lg:pt-8 lg:pb-20">
-        <Reveal className="relative z-10 col-span-2 lg:col-span-1 lg:col-start-1 lg:row-start-2">
+      <div className="relative mx-auto grid w-full max-w-6xl px-6 pt-10 pb-14 sm:px-10 sm:pt-14 sm:pb-16 md:grid-cols-[minmax(0,1fr)_auto] md:grid-rows-[1fr_auto_auto_auto_1fr] md:gap-x-10 md:pt-12 md:pr-12 md:pb-20 md:pl-8 lg:max-h-[900px] lg:min-h-[calc(100svh-4rem)] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-x-12 lg:px-6 lg:pt-6 xl:gap-x-16">
+        <Reveal className="relative z-10 md:col-start-1 md:row-start-2">
           <p
             data-reveal
-            className="text-sand/85 flex items-center gap-3 text-[11px] font-semibold tracking-[0.22em] uppercase sm:text-xs"
+            className="text-sand/85 flex items-center gap-3 text-[11px] font-semibold tracking-[0.2em] uppercase sm:text-xs sm:tracking-[0.22em]"
           >
             <span
-              className="bg-primary h-4 w-[3px] rounded-full shadow-[0_0_12px_rgba(255,190,70,0.8)]"
+              className="bg-primary h-4 w-[3px] shrink-0 rounded-full shadow-[0_0_12px_rgba(255,190,70,0.8)]"
               aria-hidden
             />
             Staff management made simple
@@ -51,7 +54,7 @@ export function Hero() {
             id="hero-heading"
             data-reveal
             style={delay(80)}
-            className="font-heading mt-7 max-w-[36rem] text-[2.55rem] leading-[1.04] tracking-[-0.025em] text-balance sm:text-[3.4rem] lg:text-[3.6rem] xl:text-[3.85rem]"
+            className="font-heading mt-5 text-[clamp(2.1rem,9.4vw,2.6rem)] leading-[1.07] tracking-[-0.022em] text-balance sm:mt-6 sm:text-[3.15rem] sm:leading-[1.05] md:max-w-[26rem] md:text-[2.85rem] lg:max-w-[34rem] lg:text-[3.2rem] xl:max-w-[36rem] xl:text-[3.6rem]"
           >
             <span className="text-ivory block font-semibold">
               Running a business is already hard.
@@ -62,27 +65,27 @@ export function Hero() {
           </h1>
         </Reveal>
 
-        <Reveal className="relative z-10 mt-7 self-center lg:col-start-1 lg:row-start-3 lg:mt-6 lg:self-start">
+        <Reveal className="relative z-10 md:col-start-1 md:row-start-3">
           <p
             data-reveal
             style={delay(160)}
-            className="text-sand/75 max-w-[30rem] text-[14px] leading-6 sm:text-base sm:leading-7"
+            className="text-sand/80 mt-5 text-base leading-7 sm:mt-6 sm:max-w-[34rem] sm:text-[17px] sm:leading-8 md:max-w-[25rem] md:text-base md:leading-7 lg:max-w-[28rem] lg:text-base lg:leading-7 xl:max-w-[30rem] xl:text-[17px] xl:leading-8"
           >
             From tracking attendance and managing leave to working out salaries and keeping your
             team organised, WOHKAH takes the stress out of managing your staff.
           </p>
         </Reveal>
 
-        {/* One phone, always beside the words. */}
-        <div className="relative mt-7 self-center lg:col-start-2 lg:row-span-5 lg:row-start-1 lg:mt-0 lg:justify-self-center">
+        {/* The phone: centred under the words on phones, on the right from tablets up. */}
+        <div className="relative mt-10 justify-self-center sm:mt-12 md:col-start-2 md:row-span-5 md:row-start-1 md:mt-0 md:self-center">
           <PhonePreview />
         </div>
 
-        <Reveal className="relative z-10 col-span-2 mt-10 lg:col-span-1 lg:col-start-1 lg:row-start-4 lg:mt-10">
+        <Reveal className="relative z-10 mt-8 sm:mt-10 md:col-start-1 md:row-start-4 md:mt-9">
           <div data-reveal style={delay(240)}>
             <Link
               href="/register"
-              className="group bg-primary text-walnut hover:bg-primary/90 focus-visible:ring-primary/50 inline-flex h-14 w-full items-center justify-center gap-3 rounded-2xl px-8 text-base font-bold shadow-[0_18px_44px_-12px_rgba(255,170,30,0.6),inset_0_1px_0_rgba(255,255,255,0.35)] transition-[transform,background-color] outline-none hover:-translate-y-0.5 focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-[#110b08] sm:w-auto"
+              className="group bg-primary text-walnut hover:bg-primary/90 focus-visible:ring-primary/50 inline-flex h-14 w-full items-center justify-center gap-3 rounded-2xl px-8 text-base font-bold shadow-[0_18px_44px_-12px_rgba(255,170,30,0.6),inset_0_1px_0_rgba(255,255,255,0.35)] transition-[transform,background-color] outline-none hover:-translate-y-0.5 focus-visible:ring-4 focus-visible:ring-offset-2 focus-visible:ring-offset-[#110b08] sm:mx-auto sm:flex sm:w-fit md:mx-0 md:inline-flex"
             >
               Create your free account
               <ArrowRightIcon
@@ -109,8 +112,8 @@ function HeroArt() {
       <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_82%_42%,rgba(255,168,40,0.20)_0%,rgba(190,110,10,0.08)_38%,transparent_72%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(45%_35%_at_8%_100%,rgba(255,170,50,0.10)_0%,transparent_70%)]" />
       {/* A large curved surface catching the light (abstract, like a lit edge). */}
-      <div className="absolute top-[52%] right-[-62%] size-[64rem] rounded-full bg-[radial-gradient(circle_at_22%_28%,rgba(255,190,80,0.16)_0%,rgba(255,160,40,0.05)_30%,transparent_55%)] shadow-[inset_3px_3px_2px_-1px_rgba(255,206,120,0.35),inset_40px_40px_80px_-40px_rgba(255,170,50,0.25)] sm:top-[30%] sm:right-[-40%] lg:top-[-8%] lg:right-[-30%] lg:size-[70rem]" />
-      <div className="absolute top-[70%] right-[-75%] size-[64rem] rounded-full shadow-[inset_2px_2px_2px_-1px_rgba(255,206,120,0.18)] sm:top-[50%] sm:right-[-55%] lg:top-[20%] lg:right-[-42%] lg:size-[72rem]" />
+      <div className="absolute top-[52%] right-[-62%] size-[64rem] rounded-full bg-[radial-gradient(circle_at_22%_28%,rgba(255,190,80,0.16)_0%,rgba(255,160,40,0.05)_30%,transparent_55%)] shadow-[inset_3px_3px_2px_-1px_rgba(255,206,120,0.35),inset_40px_40px_80px_-40px_rgba(255,170,50,0.25)] sm:top-[30%] sm:right-[-40%] md:max-lg:hidden lg:top-[-8%] lg:right-[-48%] lg:size-[70rem] xl:right-[-30%]" />
+      <div className="absolute top-[70%] right-[-75%] size-[64rem] rounded-full shadow-[inset_2px_2px_2px_-1px_rgba(255,206,120,0.18)] sm:top-[50%] sm:right-[-55%] md:max-lg:hidden lg:top-[20%] lg:right-[-60%] lg:size-[72rem] xl:right-[-42%]" />
       {/* Soft light lines. */}
       <svg
         className="absolute inset-0 h-full w-full"
@@ -159,7 +162,7 @@ function PhonePreview() {
     { label: "Salaries", icon: WalletIcon, soon: !live("salaries") },
   ];
   return (
-    <figure className="relative [--s:0.46] min-[400px]:[--s:0.5] sm:[--s:0.72] md:[--s:0.82] lg:[--s:1] xl:[--s:1.06]">
+    <figure className="relative [--s:0.68] [--tilt:perspective(1400px)_rotateY(-9deg)_rotateX(4deg)_rotate(3deg)] min-[380px]:[--s:0.74] min-[420px]:[--s:0.8] sm:[--s:0.9] md:[--s:0.74] md:[--tilt:perspective(1400px)_rotateY(-16deg)_rotateX(6deg)_rotate(5deg)] lg:[--s:0.92] xl:[--s:1.02] 2xl:[--s:1.1]">
       {/* Golden light behind the phone: a wide haze, a warm core and a bright centre. */}
       <div
         aria-hidden
@@ -182,7 +185,7 @@ function PhonePreview() {
       <div className="relative h-[calc(640px*var(--s))] w-[calc(300px*var(--s))]">
         <div className="absolute top-0 left-0 w-[300px] origin-top-left [transform:scale(var(--s))]">
           <div className="wk-float">
-            <div className="[transform:perspective(1400px)_rotateY(-16deg)_rotateX(6deg)_rotate(5deg)] motion-reduce:[transform:rotate(3deg)]">
+            <div className="[transform:var(--tilt)] motion-reduce:[transform:rotate(3deg)]">
               {/* Frame */}
               <div className="rounded-[2.9rem] bg-[linear-gradient(145deg,#c89a55,#4a3526_18%,#160f0b_45%,#0e0907_70%,#8a6438)] p-[3px] shadow-[0_50px_90px_-30px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.05),-14px_-6px_50px_-18px_rgba(255,180,60,0.55),18px_10px_60px_-20px_rgba(255,160,40,0.35)]">
                 <div className="rounded-[2.75rem] bg-[#0d0907] p-[9px]">
@@ -299,7 +302,7 @@ function PhonePreview() {
           </div>
         </div>
       </div>
-      <figcaption className="text-sand/50 mt-[calc(34px*var(--s))] text-center text-[10px] sm:text-[11px]">
+      <figcaption className="text-sand/55 mt-[calc(30px*var(--s))] text-center text-[11px]">
         Preview with sample data.
       </figcaption>
     </figure>
